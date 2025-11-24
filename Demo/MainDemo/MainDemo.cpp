@@ -78,8 +78,10 @@ int main(){
 
     std::string configPath = static_cast<std::string>(SOURCE_FILE_PATH) + "/config/Teleoperate/Ti5Robot.json";
 
+    std::cout<<"configPath: "<<configPath<<std::endl;
+
 //    auto teleoperatePtr = RobotTeleoperate::GetPtr(config);
     auto teleoperatePtr = RobotTeleoperate::GetPtr(configPath);
 
-    teleoperatePtr->StartTeleoperate();
+    teleoperatePtr->StartTeleoperate(false);
 }

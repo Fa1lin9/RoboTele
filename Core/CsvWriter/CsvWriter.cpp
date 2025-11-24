@@ -1,15 +1,15 @@
 #include <CsvWriter/CsvWriter.hpp>
 
 CsvWriter::CsvWriter(){
-    savePath = std::string(SOURCE_FILE_PATH) + "/Log/" + this->GetDateStamp();
-    std::string filename = this->savePath + "/" + this->GetTimestamp() + ".csv";
-    OpenFile(filename);
+    this->savePath = std::string(SOURCE_FILE_PATH) + "/Log/" + this->GetDateStamp();
+    std::string fileName = this->savePath + "/" + this->GetTimestamp() + ".csv";
+    OpenFile(fileName);
 }
 
-CsvWriter::CsvWriter(const std::string& filename){
-    savePath = std::string(SOURCE_FILE_PATH) + "/Log/" + this->GetDateStamp();
-    std::string filepath = this->savePath + "/" + filename;
-    OpenFile(filepath);
+CsvWriter::CsvWriter(const std::string& fileName){
+    this->savePath = std::string(SOURCE_FILE_PATH) + "/Log/" + this->GetDateStamp();
+    std::string fileName_ = this->savePath + "/" + fileName + ".csv";
+    OpenFile(fileName_);
 }
 
 CsvWriter::~CsvWriter(){

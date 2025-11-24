@@ -12,6 +12,7 @@ set( GROUP_NAME "GUI" )
 list( APPEND ${GROUP_NAME}_Components
     SimpleGUI # Just for test
     Ti5RobotBasicControlGUI
+    Ti5RobotTeleoperateGUI
 
 )
 

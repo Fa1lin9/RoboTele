@@ -14,10 +14,10 @@ JsonParser::JsonParser(const std::string &filePath_)
         std::string jsonStr = oss.str();
 
         // parse the file
-        boost::json::value jsonValue = boost::json::parse(jsonStr);
+        this->rootValue = boost::json::parse(jsonStr);
 
-        if(jsonValue.is_object()){
-           this->rootObject = jsonValue.as_object();
+        if(this->rootValue.is_object()){
+           this->rootObject = this->rootValue.as_object();
         }else{
             std::cerr<<"[JsonParser] The root's type is not a object!"<<std::endl;
         }

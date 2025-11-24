@@ -107,17 +107,19 @@ Ti5RobotTeleoperate::~Ti5RobotTeleoperate(){
 
 }
 
-bool Ti5RobotTeleoperate::StartTeleoperate(){
+bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     // Filter
     WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, this->ikSolverPtr->GetDofTotal());
 
 //    int FPS = 25;
+    this->pauseFlag = false;
     this->startFlag = true;
     this->saveFlag = false;
 
     while(this->startFlag){
-        if(this->stopFlag){
+        if(this->pauseFlag){
             std::cout<<"Teleoperation Stop ! "<<std::endl;
+            sleep(1);
             continue;
         }
 
@@ -130,7 +132,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(){
             continue;
         }
 
-        if(0){
+        if(verbose){
             std::cout << "--------------------------" << std::endl;
             std::cout << "Head Pose:\n" << msg[0] << std::endl;
             std::cout << "Left Wrist Pose:\n" << msg[1] << std::endl;
@@ -146,7 +148,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(){
 
         std::vector<Eigen::Matrix4d> transformedMsg = this->transformPtr->Transform(msgConfig);
 
-        if(0){
+        if(verbose){
             std::cout << "--------------------------" << std::endl;
             std::cout << "Transformed Left Wrist Pose:\n" << transformedMsg[0] << std::endl;
             std::cout << "Transformed Right Wrist Pose:\n" << transformedMsg[1] << std::endl;
@@ -226,12 +228,12 @@ bool Ti5RobotTeleoperate::StartTeleoperate(){
     return true;
 }
 
-bool Ti5RobotTeleoperate::StopTeleoperate(){
-    this->stopFlag = true;
+bool Ti5RobotTeleoperate::PauseTeleoperate(){
+    this->pauseFlag = !this->pauseFlag;
     return true;
 }
 
-bool Ti5RobotTeleoperate::EndTeleoperate(){
+bool Ti5RobotTeleoperate::StopTeleoperate(){
     if(!this->startFlag){
         std::cout<<"Teleoperation has ended! "<<std::endl;
     }else{

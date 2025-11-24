@@ -47,6 +47,9 @@ public:
         int dofRightArm;
     };
 
+    // just for nlopt
+    // but currently we use the casadi to solve
+    // so we don't use it anymore
     struct Ti5RobotConfig{
 
         Eigen::VectorXd q;

@@ -18,7 +18,7 @@ public:
     CsvWriter();
 
     // 构造函数2: 使用输入的文件名
-    CsvWriter(const std::string& filename);
+    CsvWriter(const std::string& fileName);
 
     ~CsvWriter();
 

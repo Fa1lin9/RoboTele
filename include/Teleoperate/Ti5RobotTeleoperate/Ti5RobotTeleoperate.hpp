@@ -12,9 +12,9 @@ public:
     ~Ti5RobotTeleoperate();
 
     bool Init() override;
-    bool StartTeleoperate() override;
+    bool StartTeleoperate(bool verbose) override;
+    bool PauseTeleoperate() override;
     bool StopTeleoperate() override;
-    bool EndTeleoperate() override;
 
 private:
     std::string address;
@@ -29,7 +29,7 @@ private:
     // some flags
     bool startFlag = false;
 
-    bool stopFlag = false;
+    bool pauseFlag = false;
 
     bool saveFlag = true;
 

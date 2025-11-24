@@ -1,6 +1,8 @@
 #include <DataCollector/DataCollector.hpp>
 
+#include "VisionProData.pb.h"
 
+RobotTeleoperate::HandPositions temp;
 DataCollector::DataCollector(){
 
 }

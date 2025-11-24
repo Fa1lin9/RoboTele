@@ -52,7 +52,7 @@ target_link_libraries( ${TARGET_NAME}
     PRIVATE
 
         $<BUILD_INTERFACE:cppzmq>
-        # $<BUILD_INTERFACE:protobuf>
+        $<BUILD_INTERFACE:protobuf>
 
 )
 

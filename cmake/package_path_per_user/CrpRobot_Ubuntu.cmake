@@ -164,7 +164,7 @@ find_package( ZeroMQ REQUIRED )
 # #                     Find protobuf                     #
 # #######################################################
 
-find_package( Protobuf REQUIRED )
+find_package( protobuf REQUIRED )
 
 # # #######################################################
 # # #                     Find cppzmq                     #

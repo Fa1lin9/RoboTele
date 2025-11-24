@@ -1,0 +1,29 @@
+syntax = "proto3";
+package RobotTeleoperate;
+
+// Matrix 4*4
+message Matrix4d {
+    repeated double data = 1; // length 16
+}
+
+// Point 3-D
+message Point3d {
+    double x = 1;
+    double y = 2;
+    double z = 3;
+}
+
+message HandPositions {
+    repeated Point3d joints = 1;
+}
+
+message VisionProData {
+    // Matrix
+    Matrix4d headPzose = 1;
+    Matrix4d leftArmPose = 2;
+    Matrix4d rightArmPose = 3;
+
+    // Hand
+    HandPositions leftHandPositions = 4;
+    HandPositions rightHandPositions = 5;
+}

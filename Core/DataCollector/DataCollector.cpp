@@ -1,5 +1,6 @@
 #include <DataCollector/DataCollector.hpp>
 
+
 DataCollector::DataCollector(){
 
 }
@@ -41,13 +42,13 @@ void DataCollector::Init(const std::string &address_){
     // Mat Init
     headPose.setZero();
     headPose(3,3) = 1;
-    leftWristPose.setZero();
-    leftWristPose(3,3) = 1;
-    rightWristPose.setZero();
-    rightWristPose(3,3) = 1;
+    leftArmPose.setZero();
+    leftArmPose(3,3) = 1;
+    rightArmPose.setZero();
+    rightArmPose(3,3) = 1;
 
-    leftHandPosition.setZero();
-    rightHandPosition.setZero();
+    leftHandPositions.setZero();
+    rightHandPositions.setZero();
 
     std::cout << FUNC_SIG <<" initialized, connected to " << address << std::endl;
 }
@@ -74,13 +75,15 @@ void DataCollector::run(){
 
             // Get Data
             std::memcpy(this->headPose.data(), msg.data(), sizeof(Eigen::Matrix4d));
-            std::memcpy(this->leftWristPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d), sizeof(Eigen::Matrix4d));
-            std::memcpy(this->rightWristPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d) * 2, sizeof(Eigen::Matrix4d));
+            std::memcpy(this->leftArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d), sizeof(Eigen::Matrix4d));
+            std::memcpy(this->rightArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d) * 2, sizeof(Eigen::Matrix4d));
 
             // Transpose
             this->headPose.transposeInPlace();
-            this->leftWristPose.transposeInPlace();
-            this->rightWristPose.transposeInPlace();
+            this->leftArmPose.transposeInPlace();
+            this->rightArmPose.transposeInPlace();
+
+
 
         }
 
@@ -88,8 +91,8 @@ void DataCollector::run(){
         if(0){
             std::cout << "--------------------------" << std::endl;
             std::cout << "Head Pose:\n" << headPose << std::endl;
-            std::cout << "Left Wrist Pose:\n" << leftWristPose << std::endl;
-            std::cout << "Right Wrist Pose:\n" << rightWristPose << std::endl;
+            std::cout << "Left Wrist Pose:\n" << leftArmPose << std::endl;
+            std::cout << "Right Wrist Pose:\n" << rightArmPose << std::endl;
             std::cout << "--------------------------" << std::endl;
         }
 
@@ -110,13 +113,13 @@ std::vector<Eigen::Matrix4d> DataCollector::GetValue(){
 
     // Get Data
     std::memcpy(this->headPose.data(), msg.data(), sizeof(Eigen::Matrix4d));
-    std::memcpy(this->leftWristPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d), sizeof(Eigen::Matrix4d));
-    std::memcpy(this->rightWristPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d) * 2, sizeof(Eigen::Matrix4d));
+    std::memcpy(this->leftArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d), sizeof(Eigen::Matrix4d));
+    std::memcpy(this->rightArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d) * 2, sizeof(Eigen::Matrix4d));
 
     // Transpose
     this->headPose.transposeInPlace();
-    this->leftWristPose.transposeInPlace();
-    this->rightWristPose.transposeInPlace();
+    this->leftArmPose.transposeInPlace();
+    this->rightArmPose.transposeInPlace();
 
-    return {this->headPose, this->leftWristPose, this->rightWristPose};
+    return {this->headPose, this->leftArmPose, this->rightArmPose};
 }

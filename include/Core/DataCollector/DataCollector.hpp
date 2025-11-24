@@ -29,12 +29,12 @@ private:
     // some variable for data
     // 头、双臂的位姿矩阵
     Eigen::Matrix4d headPose;
-    Eigen::Matrix4d leftWristPose;
-    Eigen::Matrix4d rightWristPose;
+    Eigen::Matrix4d leftArmPose;
+    Eigen::Matrix4d rightArmPose;
 
     // 两只手的点位
-    Eigen::Matrix<double,25,3> leftHandPosition;
-    Eigen::Matrix<double,25,3> rightHandPosition;
+    Eigen::Matrix<double,25,3> leftHandPositions;
+    Eigen::Matrix<double,25,3> rightHandPositions;
 
     // lock
     std::mutex mutex;

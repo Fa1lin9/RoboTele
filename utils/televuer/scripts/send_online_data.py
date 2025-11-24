@@ -1,5 +1,4 @@
 import time
-import threading
 import numpy as np
 from televuer import TeleVuer
 from multiprocessing import shared_memory, Process, Array
@@ -102,6 +101,7 @@ def main(tv: TeleVuer):
                     socket.send(msg)
                     # sock.sendall(msg)
 
+
                     writer.writerow([head_pose.tolist(), left_arm_pose.tolist(), right_arm_pose.tolist()])
                     count += 1
                     print(f"[IPC] Sent batch {count}, size={len(msg)} bytes")
@@ -126,17 +126,5 @@ def main(tv: TeleVuer):
 
         # time.sleep(0.01)  # 100Hz
 
-# ==================== 启动 TeleVuer 和 IPC 线程 ====================
-# tv_thread = threading.Thread(target=tv.start)
-# tv_thread.daemon = True
-# tv_thread.start()
-#
-# sender_thread = threading.Thread(target=ipc_sender, args=(tv,))
-# sender_thread.daemon = True
-# sender_thread.start()
-
-# ==================== 阻塞主线程 ====================
-# while True:
-#     time.sleep(1)
 if __name__ == '__main__':
     main(tv)

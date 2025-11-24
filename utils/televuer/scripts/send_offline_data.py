@@ -3,8 +3,12 @@ import numpy as np
 import zmq
 import struct
 import os
-import time
+import sys
 
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from VisionProData import VisionProData_pb2
+
+data = VisionProData_pb2.VisionProData()
 # ==================== 配置 ====================
 
 # 读取 CSV 文件
@@ -61,6 +65,10 @@ while count < len(poses['head_pose']):
     rightArmPose = poses['right_arm_pose'][count]
 
     # 打包连续发送 3 个矩阵
+    data.headPose.data.extend(headPose.astype(float).flatten().tolist())
+    data.leftArmPose.data.extend(leftArmPose.astype(float).flatten().tolist())
+    data.rightArmPose.data.extend(rightArmPose.astype(float).flatten().tolist())
+
     msg = pack_matrix(headPose) + pack_matrix(leftArmPose) + pack_matrix(rightArmPose)
     print(f"Sent pose batch {count} with message size: {len(msg)} bytes")
 

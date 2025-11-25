@@ -1,6 +1,6 @@
-#include <Ti5RobotIKSolver/Ti5RobotIKSolver.hpp>
+#include <Ti5RobotDualArmSolver/Ti5RobotDualArmSolver.hpp>
 
-Ti5RobotIKSolver::Ti5RobotIKSolver(const IKSolver::BasicConfig &config_)
+Ti5RobotDualArmSolver::Ti5RobotDualArmSolver(const DualArmSolver::BasicConfig &config_)
     :maxIteration(config_.maxIteration),
      relativeTol(config_.relativeTol)
 {
@@ -48,19 +48,19 @@ Ti5RobotIKSolver::Ti5RobotIKSolver(const IKSolver::BasicConfig &config_)
     std::cout<<" Init Sucessfully! "<<std::endl;
 }
 
-Ti5RobotIKSolver::~Ti5RobotIKSolver()
+Ti5RobotDualArmSolver::~Ti5RobotDualArmSolver()
 {
 
 }
 
-boost::optional<Eigen::VectorXd> Ti5RobotIKSolver::Solve(
+boost::optional<Eigen::VectorXd> Ti5RobotDualArmSolver::Solve(
         const std::vector<Eigen::Matrix4d>& targetPose,
         const Eigen::VectorXd& qInit,
         bool verbose)
 {
     // check the target pose
     for(size_t i=0;i<targetPose.size();i++){
-        if(!this->isPoseMatrix(targetPose[i])){
+        if(!this->IsPoseMatrix(targetPose[i])){
             std::cout<<"targetPose is not a pose matrix"<<std::endl;
             return boost::none;
         }
@@ -87,7 +87,7 @@ boost::optional<Eigen::VectorXd> Ti5RobotIKSolver::Solve(
             ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
                 Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
                 Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
-                IKSolver::Ti5RobotConfig config = {
+                DualArmSolver::Ti5RobotConfig config = {
                     .q = q,
                     .qInit= robotData->qInit,
                     .targetPose = robotData->targetPose,
@@ -111,7 +111,7 @@ boost::optional<Eigen::VectorXd> Ti5RobotIKSolver::Solve(
             ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
                 Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
                 Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
-                IKSolver::Ti5RobotConfig config = {
+                DualArmSolver::Ti5RobotConfig config = {
                     .q = q,
                     .qInit= robotData->qInit,
                     .targetPose = robotData->targetPose,
@@ -256,7 +256,7 @@ boost::optional<Eigen::VectorXd> Ti5RobotIKSolver::Solve(
     }
 }
 
-void Ti5RobotIKSolver::Info(){
+void Ti5RobotDualArmSolver::Info(){
     LOG_FUNCTION;
 
     std::cout << " ----------------------------------------------------- "<< std::endl;
@@ -344,7 +344,7 @@ void Ti5RobotIKSolver::Info(){
 //    std::cout << " rotation of left arm: \n"<<Forward(testQ)[0].rotation()<<std::endl;
 }
 
-std::vector<pinocchio::SE3> Ti5RobotIKSolver::Forward(const Eigen::VectorXd& q){
+std::vector<pinocchio::SE3> Ti5RobotDualArmSolver::Forward(const Eigen::VectorXd& q){
 //    LOG_FUNCTION;
     if(q.size() != this->robotModel.nq){
         std::string error = " The size of the q should be this->robotModel.nq! ";
@@ -379,11 +379,11 @@ std::vector<pinocchio::SE3> Ti5RobotIKSolver::Forward(const Eigen::VectorXd& q){
     return std::vector<pinocchio::SE3>{leftArmPose, rightArmPose};
 }
 
-size_t Ti5RobotIKSolver::GetDofTotal(){
+size_t Ti5RobotDualArmSolver::GetDofTotal(){
     return this->dofTotal;
 }
 
-bool Ti5RobotIKSolver::isPoseMatrix(const Eigen::Matrix4d &mat,
+bool Ti5RobotDualArmSolver::IsPoseMatrix(const Eigen::Matrix4d &mat,
                                     const double& eps){
 
     Eigen::Matrix3d rotation = mat.block<3,3>(0,0);
@@ -404,7 +404,7 @@ bool Ti5RobotIKSolver::isPoseMatrix(const Eigen::Matrix4d &mat,
     return true;
 }
 
-double Ti5RobotIKSolver::ObjectiveFunc(const IKSolver::Ti5RobotConfig& config_){
+double Ti5RobotDualArmSolver::ObjectiveFunc(const DualArmSolver::Ti5RobotConfig& config_){
 //    LOG_FUNCTION;
     std::vector<pinocchio::SE3> currentPose = this->Forward(config_.q);
 
@@ -483,7 +483,7 @@ double Ti5RobotIKSolver::ObjectiveFunc(const IKSolver::Ti5RobotConfig& config_){
 //    return grad;
 //}
 
-void Ti5RobotIKSolver::NormalizeAngle(Eigen::VectorXd& angle){
+void Ti5RobotDualArmSolver::NormalizeAngle(Eigen::VectorXd& angle){
     for(int i=0;i<angle.size();i++){
         angle(i) = fmod(angle(i) + M_PI, 2 * M_PI); // 先 +π 再取模
         if (angle(i) < 0) {
@@ -493,7 +493,7 @@ void Ti5RobotIKSolver::NormalizeAngle(Eigen::VectorXd& angle){
     }
 }
 
-void Ti5RobotIKSolver::InitRobot(const IKSolver::BasicConfig &config_){
+void Ti5RobotDualArmSolver::InitRobot(const DualArmSolver::BasicConfig &config_){
 //    LOG_FUNCTION;
     // Init Model
 //    pinocchio::urdf::buildModel(
@@ -572,7 +572,7 @@ void Ti5RobotIKSolver::InitRobot(const IKSolver::BasicConfig &config_){
 
 }
 
-void Ti5RobotIKSolver::InitOptim(){
+void Ti5RobotDualArmSolver::InitOptim(){
 //    pinocchio::DataTpl<casadi::SX> dataSX(this->robotModelSX);
     this->dataPtrSX = std::make_shared<pinocchio::DataTpl<casadi::SX>>(this->robotModelSX);
 
@@ -663,17 +663,6 @@ void Ti5RobotIKSolver::InitOptim(){
         0.1 * smoothCost +
         0.02 * regularizationCost;
 
-//    // set limitation to joint6
-//    this->totalBoundsLower[9] = 0;
-//    this->totalBoundsUpper[9] = 0;
-//    this->totalBoundsLower[19] = 0;
-//    this->totalBoundsUpper[19] = 0;
-//    // set limitation to joint7
-//    this->totalBoundsLower[10] = 0;
-//    this->totalBoundsUpper[10] = 0;
-//    this->totalBoundsLower[20] = 0;
-//    this->totalBoundsUpper[20] = 0;
-
     this->opti.subject_to(
                 this->opti.bounded(
                     this->totalBoundsLower,
@@ -694,7 +683,7 @@ void Ti5RobotIKSolver::InitOptim(){
     this->opti.solver("ipopt", opts);
 }
 
-void Ti5RobotIKSolver::InitAD(const std::vector<Eigen::Matrix4d>& targetPose_,
+void Ti5RobotDualArmSolver::InitAD(const std::vector<Eigen::Matrix4d>& targetPose_,
                                     const Eigen::VectorXd& qInit_){
     // Variable
     casadi::SX qVar = casadi::SX::sym("qVar",this->dofTotal,1);
@@ -718,7 +707,7 @@ void Ti5RobotIKSolver::InitAD(const std::vector<Eigen::Matrix4d>& targetPose_,
     this->mainFunc = casadi::Function("mainFunc", {qVar}, {costFunc, gradFunc});
 }
 
-casadi::SX Ti5RobotIKSolver::ObjectiveFuncSX(
+casadi::SX Ti5RobotDualArmSolver::ObjectiveFuncSX(
             const pinocchio::ModelTpl<casadi::SX>::ConfigVectorType& q,
             const Eigen::Matrix<casadi::SX,Eigen::Dynamic,1>& qInit,
             const std::vector<Eigen::Matrix<casadi::SX,4,4>>& targetPose){

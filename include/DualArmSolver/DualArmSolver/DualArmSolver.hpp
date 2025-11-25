@@ -22,7 +22,7 @@
 
 //#include <WeightedMovingFilter/WeightedMovingFilter.hpp>
 
-class IKSolver
+class DualArmSolver
 {
 public:
 //    enum Type{
@@ -60,8 +60,8 @@ public:
 //        Eigen::Matrix4d rightArmTargetPose;
     };
 
-    IKSolver();
-    ~IKSolver();
+    DualArmSolver();
+    ~DualArmSolver();
 
     // Solver the IK
     //考虑到目标位姿包含双臂末端，同时考虑到泛化性，所以用std::vector
@@ -77,7 +77,7 @@ public:
 
     virtual size_t GetDofTotal() = 0;
 
-    static boost::shared_ptr<IKSolver> GetPtr(const IKSolver::BasicConfig& config_);
+    static boost::shared_ptr<DualArmSolver> GetPtr(const DualArmSolver::BasicConfig& config_);
 
 private:
 

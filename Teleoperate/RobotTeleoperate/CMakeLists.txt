@@ -50,7 +50,7 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:Core::DataCollector>
         $<BUILD_INTERFACE:Core::CsvWriter>
         $<BUILD_INTERFACE:Core::WeightedMovingFilter>
-        $<BUILD_INTERFACE:IKSolver::IKSolver>
+        $<BUILD_INTERFACE:DualArmSolver::DualArmSolver>
         $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
         $<BUILD_INTERFACE:FastDDSInterface::Ros2Bridge>
         $<BUILD_INTERFACE:Core::JsonParser>

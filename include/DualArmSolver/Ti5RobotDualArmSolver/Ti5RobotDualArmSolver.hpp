@@ -1,5 +1,5 @@
 #pragma once
-#include <IKSolver/IKSolver.hpp>
+#include <DualArmSolver/DualArmSolver.hpp>
 #include <source_path.h>
 
 #include <chrono>
@@ -71,12 +71,12 @@
 
  ------------------ Details of the Joints ------------------ */
 
-class Ti5RobotIKSolver
-        :public IKSolver
+class Ti5RobotDualArmSolver
+        :public DualArmSolver
 {
 public:
-    Ti5RobotIKSolver(const IKSolver::BasicConfig &config_);
-    ~Ti5RobotIKSolver();
+    Ti5RobotDualArmSolver(const DualArmSolver::BasicConfig &config_);
+    ~Ti5RobotDualArmSolver();
 
     boost::optional<Eigen::VectorXd> Solve(
                     const std::vector<Eigen::Matrix4d>& targetPose,
@@ -104,7 +104,7 @@ public:
 
 private:
     struct Ti5RobotData{
-        Ti5RobotIKSolver *solver;
+        Ti5RobotDualArmSolver *solver;
         Eigen::VectorXd qInit;
         std::vector<Eigen::Matrix4d> targetPose;
 //        Eigen::Matrix4d leftArmTargetPose;
@@ -112,21 +112,21 @@ private:
     };
 
 private:
-    bool isPoseMatrix(const Eigen::Matrix4d& mat,
+    bool IsPoseMatrix(const Eigen::Matrix4d& mat,
                       const double& eps = 1e-2);
 
-    double ObjectiveFunc(const IKSolver::Ti5RobotConfig& config_);
+    double ObjectiveFunc(const DualArmSolver::Ti5RobotConfig& config_);
 
     casadi::SX ObjectiveFuncSX(const pinocchio::ModelTpl<casadi::SX>::ConfigVectorType& q,
                         const Eigen::Matrix<casadi::SX,Eigen::Dynamic,1>& qInit,
                         const std::vector<Eigen::Matrix<casadi::SX,4,4>>& targetPose
                         );
 
-    Eigen::VectorXd GradFunc(const IKSolver::Ti5RobotConfig& config_);
+    Eigen::VectorXd GradFunc(const DualArmSolver::Ti5RobotConfig& config_);
 
     void NormalizeAngle(Eigen::VectorXd& angle);
 
-    void InitRobot(const IKSolver::BasicConfig &config_);
+    void InitRobot(const DualArmSolver::BasicConfig &config_);
 
     void InitOptim();
 

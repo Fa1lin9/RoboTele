@@ -87,9 +87,9 @@ if( BuildPackages_SimRobot)
     add_subdirectory( SimRobot )
 endif()
 
-option( BuildPackages_IKSolver "Whether generate Core package?" ON )
-if( BuildPackages_IKSolver )
-    add_subdirectory( IKSolver )
+option( BuildPackages_DualArmSolver "Whether generate Core package?" ON )
+if( BuildPackages_DualArmSolver )
+    add_subdirectory( DualArmSolver )
 endif()
 
 option( BuildPackages_CoordinateTransform "Whether generate Core package?" ON )

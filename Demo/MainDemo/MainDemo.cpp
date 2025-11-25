@@ -10,7 +10,7 @@ int main(){
                     0, 1, 0, 0,
                     0, 0, 1, +1.10,
                     0, 0 ,0, 1;
-    IKSolver::BasicConfig solverConfig = {
+    DualArmSolver::BasicConfig solverConfig = {
         .robotType = RobotType::Type::Ti5Robot,
         .baseFrameName = {"BASE_S"},
         .targetFrameName = {"L_WRIST_R", "R_WRIST_R"},

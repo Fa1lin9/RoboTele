@@ -32,7 +32,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
     RobotType::Type robotType = RobotType::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
 
     // IKSolver
-    IKSolver::BasicConfig solverConfig = {
+    DualArmSolver::BasicConfig solverConfig = {
         .robotType = robotType,
 //        .baseFrameName = {"BASE_S"},
         .baseFrameName = JsonParser::JsonArray2StdVecStr(solverObj["BaseFrameName"].as_array()),

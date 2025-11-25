@@ -2,7 +2,7 @@
 
 #include <source_path.h>
 
-#include <IKSolver/IKSolver.hpp>
+#include <DualArmSolver/DualArmSolver.hpp>
 #include <PhysicalRobot/PhysicalRobot.hpp>
 #include <CoordinateTransform/CoordinateTransform.hpp>
 #include <CsvWriter/CsvWriter.hpp>
@@ -29,7 +29,7 @@ public:
         std::string address;
         int FPS;
 
-        IKSolver::BasicConfig solverConfig;
+        DualArmSolver::BasicConfig solverConfig;
         PhysicalRobot::BasicConfig robotConfig;
         CoordinateTransform::BasicConfig transformConfig;
         Ros2Bridge::BasicConfig bridgeConfig;
@@ -51,7 +51,7 @@ public:
     virtual bool StopTeleoperate() = 0;
 
 protected:
-    boost::shared_ptr<IKSolver> ikSolverPtr;
+    boost::shared_ptr<DualArmSolver> ikSolverPtr;
 
     boost::shared_ptr<PhysicalRobot> physicalRobotPtr;
 

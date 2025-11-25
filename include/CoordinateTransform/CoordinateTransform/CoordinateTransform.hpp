@@ -31,8 +31,8 @@ public:
         Eigen::Matrix4d                 rightWrist2xrWorldPose;
 
         // 双手的局部坐标系，包含25个点
-        Eigen::Matrix<double,25,3>      leftHandPose;
-        Eigen::Matrix<double,25,3>      rightHandPose;
+        Eigen::Matrix<double,25,3>      leftHandPositions;
+        Eigen::Matrix<double,25,3>      rightHandPositions;
     };
 
     CoordinateTransform();

@@ -550,16 +550,16 @@ void Ti5DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
 
     // according to the config , set limitation to the joint
     // Left Arm
-    std::cout<<"The current DOF of the left arm is "<<config_.dofLeftArm<<std::endl;
-    for(size_t i=0;i<this->dofArm - config_.dofLeftArm;i++){
+    std::cout<<"The current DOF of the left arm is "<<config_.dofArm(0)<<std::endl;
+    for(size_t i=0;i<this->dofArm - config_.dofArm(0);i++){
         size_t temp = this->leftArmID.back() - 1 - i;
         this->totalBoundsLower[temp] = 0;
         this->totalBoundsUpper[temp] = 0;
         std::cout<<"Set limitation to left arm joint"<<temp<<std::endl;
     }
 
-    std::cout<<"The current DOF of the right arm is "<<config_.dofRightArm<<std::endl;
-    for(size_t i=0;i<this->dofArm - config_.dofRightArm;i++){
+    std::cout<<"The current DOF of the right arm is "<<config_.dofArm(1)<<std::endl;
+    for(size_t i=0;i<this->dofArm - config_.dofArm(1);i++){
         size_t temp = this->rightArmID.back() - 1 - i;
         this->totalBoundsLower[temp] = 0;
         this->totalBoundsUpper[temp] = 0;

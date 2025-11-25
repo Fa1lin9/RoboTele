@@ -49,8 +49,6 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:Eigen3::Eigen>
 
     PRIVATE
-
-
 )
 
 # #   Add Macro compile defination

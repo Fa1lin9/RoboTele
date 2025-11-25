@@ -21,9 +21,10 @@ int main(){
         // for ipopt
         .maxIteration = 50,
         .relativeTol = 1e-6,
-        .dofLeftArm = 6,
-        .dofRightArm = 6,
     };
+    Eigen::VectorXd v(2);
+    v << 6, 6;
+    solverConfig.dofArm = v;
 
     // CoordinateTransform
     Eigen::Matrix4d temp;

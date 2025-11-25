@@ -45,8 +45,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         // for ipopt
         .maxIteration = static_cast<int>(solverObj["MaxIteration"].as_int64()),
         .relativeTol = solverObj["RelativeTol"].as_double(),
-        .dofLeftArm = static_cast<int>(solverObj["DofLeftArm"].as_int64()),
-        .dofRightArm = static_cast<int>(solverObj["DofRightArm"].as_int64()),
+        .dofArm = JsonParser::JsonArray2EigenVectorXd(solverObj["DofArm"].as_array()),
     };
     // In the future, the variable BaseOffset maybe not just 1
     // So I choose to set BaseOffset to 3-D array

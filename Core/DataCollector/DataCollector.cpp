@@ -66,28 +66,49 @@ void DataCollector::run(){
         zmq::message_t msg;
         subscriber.recv(msg, zmq::recv_flags::none);
 
-        if (msg.size() != sizeof(Eigen::Matrix4d) * 3) {
-            std::cout<<"The length should be :"<<sizeof(Eigen::Matrix4d) * 3<<std::endl;
-            std::cerr << "Received wrong size: " << msg.size() << std::endl;
-            continue;
+//        if (msg.size() != sizeof(Eigen::Matrix4d) * 3) {
+//            std::cout<<"The length should be :"<<sizeof(Eigen::Matrix4d) * 3<<std::endl;
+//            std::cerr << "Received wrong size: " << msg.size() << std::endl;
+//            continue;
+//        }
+
+
+        std::lock_guard<std::mutex> lock(mutex);
+
+        // Get Data
+//            std::memcpy(this->headPose.data(), msg.data(), sizeof(Eigen::Matrix4d));
+//            std::memcpy(this->leftArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d), sizeof(Eigen::Matrix4d));
+//            std::memcpy(this->rightArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d) * 2, sizeof(Eigen::Matrix4d));
+
+        RobotTeleoperate::VisionProData data;
+
+        if (!data.ParseFromArray(msg.data(), msg.size())) {
+            throw std::logic_error("Failed to parse protobuf data!");
         }
 
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-
-            // Get Data
-            std::memcpy(this->headPose.data(), msg.data(), sizeof(Eigen::Matrix4d));
-            std::memcpy(this->leftArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d), sizeof(Eigen::Matrix4d));
-            std::memcpy(this->rightArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d) * 2, sizeof(Eigen::Matrix4d));
-
-            // Transpose
-            this->headPose.transposeInPlace();
-            this->leftArmPose.transposeInPlace();
-            this->rightArmPose.transposeInPlace();
-
-
-
+        // === 1. 读取 headPose ===
+        if (data.headPose().data_size() == 16) {
+            for (int i = 0; i < 16; i++)
+                this->headPose(i / 4, i % 4) = data.headPose().data(i);
         }
+
+        // === 2. 读取 leftArmPose ===
+        if (data.leftArmPose().data_size() == 16) {
+            for (int i = 0; i < 16; i++)
+                this->leftArmPose(i / 4, i % 4) = data.leftArmPose().data(i);
+        }
+
+        // === 3. 读取 rightArmPose ===
+        if (data.rightArmPose().data_size() == 16) {
+            for (int i = 0; i < 16; i++)
+                this->rightArmPose(i / 4, i % 4) = data.rightArmPose().data(i);
+        }
+
+        // Transpose
+//            this->headPose.transposeInPlace();
+//            this->leftArmPose.transposeInPlace();
+//            this->rightArmPose.transposeInPlace();
+
 
         // Matrix Output
         if(0){
@@ -97,7 +118,6 @@ void DataCollector::run(){
             std::cout << "Right Wrist Pose:\n" << rightArmPose << std::endl;
             std::cout << "--------------------------" << std::endl;
         }
-
     }
 
 }
@@ -105,23 +125,60 @@ void DataCollector::run(){
 std::vector<Eigen::Matrix4d> DataCollector::GetValue(){
 //    LOG_FUNCTION;
     zmq::message_t msg;
+//    subscriber.set(zmq::sockopt::conflate, 1);47
+
+
     subscriber.recv(msg, zmq::recv_flags::none);
 
-    if (msg.size() != sizeof(Eigen::Matrix4d) * 3) {
-        std::cout<<"The length should be :"<<sizeof(Eigen::Matrix4d) * 3<<std::endl;
-        std::cerr << "Received wrong size: " << msg.size() << std::endl;
-        return {};
+//    if (msg.size() != sizeof(Eigen::Matrix4d) * 3) {
+//        std::cout<<"The length should be :"<<sizeof(Eigen::Matrix4d) * 3<<std::endl;
+//        std::cerr << "Received wrong size: " << msg.size() << std::endl;
+//        return {};
+//    }
+
+//    // Get Data
+//    std::memcpy(this->headPose.data(), msg.data(), sizeof(Eigen::Matrix4d));
+//    std::memcpy(this->leftArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d), sizeof(Eigen::Matrix4d));
+//    std::memcpy(this->rightArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d) * 2, sizeof(Eigen::Matrix4d));
+
+//    // Transpose
+//    this->headPose.transposeInPlace();
+//    this->leftArmPose.transposeInPlace();
+//    this->rightArmPose.transposeInPlace();
+
+    RobotTeleoperate::VisionProData data;
+
+    if (!data.ParseFromArray(msg.data(), msg.size())) {
+        throw std::logic_error("Failed to parse protobuf data!");
     }
 
-    // Get Data
-    std::memcpy(this->headPose.data(), msg.data(), sizeof(Eigen::Matrix4d));
-    std::memcpy(this->leftArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d), sizeof(Eigen::Matrix4d));
-    std::memcpy(this->rightArmPose.data(), (char*)msg.data() + sizeof(Eigen::Matrix4d) * 2, sizeof(Eigen::Matrix4d));
+    // === 1. 读取 headPose ===
+    if (data.headPose().data_size() == 16) {
+        for (int i = 0; i < 16; i++)
+            this->headPose(i / 4, i % 4) = data.headPose().data(i);
+    }
 
-    // Transpose
-    this->headPose.transposeInPlace();
-    this->leftArmPose.transposeInPlace();
-    this->rightArmPose.transposeInPlace();
+    // === 2. 读取 leftArmPose ===
+    if (data.leftArmPose().data_size() == 16) {
+        for (int i = 0; i < 16; i++)
+            this->leftArmPose(i / 4, i % 4) = data.leftArmPose().data(i);
+    }
 
+    // === 3. 读取 rightArmPose ===
+    if (data.rightArmPose().data_size() == 16) {
+        for (int i = 0; i < 16; i++)
+            this->rightArmPose(i / 4, i % 4) = data.rightArmPose().data(i);
+    }
+
+    // Matrix Output
+    if(0){
+        std::cout << "--------------------------" << std::endl;
+        std::cout << "Head Pose:\n" << headPose << std::endl;
+        std::cout << "Left Wrist Pose:\n" << leftArmPose << std::endl;
+        std::cout << "Right Wrist Pose:\n" << rightArmPose << std::endl;
+        std::cout << "--------------------------" << std::endl;
+    }
+
+//    std::lock_guard<std::mutex> lock(mutex);
     return {this->headPose, this->leftArmPose, this->rightArmPose};
 }

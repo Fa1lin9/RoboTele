@@ -104,7 +104,7 @@ def read_tv_data(tv: TeleVuer):
 
 # ==================== 启动线程 ====================
 data_thread = threading.Thread(target=read_tv_data, args=(tv,))
-start_thread = threading.Thread(target=tv.start(), args=())
+# start_thread = threading.Thread(target=tv.start(), args=())
 data_thread.daemon = True  # 主线程退出时自动结束
 data_thread.start()
 

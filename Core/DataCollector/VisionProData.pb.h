@@ -677,29 +677,29 @@ class VisionProData final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kHeadPzoseFieldNumber = 1,
+    kHeadPoseFieldNumber = 1,
     kLeftArmPoseFieldNumber = 2,
     kRightArmPoseFieldNumber = 3,
     kLeftHandPositionsFieldNumber = 4,
     kRightHandPositionsFieldNumber = 5,
   };
-  // .RobotTeleoperate.Matrix4d headPzose = 1;
-  bool has_headpzose() const;
+  // .RobotTeleoperate.Matrix4d headPose = 1;
+  bool has_headpose() const;
   private:
-  bool _internal_has_headpzose() const;
+  bool _internal_has_headpose() const;
   public:
-  void clear_headpzose();
-  const ::RobotTeleoperate::Matrix4d& headpzose() const;
-  PROTOBUF_NODISCARD ::RobotTeleoperate::Matrix4d* release_headpzose();
-  ::RobotTeleoperate::Matrix4d* mutable_headpzose();
-  void set_allocated_headpzose(::RobotTeleoperate::Matrix4d* headpzose);
+  void clear_headpose();
+  const ::RobotTeleoperate::Matrix4d& headPose() const;
+  PROTOBUF_NODISCARD ::RobotTeleoperate::Matrix4d* release_headpose();
+  ::RobotTeleoperate::Matrix4d* mutable_headpose();
+  void set_allocated_headpose(::RobotTeleoperate::Matrix4d* headpose);
   private:
-  const ::RobotTeleoperate::Matrix4d& _internal_headpzose() const;
-  ::RobotTeleoperate::Matrix4d* _internal_mutable_headpzose();
+  const ::RobotTeleoperate::Matrix4d& _internal_headpose() const;
+  ::RobotTeleoperate::Matrix4d* _internal_mutable_headpose();
   public:
-  void unsafe_arena_set_allocated_headpzose(
-      ::RobotTeleoperate::Matrix4d* headpzose);
-  ::RobotTeleoperate::Matrix4d* unsafe_arena_release_headpzose();
+  void unsafe_arena_set_allocated_headpose(
+      ::RobotTeleoperate::Matrix4d* headpose);
+  ::RobotTeleoperate::Matrix4d* unsafe_arena_release_headpose();
 
   // .RobotTeleoperate.Matrix4d leftArmPose = 2;
   bool has_leftarmpose() const;
@@ -707,7 +707,7 @@ class VisionProData final :
   bool _internal_has_leftarmpose() const;
   public:
   void clear_leftarmpose();
-  const ::RobotTeleoperate::Matrix4d& leftarmpose() const;
+  const ::RobotTeleoperate::Matrix4d& leftArmPose() const;
   PROTOBUF_NODISCARD ::RobotTeleoperate::Matrix4d* release_leftarmpose();
   ::RobotTeleoperate::Matrix4d* mutable_leftarmpose();
   void set_allocated_leftarmpose(::RobotTeleoperate::Matrix4d* leftarmpose);
@@ -725,7 +725,7 @@ class VisionProData final :
   bool _internal_has_rightarmpose() const;
   public:
   void clear_rightarmpose();
-  const ::RobotTeleoperate::Matrix4d& rightarmpose() const;
+  const ::RobotTeleoperate::Matrix4d& rightArmPose() const;
   PROTOBUF_NODISCARD ::RobotTeleoperate::Matrix4d* release_rightarmpose();
   ::RobotTeleoperate::Matrix4d* mutable_rightarmpose();
   void set_allocated_rightarmpose(::RobotTeleoperate::Matrix4d* rightarmpose);
@@ -781,7 +781,7 @@ class VisionProData final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::RobotTeleoperate::Matrix4d* headpzose_;
+    ::RobotTeleoperate::Matrix4d* headpose_;
     ::RobotTeleoperate::Matrix4d* leftarmpose_;
     ::RobotTeleoperate::Matrix4d* rightarmpose_;
     ::RobotTeleoperate::HandPositions* lefthandpositions_;
@@ -961,45 +961,45 @@ HandPositions::joints() const {
 
 // VisionProData
 
-// .RobotTeleoperate.Matrix4d headPzose = 1;
-inline bool VisionProData::_internal_has_headpzose() const {
-  return this != internal_default_instance() && _impl_.headpzose_ != nullptr;
+// .RobotTeleoperate.Matrix4d headPose = 1;
+inline bool VisionProData::_internal_has_headpose() const {
+  return this != internal_default_instance() && _impl_.headpose_ != nullptr;
 }
-inline bool VisionProData::has_headpzose() const {
-  return _internal_has_headpzose();
+inline bool VisionProData::has_headpose() const {
+  return _internal_has_headpose();
 }
-inline void VisionProData::clear_headpzose() {
-  if (GetArenaForAllocation() == nullptr && _impl_.headpzose_ != nullptr) {
-    delete _impl_.headpzose_;
+inline void VisionProData::clear_headpose() {
+  if (GetArenaForAllocation() == nullptr && _impl_.headpose_ != nullptr) {
+    delete _impl_.headpose_;
   }
-  _impl_.headpzose_ = nullptr;
+  _impl_.headpose_ = nullptr;
 }
-inline const ::RobotTeleoperate::Matrix4d& VisionProData::_internal_headpzose() const {
-  const ::RobotTeleoperate::Matrix4d* p = _impl_.headpzose_;
+inline const ::RobotTeleoperate::Matrix4d& VisionProData::_internal_headpose() const {
+  const ::RobotTeleoperate::Matrix4d* p = _impl_.headpose_;
   return p != nullptr ? *p : reinterpret_cast<const ::RobotTeleoperate::Matrix4d&>(
       ::RobotTeleoperate::_Matrix4d_default_instance_);
 }
-inline const ::RobotTeleoperate::Matrix4d& VisionProData::headpzose() const {
-  // @@protoc_insertion_point(field_get:RobotTeleoperate.VisionProData.headPzose)
-  return _internal_headpzose();
+inline const ::RobotTeleoperate::Matrix4d& VisionProData::headPose() const {
+  // @@protoc_insertion_point(field_get:RobotTeleoperate.VisionProData.headPose)
+  return _internal_headpose();
 }
-inline void VisionProData::unsafe_arena_set_allocated_headpzose(
-    ::RobotTeleoperate::Matrix4d* headpzose) {
+inline void VisionProData::unsafe_arena_set_allocated_headpose(
+    ::RobotTeleoperate::Matrix4d* headpose) {
   if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.headpzose_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.headpose_);
   }
-  _impl_.headpzose_ = headpzose;
-  if (headpzose) {
+  _impl_.headpose_ = headpose;
+  if (headpose) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:RobotTeleoperate.VisionProData.headPzose)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:RobotTeleoperate.VisionProData.headPose)
 }
-inline ::RobotTeleoperate::Matrix4d* VisionProData::release_headpzose() {
+inline ::RobotTeleoperate::Matrix4d* VisionProData::release_headpose() {
   
-  ::RobotTeleoperate::Matrix4d* temp = _impl_.headpzose_;
-  _impl_.headpzose_ = nullptr;
+  ::RobotTeleoperate::Matrix4d* temp = _impl_.headpose_;
+  _impl_.headpose_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
   temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
@@ -1011,44 +1011,44 @@ inline ::RobotTeleoperate::Matrix4d* VisionProData::release_headpzose() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::RobotTeleoperate::Matrix4d* VisionProData::unsafe_arena_release_headpzose() {
-  // @@protoc_insertion_point(field_release:RobotTeleoperate.VisionProData.headPzose)
+inline ::RobotTeleoperate::Matrix4d* VisionProData::unsafe_arena_release_headpose() {
+  // @@protoc_insertion_point(field_release:RobotTeleoperate.VisionProData.headPose)
   
-  ::RobotTeleoperate::Matrix4d* temp = _impl_.headpzose_;
-  _impl_.headpzose_ = nullptr;
+  ::RobotTeleoperate::Matrix4d* temp = _impl_.headpose_;
+  _impl_.headpose_ = nullptr;
   return temp;
 }
-inline ::RobotTeleoperate::Matrix4d* VisionProData::_internal_mutable_headpzose() {
+inline ::RobotTeleoperate::Matrix4d* VisionProData::_internal_mutable_headpose() {
   
-  if (_impl_.headpzose_ == nullptr) {
+  if (_impl_.headpose_ == nullptr) {
     auto* p = CreateMaybeMessage<::RobotTeleoperate::Matrix4d>(GetArenaForAllocation());
-    _impl_.headpzose_ = p;
+    _impl_.headpose_ = p;
   }
-  return _impl_.headpzose_;
+  return _impl_.headpose_;
 }
-inline ::RobotTeleoperate::Matrix4d* VisionProData::mutable_headpzose() {
-  ::RobotTeleoperate::Matrix4d* _msg = _internal_mutable_headpzose();
-  // @@protoc_insertion_point(field_mutable:RobotTeleoperate.VisionProData.headPzose)
+inline ::RobotTeleoperate::Matrix4d* VisionProData::mutable_headpose() {
+  ::RobotTeleoperate::Matrix4d* _msg = _internal_mutable_headpose();
+  // @@protoc_insertion_point(field_mutable:RobotTeleoperate.VisionProData.headPose)
   return _msg;
 }
-inline void VisionProData::set_allocated_headpzose(::RobotTeleoperate::Matrix4d* headpzose) {
+inline void VisionProData::set_allocated_headpose(::RobotTeleoperate::Matrix4d* headpose) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
-    delete _impl_.headpzose_;
+    delete _impl_.headpose_;
   }
-  if (headpzose) {
+  if (headpose) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(headpzose);
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(headpose);
     if (message_arena != submessage_arena) {
-      headpzose = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, headpzose, submessage_arena);
+      headpose = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, headpose, submessage_arena);
     }
     
   } else {
     
   }
-  _impl_.headpzose_ = headpzose;
-  // @@protoc_insertion_point(field_set_allocated:RobotTeleoperate.VisionProData.headPzose)
+  _impl_.headpose_ = headpose;
+  // @@protoc_insertion_point(field_set_allocated:RobotTeleoperate.VisionProData.headPose)
 }
 
 // .RobotTeleoperate.Matrix4d leftArmPose = 2;
@@ -1069,7 +1069,7 @@ inline const ::RobotTeleoperate::Matrix4d& VisionProData::_internal_leftarmpose(
   return p != nullptr ? *p : reinterpret_cast<const ::RobotTeleoperate::Matrix4d&>(
       ::RobotTeleoperate::_Matrix4d_default_instance_);
 }
-inline const ::RobotTeleoperate::Matrix4d& VisionProData::leftarmpose() const {
+inline const ::RobotTeleoperate::Matrix4d& VisionProData::leftArmPose() const {
   // @@protoc_insertion_point(field_get:RobotTeleoperate.VisionProData.leftArmPose)
   return _internal_leftarmpose();
 }
@@ -1159,7 +1159,7 @@ inline const ::RobotTeleoperate::Matrix4d& VisionProData::_internal_rightarmpose
   return p != nullptr ? *p : reinterpret_cast<const ::RobotTeleoperate::Matrix4d&>(
       ::RobotTeleoperate::_Matrix4d_default_instance_);
 }
-inline const ::RobotTeleoperate::Matrix4d& VisionProData::rightarmpose() const {
+inline const ::RobotTeleoperate::Matrix4d& VisionProData::rightArmPose() const {
   // @@protoc_insertion_point(field_get:RobotTeleoperate.VisionProData.rightArmPose)
   return _internal_rightarmpose();
 }

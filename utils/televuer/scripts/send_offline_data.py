@@ -8,15 +8,13 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from VisionProData import VisionProData_pb2
 
-data = VisionProData_pb2.VisionProData()
 # ==================== 配置 ====================
 
 # 读取 CSV 文件
 # file_name = "20250829_161326.csv"
 # file_name = "20250929_152433.csv" # usually used
-# file_name = "20251111_112715.csv"
-# file_name = "20251114_105655.csv"
-file_name = "20251117_163604.csv"
+# file_name = "20251117_163604.csv"
+file_name = "20251125_135345.csv"
 CSV_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', f"{file_name}")
 
 # 定义 ZeroMQ 配置
@@ -59,6 +57,8 @@ poses = load_data_from_csv(CSV_FILE)
 # 发送数据的循环
 count = 0
 while count < len(poses['head_pose']):
+    data = VisionProData_pb2.VisionProData()
+
     # 获取当前帧的姿态矩阵
     headPose = poses['head_pose'][count]
     leftArmPose = poses['left_arm_pose'][count]
@@ -69,11 +69,14 @@ while count < len(poses['head_pose']):
     data.leftArmPose.data.extend(leftArmPose.astype(float).flatten().tolist())
     data.rightArmPose.data.extend(rightArmPose.astype(float).flatten().tolist())
 
-    msg = pack_matrix(headPose) + pack_matrix(leftArmPose) + pack_matrix(rightArmPose)
-    print(f"Sent pose batch {count} with message size: {len(msg)} bytes")
+    # msg = pack_matrix(headPose) + pack_matrix(leftArmPose) + pack_matrix(rightArmPose)
+    # print(f"Sent pose batch {count} with message size: {len(msg)} bytes")
+
+    data_bytes = data.SerializeToString()
 
     # 通过 ZeroMQ 发送数据
-    socket.send(msg)
+    socket.send(data_bytes)
+    # socket.send(msg)
     count += 1
 
     # 控制发送间隔，模拟 50ms 的发送间隔

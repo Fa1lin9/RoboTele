@@ -1,43 +1,37 @@
 import time
 import numpy as np
 from televuer import TeleVuer
-from multiprocessing import shared_memory, Process, Array
-import struct
+from multiprocessing import shared_memory
 from datetime import datetime
 import os
 import csv
 from collections import deque
+import sys
+import traceback
 
-times = deque(maxlen=30)
-
-# 获取当前时间戳并构建文件名
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-CSV_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', f"{timestamp}.csv")
-
-# 确保 'data' 目录存在
-os.makedirs(os.path.dirname(CSV_FILE), exist_ok=True)
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from VisionProData import VisionProData_pb2
 
 # ==================== 配置 ====================
-frequency = 25
-write_csv = True
+FREQUENCY = 25
 IMG_SHAPE = (480, 640, 3)
 IMG_SHM_NAME = "demo"
-# IPC_PATH = "ipc:///tmp/tv_ipc"  # IPC socket 文件路径
+
+# ==================== CSV ====================
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+CSV_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', f"{timestamp}.csv")
+os.makedirs(os.path.dirname(CSV_FILE), exist_ok=True)
 
 # ==================== 共享内存 ====================
 try:
     shm = shared_memory.SharedMemory(name=IMG_SHM_NAME)
 except FileNotFoundError:
-    shm = shared_memory.SharedMemory(
-        create=True,
-        size=np.prod(IMG_SHAPE),
-        name=IMG_SHM_NAME
-    )
+    shm = shared_memory.SharedMemory(create=True, size=np.prod(IMG_SHAPE), name=IMG_SHM_NAME)
 
 img_array = np.ndarray(IMG_SHAPE, dtype=np.uint8, buffer=shm.buf)
 img_array[:] = 0
 
-# ==================== TeleVuer 实例 ====================
+# ==================== TeleVuer ====================
 tv = TeleVuer(
     binocular=False,
     use_hand_tracking=True,
@@ -47,84 +41,132 @@ tv = TeleVuer(
     webrtc=False
 )
 
-# ==================== IPC（ZeroMQ PUSH） ====================
-# import socket
-# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# sock.bind(('127.0.0.1', 5555))
-# import redis
-# r = redis.Redis(host='127.0.0.1', port=5555, db=0)
 
-# ==================== 工具函数 ====================
-def pack_matrix(mat):
-    return struct.pack('d' * 16, *mat.flatten().astype(np.float64))
-
-# ==================== 数据发送线程 ====================
-def main(tv: TeleVuer):
-    prev_head_pose = None
-    prev_left_arm_pose = None
-    prev_right_arm_pose = None
-    count = 0
-
+# ==================== 主循环 ====================
+def main(tv):
+    # ==================== ZeroMQ ====================
     import zmq
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
     socket.bind("tcp://127.0.0.1:5555")
 
-    with open(CSV_FILE, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Head Pose', 'Left Arm Pose', 'Right Arm Pose'])  # CSV表头
+    prev_head = prev_left = prev_right = None
 
-        while True:
-            start = time.time()
-            try:
-                # 读取当前数据
-                head_pose = tv.head_pose
-                left_arm_pose = tv.left_arm_pose
-                right_arm_pose = tv.right_arm_pose
+    # CSV 初始化（加入左右手）
+    csv_file = open(CSV_FILE, 'w', newline='')
+    writer = csv.writer(csv_file)
+    writer.writerow([
+        'Head Pose',
+        'Left Arm Pose',
+        'Right Arm Pose',
+        'Left Hand (25x3)',
+        'Right Hand (25x3)'
+    ])
 
-                changed = False
+    frame_times = deque(maxlen=30)
 
-                if prev_head_pose is None or not np.array_equal(prev_head_pose, head_pose):
-                    print("Head Pose:\n", head_pose)
-                    changed = True
+    while True:
+        frame_start = time.time()
 
-                if prev_left_arm_pose is None or not np.array_equal(prev_left_arm_pose, left_arm_pose):
-                    print("Left Arm Pose:\n", left_arm_pose)
-                    changed = True
+        try:
+            # ===== 获取数据 =====
+            head = tv.head_pose
+            left = tv.left_arm_pose
+            right = tv.right_arm_pose
+            left_hand = tv.left_hand_positions
+            right_hand = tv.right_hand_positions
 
-                if prev_right_arm_pose is None or not np.array_equal(prev_right_arm_pose, right_arm_pose):
-                    print("Right Arm Pose:\n", right_arm_pose)
-                    changed = True
+            # ===== 基础异常检查 =====
+            if head is None or left is None or right is None:
+                print("[WARN] Pose is None, skipping frame.")
+                time.sleep(0.01)
+                continue
 
-                if changed:
-                    msg = pack_matrix(head_pose) + pack_matrix(left_arm_pose) + pack_matrix(right_arm_pose)
-                    socket.send(msg)
-                    # sock.sendall(msg)
+            if head.shape != (4, 4) or left.shape != (4, 4) or right.shape != (4, 4):
+                print("[WARN] Invalid matrix shape, skipping.")
+                continue
 
+            if left_hand is None or right_hand is None:
+                print("[WARN] Hand positions missing.")
+                left_hand = np.zeros((25, 3))
+                right_hand = np.zeros((25, 3))
 
-                    writer.writerow([head_pose.tolist(), left_arm_pose.tolist(), right_arm_pose.tolist()])
-                    count += 1
-                    print(f"[IPC] Sent batch {count}, size={len(msg)} bytes")
+            if left_hand.shape != (25, 3) or right_hand.shape != (25, 3):
+                print("[WARN] Invalid hand shape, restoring zeros.")
+                left_hand = np.zeros((25, 3))
+                right_hand = np.zeros((25, 3))
 
-                # 更新上一帧
-                prev_head_pose = head_pose.copy()
-                prev_left_arm_pose = left_arm_pose.copy()
-                prev_right_arm_pose = right_arm_pose.copy()
+            # ===== 检查是否变化 =====
+            changed = (
+                prev_head is None or
+                not np.array_equal(prev_head, head) or
+                not np.array_equal(prev_left, left) or
+                not np.array_equal(prev_right, right)
+            )
 
-            except Exception as e:
-                print("Error in IPC sender:", e)
+            if changed:
+                data = VisionProData_pb2.VisionProData()
 
-            times.append(time.time() - start)
-            fps = 1 / (sum(times) / len(times))
-            if fps < 200:
-                print(f"FPS: {fps:.2f}")
+                # ===== 矩阵填充（修复你原本的错误用法）=====
+                data.headPose.data.clear()
+                data.headPose.data.extend(head.flatten().astype(float))
 
-            end = time.time()
-            time_elapsed = end - start
-            sleep_time = max(0, (1 / float(frequency)) - time_elapsed)
-            time.sleep(sleep_time)
+                data.leftArmPose.data.clear()
+                data.leftArmPose.data.extend(left.flatten().astype(float))
 
-        # time.sleep(0.01)  # 100Hz
+                data.rightArmPose.data.clear()
+                data.rightArmPose.data.extend(right.flatten().astype(float))
+
+                # ===== 左手 =====
+                data.leftHandPositions.joints.clear()
+                for x, y, z in left_hand:
+                    p = data.leftHandPositions.joints.add()
+                    p.x = float(x)
+                    p.y = float(y)
+                    p.z = float(z)
+
+                # ===== 右手 =====
+                data.rightHandPositions.joints.clear()
+                for x, y, z in right_hand:
+                    p = data.rightHandPositions.joints.add()
+                    p.x = float(x)
+                    p.y = float(y)
+                    p.z = float(z)
+
+                # ===== 发送 =====
+                socket.send(data.SerializeToString())
+
+                # ===== 写 CSV =====
+                writer.writerow([
+                    head.tolist(),
+                    left.tolist(),
+                    right.tolist(),
+                    left_hand.tolist(),
+                    right_hand.tolist()
+                ])
+
+                print(">>> New pose updated & sent.")
+
+            # 更新上一帧
+            prev_head = head.copy()
+            prev_left = left.copy()
+            prev_right = right.copy()
+
+        except Exception as e:
+            print("[ERROR] Exception in main loop:", e)
+            traceback.print_exc()
+
+        # FPS
+        frame_times.append(time.time() - frame_start)
+        fps = 1 / np.mean(frame_times)
+        if fps < 60:
+            print(f"FPS: {fps:.2f}")
+
+        # 控制频率
+        time.sleep(max(0, 1 / FREQUENCY - (time.time() - frame_start)))
+
+    csv_file.close()
+
 
 if __name__ == '__main__':
     main(tv)

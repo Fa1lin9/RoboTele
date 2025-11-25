@@ -116,6 +116,11 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     this->startFlag = true;
     this->saveFlag = false;
 
+//    // Collector VisionPro's Data
+//    std::thread dataThread([this](){
+//        this->dataCollector.run();
+//    });
+
     while(this->startFlag){
         if(this->pauseFlag){
             std::cout<<"Teleoperation Stop ! "<<std::endl;
@@ -224,6 +229,9 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
         }
     }
+
+//    // delete the thread
+//    dataThread.join();
 
     return true;
 }

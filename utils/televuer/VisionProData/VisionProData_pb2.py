@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13VisionProData.proto\x12\x10RobotTeleoperate\"\x18\n\x08Matrix4d\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x01\"*\n\x07Point3d\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\":\n\rHandPositions\x12)\n\x06joints\x18\x01 \x03(\x0b\x32\x19.RobotTeleoperate.Point3d\"\x9a\x02\n\rVisionProData\x12-\n\theadPzose\x18\x01 \x01(\x0b\x32\x1a.RobotTeleoperate.Matrix4d\x12/\n\x0bleftArmPose\x18\x02 \x01(\x0b\x32\x1a.RobotTeleoperate.Matrix4d\x12\x30\n\x0crightArmPose\x18\x03 \x01(\x0b\x32\x1a.RobotTeleoperate.Matrix4d\x12:\n\x11leftHandPositions\x18\x04 \x01(\x0b\x32\x1f.RobotTeleoperate.HandPositions\x12;\n\x12rightHandPositions\x18\x05 \x01(\x0b\x32\x1f.RobotTeleoperate.HandPositionsb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13VisionProData.proto\x12\x10RobotTeleoperate\"\x18\n\x08Matrix4d\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x01\"*\n\x07Point3d\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\":\n\rHandPositions\x12)\n\x06joints\x18\x01 \x03(\x0b\x32\x19.RobotTeleoperate.Point3d\"\x99\x02\n\rVisionProData\x12,\n\x08headPose\x18\x01 \x01(\x0b\x32\x1a.RobotTeleoperate.Matrix4d\x12/\n\x0bleftArmPose\x18\x02 \x01(\x0b\x32\x1a.RobotTeleoperate.Matrix4d\x12\x30\n\x0crightArmPose\x18\x03 \x01(\x0b\x32\x1a.RobotTeleoperate.Matrix4d\x12:\n\x11leftHandPositions\x18\x04 \x01(\x0b\x32\x1f.RobotTeleoperate.HandPositions\x12;\n\x12rightHandPositions\x18\x05 \x01(\x0b\x32\x1f.RobotTeleoperate.HandPositionsb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'VisionProData_pb2', globals())
@@ -27,5 +27,5 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _HANDPOSITIONS._serialized_start=111
   _HANDPOSITIONS._serialized_end=169
   _VISIONPRODATA._serialized_start=172
-  _VISIONPRODATA._serialized_end=454
+  _VISIONPRODATA._serialized_end=453
 # @@protoc_insertion_point(module_scope)

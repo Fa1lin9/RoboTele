@@ -97,7 +97,7 @@ class TeleVuer:
 
         self.process = Process(target=self.vuer_run)
         self.process.daemon = True
-        # self.process.start()
+        self.process.start()
 
     def start(self):
         self.process.start()

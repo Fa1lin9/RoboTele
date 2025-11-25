@@ -64,7 +64,7 @@ struct HandPositionsDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HandPositionsDefaultTypeInternal _HandPositions_default_instance_;
 PROTOBUF_CONSTEXPR VisionProData::VisionProData(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.headpzose_)*/nullptr
+    /*decltype(_impl_.headpose_)*/nullptr
   , /*decltype(_impl_.leftarmpose_)*/nullptr
   , /*decltype(_impl_.rightarmpose_)*/nullptr
   , /*decltype(_impl_.lefthandpositions_)*/nullptr
@@ -114,7 +114,7 @@ const uint32_t TableStruct_VisionProData_2eproto::offsets[] PROTOBUF_SECTION_VAR
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::RobotTeleoperate::VisionProData, _impl_.headpzose_),
+  PROTOBUF_FIELD_OFFSET(::RobotTeleoperate::VisionProData, _impl_.headpose_),
   PROTOBUF_FIELD_OFFSET(::RobotTeleoperate::VisionProData, _impl_.leftarmpose_),
   PROTOBUF_FIELD_OFFSET(::RobotTeleoperate::VisionProData, _impl_.rightarmpose_),
   PROTOBUF_FIELD_OFFSET(::RobotTeleoperate::VisionProData, _impl_.lefthandpositions_),
@@ -139,18 +139,18 @@ const char descriptor_table_protodef_VisionProData_2eproto[] PROTOBUF_SECTION_VA
   "\030\n\010Matrix4d\022\014\n\004data\030\001 \003(\001\"*\n\007Point3d\022\t\n\001"
   "x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 \001(\001\":\n\rHandPos"
   "itions\022)\n\006joints\030\001 \003(\0132\031.RobotTeleoperat"
-  "e.Point3d\"\232\002\n\rVisionProData\022-\n\theadPzose"
-  "\030\001 \001(\0132\032.RobotTeleoperate.Matrix4d\022/\n\013le"
-  "ftArmPose\030\002 \001(\0132\032.RobotTeleoperate.Matri"
-  "x4d\0220\n\014rightArmPose\030\003 \001(\0132\032.RobotTeleope"
-  "rate.Matrix4d\022:\n\021leftHandPositions\030\004 \001(\013"
-  "2\037.RobotTeleoperate.HandPositions\022;\n\022rig"
-  "htHandPositions\030\005 \001(\0132\037.RobotTeleoperate"
-  ".HandPositionsb\006proto3"
+  "e.Point3d\"\231\002\n\rVisionProData\022,\n\010headPose\030"
+  "\001 \001(\0132\032.RobotTeleoperate.Matrix4d\022/\n\013lef"
+  "tArmPose\030\002 \001(\0132\032.RobotTeleoperate.Matrix"
+  "4d\0220\n\014rightArmPose\030\003 \001(\0132\032.RobotTeleoper"
+  "ate.Matrix4d\022:\n\021leftHandPositions\030\004 \001(\0132"
+  "\037.RobotTeleoperate.HandPositions\022;\n\022righ"
+  "tHandPositions\030\005 \001(\0132\037.RobotTeleoperate."
+  "HandPositionsb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_VisionProData_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_VisionProData_2eproto = {
-    false, false, 462, descriptor_table_protodef_VisionProData_2eproto,
+    false, false, 461, descriptor_table_protodef_VisionProData_2eproto,
     "VisionProData.proto",
     &descriptor_table_VisionProData_2eproto_once, nullptr, 0, 4,
     schemas, file_default_instances, TableStruct_VisionProData_2eproto::offsets,
@@ -809,7 +809,7 @@ void HandPositions::InternalSwap(HandPositions* other) {
 
 class VisionProData::_Internal {
  public:
-  static const ::RobotTeleoperate::Matrix4d& headpzose(const VisionProData* msg);
+  static const ::RobotTeleoperate::Matrix4d& headpose(const VisionProData* msg);
   static const ::RobotTeleoperate::Matrix4d& leftarmpose(const VisionProData* msg);
   static const ::RobotTeleoperate::Matrix4d& rightarmpose(const VisionProData* msg);
   static const ::RobotTeleoperate::HandPositions& lefthandpositions(const VisionProData* msg);
@@ -817,8 +817,8 @@ class VisionProData::_Internal {
 };
 
 const ::RobotTeleoperate::Matrix4d&
-VisionProData::_Internal::headpzose(const VisionProData* msg) {
-  return *msg->_impl_.headpzose_;
+VisionProData::_Internal::headpose(const VisionProData* msg) {
+  return *msg->_impl_.headpose_;
 }
 const ::RobotTeleoperate::Matrix4d&
 VisionProData::_Internal::leftarmpose(const VisionProData* msg) {
@@ -846,7 +846,7 @@ VisionProData::VisionProData(const VisionProData& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   VisionProData* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.headpzose_){nullptr}
+      decltype(_impl_.headpose_){nullptr}
     , decltype(_impl_.leftarmpose_){nullptr}
     , decltype(_impl_.rightarmpose_){nullptr}
     , decltype(_impl_.lefthandpositions_){nullptr}
@@ -854,8 +854,8 @@ VisionProData::VisionProData(const VisionProData& from)
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_headpzose()) {
-    _this->_impl_.headpzose_ = new ::RobotTeleoperate::Matrix4d(*from._impl_.headpzose_);
+  if (from._internal_has_headpose()) {
+    _this->_impl_.headpose_ = new ::RobotTeleoperate::Matrix4d(*from._impl_.headpose_);
   }
   if (from._internal_has_leftarmpose()) {
     _this->_impl_.leftarmpose_ = new ::RobotTeleoperate::Matrix4d(*from._impl_.leftarmpose_);
@@ -877,7 +877,7 @@ inline void VisionProData::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.headpzose_){nullptr}
+      decltype(_impl_.headpose_){nullptr}
     , decltype(_impl_.leftarmpose_){nullptr}
     , decltype(_impl_.rightarmpose_){nullptr}
     , decltype(_impl_.lefthandpositions_){nullptr}
@@ -897,7 +897,7 @@ VisionProData::~VisionProData() {
 
 inline void VisionProData::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete _impl_.headpzose_;
+  if (this != internal_default_instance()) delete _impl_.headpose_;
   if (this != internal_default_instance()) delete _impl_.leftarmpose_;
   if (this != internal_default_instance()) delete _impl_.rightarmpose_;
   if (this != internal_default_instance()) delete _impl_.lefthandpositions_;
@@ -914,10 +914,10 @@ void VisionProData::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArenaForAllocation() == nullptr && _impl_.headpzose_ != nullptr) {
-    delete _impl_.headpzose_;
+  if (GetArenaForAllocation() == nullptr && _impl_.headpose_ != nullptr) {
+    delete _impl_.headpose_;
   }
-  _impl_.headpzose_ = nullptr;
+  _impl_.headpose_ = nullptr;
   if (GetArenaForAllocation() == nullptr && _impl_.leftarmpose_ != nullptr) {
     delete _impl_.leftarmpose_;
   }
@@ -943,10 +943,10 @@ const char* VisionProData::_InternalParse(const char* ptr, ::_pbi::ParseContext*
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .RobotTeleoperate.Matrix4d headPzose = 1;
+      // .RobotTeleoperate.Matrix4d headPose = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          ptr = ctx->ParseMessage(_internal_mutable_headpzose(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_headpose(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1012,11 +1012,11 @@ uint8_t* VisionProData::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .RobotTeleoperate.Matrix4d headPzose = 1;
-  if (this->_internal_has_headpzose()) {
+  // .RobotTeleoperate.Matrix4d headPose = 1;
+  if (this->_internal_has_headpose()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, _Internal::headpzose(this),
-        _Internal::headpzose(this).GetCachedSize(), target, stream);
+      InternalWriteMessage(1, _Internal::headpose(this),
+        _Internal::headpose(this).GetCachedSize(), target, stream);
   }
 
   // .RobotTeleoperate.Matrix4d leftArmPose = 2;
@@ -1063,11 +1063,11 @@ size_t VisionProData::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .RobotTeleoperate.Matrix4d headPzose = 1;
-  if (this->_internal_has_headpzose()) {
+  // .RobotTeleoperate.Matrix4d headPose = 1;
+  if (this->_internal_has_headpose()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.headpzose_);
+        *_impl_.headpose_);
   }
 
   // .RobotTeleoperate.Matrix4d leftArmPose = 2;
@@ -1116,9 +1116,9 @@ void VisionProData::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_headpzose()) {
-    _this->_internal_mutable_headpzose()->::RobotTeleoperate::Matrix4d::MergeFrom(
-        from._internal_headpzose());
+  if (from._internal_has_headpose()) {
+    _this->_internal_mutable_headpose()->::RobotTeleoperate::Matrix4d::MergeFrom(
+        from._internal_headpose());
   }
   if (from._internal_has_leftarmpose()) {
     _this->_internal_mutable_leftarmpose()->::RobotTeleoperate::Matrix4d::MergeFrom(
@@ -1156,9 +1156,9 @@ void VisionProData::InternalSwap(VisionProData* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(VisionProData, _impl_.righthandpositions_)
       + sizeof(VisionProData::_impl_.righthandpositions_)
-      - PROTOBUF_FIELD_OFFSET(VisionProData, _impl_.headpzose_)>(
-          reinterpret_cast<char*>(&_impl_.headpzose_),
-          reinterpret_cast<char*>(&other->_impl_.headpzose_));
+      - PROTOBUF_FIELD_OFFSET(VisionProData, _impl_.headpose_)>(
+          reinterpret_cast<char*>(&_impl_.headpose_),
+          reinterpret_cast<char*>(&other->_impl_.headpose_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata VisionProData::GetMetadata() const {

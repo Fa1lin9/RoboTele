@@ -19,7 +19,7 @@ message HandPositions {
 
 message VisionProData {
     // Matrix
-    Matrix4d headPzose = 1;
+    Matrix4d headPose = 1;
     Matrix4d leftArmPose = 2;
     Matrix4d rightArmPose = 3;
 

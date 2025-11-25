@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 3.20 )
 #############################################################
 #	Set project name, files, dependancies
 #############################################################
-set( TARGET_NAME "Ti5RobotDualArmSolver" )
+set( TARGET_NAME "WaistSolver" )
 message( STATUS "\n-------------  ${GROUP_NAME} - ${TARGET_NAME}  -------------" )
 
 
@@ -46,8 +46,8 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC     
-        $<BUILD_INTERFACE:DualArmSolver::DualArmSolver>
-        
+        $<BUILD_INTERFACE:Eigen3::Eigen>
+
     PRIVATE
 
 

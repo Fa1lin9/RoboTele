@@ -22,18 +22,19 @@
 
 //#include <WeightedMovingFilter/WeightedMovingFilter.hpp>
 
-class DualArmSolver
+class ArmSolver
 {
 public:
-//    enum Type{
-//        Ti5Robot
-//    };
+    enum Type{
+        Ti5DualArm,
+
+    };
 
     struct BasicConfig
     {
         std::string modelPath;
 
-        RobotType::Type robotType;
+        ArmSolver::Type type;
 
         std::vector<std::string> baseFrameName;
         std::vector<std::string> targetFrameName;
@@ -60,8 +61,8 @@ public:
 //        Eigen::Matrix4d rightArmTargetPose;
     };
 
-    DualArmSolver();
-    ~DualArmSolver();
+    ArmSolver();
+    ~ArmSolver();
 
     // Solver the IK
     //考虑到目标位姿包含双臂末端，同时考虑到泛化性，所以用std::vector
@@ -77,8 +78,11 @@ public:
 
     virtual size_t GetDofTotal() = 0;
 
-    static boost::shared_ptr<DualArmSolver> GetPtr(const DualArmSolver::BasicConfig& config_);
+    static boost::shared_ptr<ArmSolver> GetPtr(const ArmSolver::BasicConfig& config_);
+
+    static ArmSolver::Type GetTypeFromStr(const std::string& str);
+
 
 private:
-
+    static const std::unordered_map<std::string, ArmSolver::Type> typeMap;
 };

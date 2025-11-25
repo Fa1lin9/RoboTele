@@ -8,10 +8,10 @@ set( msg_head "[Package Robot CMakeLists.txt] :" )
 ##########################################################################
 #	MainRoutine group components definition
 ##########################################################################
-set( GROUP_NAME "DualArmSolver" )
+set( GROUP_NAME "ArmSolver" )
 list( APPEND ${GROUP_NAME}_Components
-    DualArmSolver
-    Ti5RobotDualArmSolver
+    ArmSolver
+    Ti5DualArmSolver
 )
 
 ##########################################################################

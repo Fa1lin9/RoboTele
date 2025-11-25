@@ -49,7 +49,7 @@ target_link_libraries( ${TARGET_NAME}
     PRIVATE
         $<BUILD_INTERFACE:CoordinateTransform::CoordinateTransform>
         $<BUILD_INTERFACE:Core::DataCollector>
-        $<BUILD_INTERFACE:DualArmSolver::DualArmSolver>
+        $<BUILD_INTERFACE:ArmSolver::ArmSolver>
         $<BUILD_INTERFACE:Teleoperate::RobotTeleoperate>
 #        $<BUILD_INTERFACE:Core::CsvWriter>
 

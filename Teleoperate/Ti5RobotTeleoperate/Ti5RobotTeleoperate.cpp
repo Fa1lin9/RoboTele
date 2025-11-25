@@ -22,7 +22,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
     qInit.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
     qInit.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
 
-    this->ikSolverPtr = DualArmSolver::GetPtr(config.solverConfig);
+    this->ikSolverPtr = ArmSolver::GetPtr(config.solverConfig);
 
     this->transformPtr = CoordinateTransform::GetPtr(config.transformConfig);
 

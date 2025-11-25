@@ -10,8 +10,8 @@ int main(){
                     0, 1, 0, 0,
                     0, 0, 1, +1.10,
                     0, 0 ,0, 1;
-    DualArmSolver::BasicConfig solverConfig = {
-        .robotType = RobotType::Type::Ti5Robot,
+    ArmSolver::BasicConfig solverConfig = {
+        .type = ArmSolver::Type::Ti5DualArm,
         .baseFrameName = {"BASE_S"},
         .targetFrameName = {"L_WRIST_R", "R_WRIST_R"},
         .baseOffset = {baseOffset},

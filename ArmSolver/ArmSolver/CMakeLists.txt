@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 3.20 )
 #############################################################
 #	Set project name, files, dependancies
 #############################################################
-set( TARGET_NAME "RobotTeleoperate" )
+set( TARGET_NAME "ArmSolver" )
 message( STATUS "\n-------------  ${GROUP_NAME} - ${TARGET_NAME}  -------------" )
 
 
@@ -27,7 +27,7 @@ file( GLOB INTERFACE_HEADERS
 #	Create target and Set the target prorperties
 #############################################################
 #	Create target
-add_library( ${TARGET_NAME} STATIC ${SOURCES} ${HEADERS} ${INTERFACE_HEADERS} )
+add_library( ${TARGET_NAME} ${SOURCES} ${HEADERS} ${INTERFACE_HEADERS} )
 add_library( ${GROUP_NAME}::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
 #  Set project include directories
@@ -45,24 +45,21 @@ target_include_directories( ${TARGET_NAME}
 
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
-    PUBLIC 
-        $<BUILD_INTERFACE:CoordinateTransform::CoordinateTransform>
-        $<BUILD_INTERFACE:Core::DataCollector>
-        $<BUILD_INTERFACE:Core::CsvWriter>
-        $<BUILD_INTERFACE:Core::WeightedMovingFilter>
-        $<BUILD_INTERFACE:ArmSolver::ArmSolver>
-        $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
-        $<BUILD_INTERFACE:FastDDSInterface::Ros2Bridge>
-        $<BUILD_INTERFACE:Core::JsonParser>
-    
+    PUBLIC     
+        $<BUILD_INTERFACE:Eigen3::Eigen>
+        $<BUILD_INTERFACE:Boost::headers>
+        $<BUILD_INTERFACE:Boost::filesystem>
+        $<BUILD_INTERFACE:Boost::program_options>
+        $<BUILD_INTERFACE:pinocchio::pinocchio>
+        $<BUILD_INTERFACE:pinocchio::pinocchio_headers>
+        $<BUILD_INTERFACE:NLopt::nlopt>
+        $<BUILD_INTERFACE:casadi::casadi>
+#        $<BUILD_INTERFACE:Core::WeightedMovingFilter>
+        
     PRIVATE
-        $<BUILD_INTERFACE:Teleoperate::Ti5RobotTeleoperate>
+        $<BUILD_INTERFACE:ArmSolver::Ti5DualArmSolver>
 
 )
-
-# if(UNIX)
-#   target_link_libraries(${TARGET_NAME} PUBLIC dl)
-# endif()
 
 # #   Add Macro compile defination
 # TARGET_COMPILE_DEFINITIONS( ${TARGET_NAME}

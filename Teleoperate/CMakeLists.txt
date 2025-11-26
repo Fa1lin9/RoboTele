@@ -3,12 +3,13 @@
 #############################################################
 cmake_minimum_required(VERSION 3.20)
 
-set( msg_head "[Package Teleoperate CMakeLists.txt] :" )
+set( GROUP_NAME "Teleoperate" )
+
+set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 
 ##########################################################################
 #	MainRoutine group components definition
 ##########################################################################
-set( GROUP_NAME "Teleoperate" )
 list( APPEND ${GROUP_NAME}_Components
     RobotTeleoperate
     Ti5RobotTeleoperate

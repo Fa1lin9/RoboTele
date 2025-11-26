@@ -3,12 +3,13 @@
 #############################################################
 cmake_minimum_required(VERSION 3.20)
 
-set( msg_head "[Package Core CMakeLists.txt] :" )
+set( GROUP_NAME "Core" )
+
+set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 
 ##########################################################################
 #	MainRoutine group components definition
 ##########################################################################
-set( GROUP_NAME "Core" )
 list( APPEND ${GROUP_NAME}_Components
     DataCollector
     CanDriver

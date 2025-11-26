@@ -243,5 +243,21 @@ set(HumaniodRobot_LIBS
 message(STATUS "HumaniodRobot_include: ${HumaniodRobot_include}")
 message(STATUS "MYLIBTI5_LIB Library: ${MYLIBTI5_LIB}")
 message(STATUS "CONTROLCAN_LIB Library: ${CONTROLCAN_LIB}")
-message(STATUS "HumaniodRobot_CONTROLCAN_LIB Library: ${HumaniodRobot_CONTROLCAN_LIB}")
-message(STATUS "HumaniodRobot_LIBS Library: ${HumaniodRobot_LIBS}")
+# message(STATUS "HumaniodRobot_CONTROLCAN_LIB Library: ${HumaniodRobot_CONTROLCAN_LIB}")
+# message(STATUS "HumaniodRobot_LIBS Library: ${HumaniodRobot_LIBS}")
+
+# #######################################################
+# #                     Find libmodbus                  #
+# #######################################################
+
+# 查找头文件
+find_path(libmodbus_INCLUDE_DIR
+    NAMES modbus/modbus.h
+    PATHS /usr/local/include
+)
+
+# 查找库文件
+find_library(libmodbus_LIBRARY
+    NAMES modbus
+    PATHS /usr/local/lib
+)

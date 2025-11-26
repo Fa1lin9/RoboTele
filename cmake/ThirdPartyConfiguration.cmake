@@ -2,9 +2,9 @@
 
 # USER_CHF_Ubuntu
 if( ${USER_CHF_Ubuntu} )
-    include( package_path_per_user/CHF_Ubuntu )
+    include( PackagePathPerUser/CHF_Ubuntu )
 endif()
 
 if( ${USER_CrpRobot_Ubuntu} )
-    include( package_path_per_user/CrpRobot_Ubuntu )
+    include( PackagePathPerUser/Ti5Robot_Ubuntu )
 endif()

@@ -3,12 +3,13 @@
 #############################################################
 cmake_minimum_required(VERSION 3.20)
 
-set( msg_head "[Package Robot CMakeLists.txt] :" )
+set( GROUP_NAME "PhysicalRobot" )
+
+set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 
 ##########################################################################
 #	MainRoutine group components definition
 ##########################################################################
-set( GROUP_NAME "PhysicalRobot" )
 list( APPEND ${GROUP_NAME}_Components
     PhysicalRobot
     Ti5PhysicalRobot

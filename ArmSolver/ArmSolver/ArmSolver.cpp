@@ -11,7 +11,7 @@ ArmSolver::~ArmSolver(){
 
 boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const ArmSolver::BasicConfig &config_){
     switch (config_.type) {
-        case RobotType::Ti5Robot :{
+        case ArmSolver::Type::Ti5DualArm :{
            return boost::make_shared<Ti5DualArmSolver>(config_);
         }
         default:{

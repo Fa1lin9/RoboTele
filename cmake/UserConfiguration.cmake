@@ -5,12 +5,12 @@
 
 #   Choose User
 option( USER_CHF_Ubuntu "Configure CHF Ubuntu system." OFF )
-option( USER_CrpRobot_Ubuntu "Configure CrpRobot Ubuntu system." ON )
+option( USER_Ti5Robot_Ubuntu "Configure Ti5Robot Ubuntu system." ON )
 
 #   Make Users as a group
 list( APPEND USER_GROUP
     USER_CHF_Ubuntu
-    USER_CrpRobot_Ubuntu
+    USER_Ti5Robot_Ubuntu
 )
 
 #   Get how many users are selected

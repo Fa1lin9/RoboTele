@@ -3,7 +3,7 @@
 #############################################################
 cmake_minimum_required(VERSION 3.20)
 
-set( GROUP_NAME "CoordinateTransform" )
+set( GROUP_NAME "HandController" )
 
 set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 
@@ -11,8 +11,8 @@ set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 #	MainRoutine group components definition
 ##########################################################################
 list( APPEND ${GROUP_NAME}_Components
-    CoordinateTransform
-    VisionPro2Ti5RobotTransform
+	HandController
+	ROHandController
 )
 
 ##########################################################################

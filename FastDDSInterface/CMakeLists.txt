@@ -3,12 +3,13 @@
 #############################################################
 cmake_minimum_required(VERSION 3.20)
 
-set( msg_head "[Package Core CMakeLists.txt] :" )
+set( GROUP_NAME "FastDDSInterface" )
+
+set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 
 ##########################################################################
 #	MainRoutine group components definition
 ##########################################################################
-set( GROUP_NAME "FastDDSInterface" )
 list( APPEND ${GROUP_NAME}_Components
     Ros2Bridge
     JointState

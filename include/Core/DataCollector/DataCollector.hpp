@@ -20,7 +20,7 @@ public:
 
     void Stop();
 
-    std::vector<Eigen::Matrix4d> GetValue();
+//    std::vector<Eigen::Matrix4d> GetValue();
 
     std::vector<Eigen::Matrix4d> GetPoseMatrix();
 

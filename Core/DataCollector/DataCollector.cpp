@@ -121,7 +121,7 @@ void DataCollector::Run() {
         this->hasNewData = true;
 
         // Debug Output
-        if (1) {
+        if (0) {
             std::cout << "--------------------------" << std::endl;
             std::cout << "Head Pose:\n" << headPose << std::endl;
             std::cout << "Left Wrist Pose:\n" << leftArmPose << std::endl;

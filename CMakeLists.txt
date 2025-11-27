@@ -111,3 +111,9 @@ option( BuildPackages_HandController "Whether generate Core package?" ON )
 if( BuildPackages_HandController )
     add_subdirectory( HandController )
 endif()
+
+option( BuildPackages_HandSolver "Whether generate Core package?" ON )
+if( BuildPackages_HandSolver )
+    add_subdirectory( HandSolver )
+endif()
+

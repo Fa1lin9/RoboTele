@@ -111,15 +111,12 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     // Filter
     WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, this->ikSolverPtr->GetDofTotal());
 
-//    int FPS = 25;
     this->pauseFlag = false;
     this->startFlag = true;
     this->saveFlag = false;
 
-//    // Collector VisionPro's Data
-//    std::thread dataThread([this](){
-//        this->dataCollector.run();
-//    });
+    // Collector VisionPro's Data
+    std::thread dataThread(&DataCollector::Run, &dataCollector);
 
     while(this->startFlag){
         if(this->pauseFlag){
@@ -129,26 +126,33 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         }
 
         auto start = std::chrono::high_resolution_clock::now();
-        std::vector<Eigen::Matrix4d> msg = this->dataCollector.GetValue();
 
-        if(msg.size()==0 || msg.empty()){
-            std::string error = " The message received is not qualified !";
+        std::vector<Eigen::Matrix4d> poseMatrix;
+        if(this->dataCollector.HasNewData()){
+//            poseMatrix = this->dataCollector.GetValue();
+            poseMatrix = this->dataCollector.GetPoseMatrix();
+        }else{
+            continue;
+        }
+
+        if(poseMatrix.size()==0 || poseMatrix.empty()){
+            std::string error = " The pose matrix received is not qualified !";
             throw std::invalid_argument(error);
             continue;
         }
 
         if(verbose){
             std::cout << "--------------------------" << std::endl;
-            std::cout << "Head Pose:\n" << msg[0] << std::endl;
-            std::cout << "Left Wrist Pose:\n" << msg[1] << std::endl;
-            std::cout << "Right Wrist Pose:\n" << msg[2] << std::endl;
+            std::cout << "Head Pose:\n" << poseMatrix[0] << std::endl;
+            std::cout << "Left Wrist Pose:\n" << poseMatrix[1] << std::endl;
+            std::cout << "Right Wrist Pose:\n" << poseMatrix[2] << std::endl;
             std::cout << "--------------------------" << std::endl;
         }
 
         CoordinateTransform::MsgConfig msgConfig{
-            .head2xrWorldPose = msg[0],
-            .leftWrist2xrWorldPose = msg[1],
-            .rightWrist2xrWorldPose = msg[2],
+            .head2xrWorldPose = poseMatrix[0],
+            .leftWrist2xrWorldPose = poseMatrix[1],
+            .rightWrist2xrWorldPose = poseMatrix[2],
         };
 
         std::vector<Eigen::Matrix4d> transformedMsg = this->transformPtr->Transform(msgConfig);
@@ -230,8 +234,9 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         }
     }
 
-//    // delete the thread
-//    dataThread.join();
+    // delete the thread
+    this->dataCollector.Stop();
+    dataThread.join();
 
     return true;
 }

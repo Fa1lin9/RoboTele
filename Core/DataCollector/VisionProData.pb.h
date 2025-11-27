@@ -743,7 +743,7 @@ class VisionProData final :
   bool _internal_has_lefthandpositions() const;
   public:
   void clear_lefthandpositions();
-  const ::RobotTeleoperate::HandPositions& lefthandpositions() const;
+  const ::RobotTeleoperate::HandPositions& leftHandPositions() const;
   PROTOBUF_NODISCARD ::RobotTeleoperate::HandPositions* release_lefthandpositions();
   ::RobotTeleoperate::HandPositions* mutable_lefthandpositions();
   void set_allocated_lefthandpositions(::RobotTeleoperate::HandPositions* lefthandpositions);
@@ -761,7 +761,7 @@ class VisionProData final :
   bool _internal_has_righthandpositions() const;
   public:
   void clear_righthandpositions();
-  const ::RobotTeleoperate::HandPositions& righthandpositions() const;
+  const ::RobotTeleoperate::HandPositions& rightHandPositions() const;
   PROTOBUF_NODISCARD ::RobotTeleoperate::HandPositions* release_righthandpositions();
   ::RobotTeleoperate::HandPositions* mutable_righthandpositions();
   void set_allocated_righthandpositions(::RobotTeleoperate::HandPositions* righthandpositions);
@@ -1249,7 +1249,7 @@ inline const ::RobotTeleoperate::HandPositions& VisionProData::_internal_lefthan
   return p != nullptr ? *p : reinterpret_cast<const ::RobotTeleoperate::HandPositions&>(
       ::RobotTeleoperate::_HandPositions_default_instance_);
 }
-inline const ::RobotTeleoperate::HandPositions& VisionProData::lefthandpositions() const {
+inline const ::RobotTeleoperate::HandPositions& VisionProData::leftHandPositions() const {
   // @@protoc_insertion_point(field_get:RobotTeleoperate.VisionProData.leftHandPositions)
   return _internal_lefthandpositions();
 }
@@ -1339,7 +1339,7 @@ inline const ::RobotTeleoperate::HandPositions& VisionProData::_internal_rightha
   return p != nullptr ? *p : reinterpret_cast<const ::RobotTeleoperate::HandPositions&>(
       ::RobotTeleoperate::_HandPositions_default_instance_);
 }
-inline const ::RobotTeleoperate::HandPositions& VisionProData::righthandpositions() const {
+inline const ::RobotTeleoperate::HandPositions& VisionProData::rightHandPositions() const {
   // @@protoc_insertion_point(field_get:RobotTeleoperate.VisionProData.rightHandPositions)
   return _internal_righthandpositions();
 }

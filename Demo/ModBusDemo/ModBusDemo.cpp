@@ -144,7 +144,7 @@ int main()
     sleep(1);
     std::cout << "Start to move! " << std::endl;
     angle(0) = 20;
-    angle(1) = 150;
+    angle(1) = 175;
     angle(2) = 150;
     handCtrl->SetJointsAngle(angle);
     std::cout << "Move over! " << std::endl;

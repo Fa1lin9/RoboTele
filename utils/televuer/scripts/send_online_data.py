@@ -31,6 +31,13 @@ except FileNotFoundError:
 img_array = np.ndarray(IMG_SHAPE, dtype=np.uint8, buffer=shm.buf)
 img_array[:] = 0
 
+# ==================== ZeroMQ ====================
+import zmq
+
+context = zmq.Context()
+socket = context.socket(zmq.PUB)
+socket.bind("tcp://127.0.0.1:5555")
+
 # ==================== TeleVuer ====================
 tv = TeleVuer(
     binocular=False,
@@ -44,11 +51,7 @@ tv = TeleVuer(
 
 # ==================== 主循环 ====================
 def main(tv):
-    # ==================== ZeroMQ ====================
-    import zmq
-    context = zmq.Context()
-    socket = context.socket(zmq.PUB)
-    socket.bind("tcp://127.0.0.1:5555")
+
 
     prev_head = prev_left = prev_right = None
 

@@ -15,12 +15,26 @@ public:
     DataCollector();
     DataCollector(const std::string &address_);
     ~DataCollector();
-    void run();
+
+    void Run();
+
+    void Stop();
+
     std::vector<Eigen::Matrix4d> GetValue();
+
+    std::vector<Eigen::Matrix4d> GetPoseMatrix();
+
+    std::vector<Eigen::Vector3d> GetLeftHandPositions();
+
+    std::vector<Eigen::Vector3d> GetRightHandPositions();
+
+    bool HasNewData();
 
     void Init(const std::string &address_);
 
 private:
+    const int numJointsHand = 25;
+
     // some variable for socket
     std::string address;
     zmq::context_t context;
@@ -33,10 +47,12 @@ private:
     Eigen::Matrix4d rightArmPose;
 
     // 两只手的点位
-    Eigen::Matrix<double,25,3> leftHandPositions;
-    Eigen::Matrix<double,25,3> rightHandPositions;
+    std::vector<Eigen::Vector3d> leftHandPositions;
+    std::vector<Eigen::Vector3d> rightHandPositions;
 
     // lock
     std::mutex mutex;
 
+    bool stopFlag = false;
+    std::atomic_bool hasNewData;
 };

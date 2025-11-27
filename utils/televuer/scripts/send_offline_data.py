@@ -4,6 +4,7 @@ import zmq
 import struct
 import os
 import sys
+import time
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from VisionProData import VisionProData_pb2
@@ -12,9 +13,9 @@ from VisionProData import VisionProData_pb2
 
 # 读取 CSV 文件
 # file_name = "20250829_161326.csv"
-# file_name = "20250929_152433.csv" # usually used
+file_name = "20250929_152433.csv" # usually used
 # file_name = "20251117_163604.csv"
-file_name = "20251125_135345.csv"
+# file_name = "20251125_135345.csv"
 CSV_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', f"{file_name}")
 
 # 定义 ZeroMQ 配置
@@ -70,7 +71,7 @@ while count < len(poses['head_pose']):
     data.rightArmPose.data.extend(rightArmPose.astype(float).flatten().tolist())
 
     # msg = pack_matrix(headPose) + pack_matrix(leftArmPose) + pack_matrix(rightArmPose)
-    # print(f"Sent pose batch {count} with message size: {len(msg)} bytes")
+    print(f"Sent pose batch {count}")
 
     data_bytes = data.SerializeToString()
 
@@ -80,6 +81,8 @@ while count < len(poses['head_pose']):
     count += 1
 
     # 控制发送间隔，模拟 50ms 的发送间隔
-    # time.sleep(1 / 20)
+    fps = 25
+    time.sleep(1 / fps)
+
 
 print("Data sending complete!")

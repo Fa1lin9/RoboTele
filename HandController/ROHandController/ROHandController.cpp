@@ -38,19 +38,31 @@ ROHandController::ROHandController(const HandController::BasicConfig& config_)
                  device << ", Slave ID: " <<
                  this->slaveID << std::endl;
 
+    if (modbus_connect(this->ctx) == -1) {
+        modbus_free(this->ctx);
+        std::string error = "[ROHandController] Connection failed: " + static_cast<std::string>(modbus_strerror(errno));
+        throw std::logic_error(error);
+    }
+
     this->Init();
 }
 
 ROHandController::~ROHandController(){
-    modbus_close(this->ctx);
-    modbus_free(this->ctx);
-
-    std::cout << "[ROHandController] Modbus closed! " << std::endl;
+    if(this->ctx){
+    //    std::cout << "[ROHandController] Delete ROHandController!  " << std::endl;
+        modbus_close(this->ctx);
+        modbus_free(this->ctx);
+        this->ctx = nullptr;
+        std::cout << "[ROHandController] Modbus closed! " << std::endl;
+    }else{
+        std::cout << "[ROHandController] Current ctx is nullptr " << std::endl;
+    }
 }
 
 std::vector<double> ROHandController::GetJointsAngle(){
     std::vector<double> ret;
-    std::vector<uint16_t> angle;
+    // The size of the angle must be defined
+    std::vector<uint16_t> angle(this->numJoints);
     // modbus_read_registers(ctx, 起始地址, 寄存器数量, 存储结果的数组)
     int readNum = modbus_read_registers(
         this->ctx,
@@ -68,7 +80,7 @@ std::vector<double> ROHandController::GetJointsAngle(){
                   << ", but read " << readNum << "\n";
     } else {
         // 读取成功
-        std::cout << "[ROHandController::GetJointsAngle] Successfully read " << readNum << " finger angle registers:\n";
+//        std::cout << "[ROHandController::GetJointsAngle] Successfully read " << readNum << " finger angle registers:\n";
 
         for (int i = 0; i < readNum; ++i) {
             uint16_t value = angle[i];
@@ -77,15 +89,19 @@ std::vector<double> ROHandController::GetJointsAngle(){
             double angleDeg = static_cast<double>(value) / 100.0;
             ret.push_back(angleDeg);
 
-            std::cout << "  [Joint( " << this->jointsName[i] << " ) " << i << " at " << (ROH_FINGER_ANGLE0 + i) << "]: "
-                      << value << " (Raw) => " << angleDeg << " degrees\n";
+            std::cout << "  [Joint( "
+                      << this->jointsName[i] << " ) "
+                      << i << " at "
+                      << (ROH_FINGER_ANGLE0 + i) << "]: "
+                      << value << " (Raw) => " <<
+                         angleDeg << " degrees\n";
         }
     }
     return ret;
 }
 
 Eigen::VectorXd ROHandController::GetJointsAngleEigen(){
-    std::vector angle = this->GetJointsAngle();
+    auto angle = this->GetJointsAngle();
     Eigen::VectorXd ret = Eigen::VectorXd::Map(angle.data(), angle.size());
     return ret;
 }
@@ -115,8 +131,10 @@ bool ROHandController::SetJointsAngle(const Eigen::VectorXd& targetValue)
         // 记录裁剪日志
         if (angle != clamped) {
             std::cout << "[ROHandController::SetJointsAngle] Joint "
-                      << this->jointsName[i] << " angle " << angle
-                      << " out of bounds, clamped to " << clamped << std::endl;
+                      << i << "( "
+                      << this->jointsName[i] << " ) angle "
+                      << angle << " out of bounds, clamped to "
+                      << clamped << std::endl;
         }
 
         // 转成寄存器的整数格式（角度 × 100）
@@ -131,6 +149,8 @@ bool ROHandController::SetJointsAngle(const Eigen::VectorXd& targetValue)
         this->numJoints,
         rawValues.data()
     );
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
     if (writeNum == -1) {
         std::cerr << "[ROHandController::SetJointsAngle] Modbus write failed: "
@@ -151,7 +171,7 @@ bool ROHandController::SetJointsAngle(const Eigen::VectorXd& targetValue)
 }
 
 bool ROHandController::BackToInitPose(){
-
+    return this->SetJointsAngle(this->initPose);
 }
 
 void ROHandController::Init(){
@@ -178,17 +198,18 @@ void ROHandController::Init(){
 //                               174.86,
 //                               90   };
 
-    this->jointsBoundsLower = {3,
+    // modified
+    this->jointsBoundsLower = {2,
                                102,
                                100,
                                104,
                                100,
                                2    };
-    this->jointsBoundsUpper = {35,
+    this->jointsBoundsUpper = {36,
+                               178,
+                               176,
                                176,
                                174,
-                               174,
-                               172,
                                88   };
 
     this->jointsName = {
@@ -200,4 +221,6 @@ void ROHandController::Init(){
         "thumbRot",
     };
 
+    this->initPose.resize(this->numJoints);
+    this->initPose << 36, 178, 176, 176, 174, 2;
 }

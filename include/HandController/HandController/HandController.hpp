@@ -1,6 +1,9 @@
 #pragma once
 
 #include <iostream>
+#include <thread>
+#include <chrono>
+
 #include <modbus/modbus-rtu.h>
 #include <modbus/modbus.h>
 
@@ -35,17 +38,17 @@ public:
     HandController();
     ~HandController();
 
-    virtual std::vector<double> GetJointsAngle();
+    virtual std::vector<double> GetJointsAngle() = 0;
 
-    virtual Eigen::VectorXd GetJointsAngleEigen();
+    virtual Eigen::VectorXd GetJointsAngleEigen() = 0;
 
-    virtual std::vector<double> GetJointsBoundsUpper();
+    virtual std::vector<double> GetJointsBoundsUpper() = 0;
 
-    virtual std::vector<double> GetJointsBoundsLower();
+    virtual std::vector<double> GetJointsBoundsLower() = 0;
 
-    virtual bool SetJointsAngle(const Eigen::VectorXd& targetValue);
+    virtual bool SetJointsAngle(const Eigen::VectorXd& targetValue) = 0;
 
-    virtual bool BackToInitPose();
+    virtual bool BackToInitPose() = 0;
 
 
     // static function

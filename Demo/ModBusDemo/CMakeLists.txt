@@ -48,6 +48,7 @@ target_link_libraries( ${TARGET_NAME}
     PUBLIC 
 
     PRIVATE
+        $<BUILD_INTERFACE:HandController::HandController>
         $<BUILD_INTERFACE:Boost::boost>
         $<BUILD_INTERFACE:${libmodbus_LIBRARY}>
 

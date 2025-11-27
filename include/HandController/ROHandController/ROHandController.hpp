@@ -38,4 +38,6 @@ private:
     int dataBits;
     int stopBits;
     int slaveID;
+
+    Eigen::VectorXd initPose;
 };

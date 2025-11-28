@@ -1,0 +1,6 @@
+{
+    "Ti5Robot":{
+        "JointsIndex": [11, 12, 13],
+        "JointsName" : ["NECK_Y", "NECK_P", "NECK_R"]
+    }
+}

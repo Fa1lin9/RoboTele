@@ -130,6 +130,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         std::vector<Eigen::Matrix4d> poseMatrix;
         if(this->dataCollector.HasNewData()){
 //            poseMatrix = this->dataCollector.GetValue();
+//            std::cout << "Get New Data! " << std::endl;
             poseMatrix = this->dataCollector.GetPoseMatrix();
         }else{
             continue;
@@ -142,11 +143,11 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         }
 
         if(verbose){
-            std::cout << "--------------------------" << std::endl;
+            std::cout << "------------- Original Data -------------" << std::endl;
             std::cout << "Head Pose:\n" << poseMatrix[0] << std::endl;
             std::cout << "Left Wrist Pose:\n" << poseMatrix[1] << std::endl;
             std::cout << "Right Wrist Pose:\n" << poseMatrix[2] << std::endl;
-            std::cout << "--------------------------" << std::endl;
+            std::cout << "-----------------------------------------" << std::endl;
         }
 
         CoordinateTransform::MsgConfig msgConfig{
@@ -158,10 +159,11 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         std::vector<Eigen::Matrix4d> transformedMsg = this->transformPtr->Transform(msgConfig);
 
         if(verbose){
-            std::cout << "--------------------------" << std::endl;
+            std::cout << "------------- Transformed Data -------------" << std::endl;
             std::cout << "Transformed Left Wrist Pose:\n" << transformedMsg[0] << std::endl;
             std::cout << "Transformed Right Wrist Pose:\n" << transformedMsg[1] << std::endl;
-            std::cout << "--------------------------" << std::endl;
+            std::cout << "Transformed Head Robot World Pose:\n" << transformedMsg[2] << std::endl;
+            std::cout << "--------------------------------------------" << std::endl;
         }
 
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
@@ -177,6 +179,17 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         if(q.has_value()){
             qEigen = q.value();
 
+            // Control the Head
+            Eigen::Vector3d headRPY = this->headSolver.Solve(transformedMsg[2]);
+            std::cout<<"HeadRPY: "<<headRPY<<std::endl;
+            auto headJointsInfo = this->headSolver.GetJointsInfo(this->robotType);
+            qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
+            qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
+            qEigen(headJointsInfo[2].index) = headRPY(0); // Row
+
+            // Control the Waist
+            // TODO
+
             // Filter
             filter.AddData(qEigen);
             qEigen = filter.GetFilteredData();
@@ -185,13 +198,13 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
                 // send to ros2
                 ti5_interfaces::msg::JointStateWithoutStamp msg;
                 std::vector<double> qVec(qEigen.data(), qEigen.data() + qEigen.size());
-    //            msg.position() = qVec;
+                msg.position() = qVec;
                 // Temp send 14 joints value just to apply to GunmpGan's current version
-                std::vector<double> qVecOnlyArm;
-                qVecOnlyArm.reserve(14);
-                qVecOnlyArm.insert(qVecOnlyArm.end(),qVec.begin() + 4, qVec.begin() + 4 + 7);
-                qVecOnlyArm.insert(qVecOnlyArm.end(),qVec.end() - 7, qVec.end());
-                msg.position() = qVecOnlyArm;
+//                std::vector<double> qVecOnlyArm;
+//                qVecOnlyArm.reserve(14);
+//                qVecOnlyArm.insert(qVecOnlyArm.end(),qVec.begin() + 4, qVec.begin() + 4 + 7);
+//                qVecOnlyArm.insert(qVecOnlyArm.end(),qVec.end() - 7, qVec.end());
+//                msg.position() = qVecOnlyArm;
 
     //            std::cout<<"The size of the postion of the msg is "<<msg.position().size()<<std::endl;
     //            for(size_t i=0;i<msg.position().size();i++){

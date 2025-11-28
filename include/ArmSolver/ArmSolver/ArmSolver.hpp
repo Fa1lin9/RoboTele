@@ -44,7 +44,7 @@ public:
 
         int maxIteration;
         double relativeTol;
-        Eigen::VectorXd dofArm;
+        std::vector<int> dofArm;
     };
 
     // just for nlopt

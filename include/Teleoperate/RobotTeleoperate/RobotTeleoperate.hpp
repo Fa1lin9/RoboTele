@@ -8,7 +8,7 @@
 #include <CsvWriter/CsvWriter.hpp>
 #include <WeightedMovingFilter/WeightedMovingFilter.hpp>
 #include <JsonParser/JsonParser.hpp>
-
+#include <HeadSolver/HeadSolver.hpp>
 #include <Ros2Bridge/Ros2Bridge.h>
 
 #include <boost/shared_ptr.hpp>
@@ -56,6 +56,8 @@ protected:
     boost::shared_ptr<PhysicalRobot> physicalRobotPtr;
 
     boost::shared_ptr<CoordinateTransform> transformPtr;
+
+    HeadSolver headSolver;
 
     int FPS;
 

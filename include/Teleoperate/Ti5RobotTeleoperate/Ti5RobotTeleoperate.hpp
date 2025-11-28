@@ -33,5 +33,5 @@ private:
 
     bool saveFlag = true;
 
-
+    const RobotType::Type robotType = RobotType::Type::Ti5Robot;
 };

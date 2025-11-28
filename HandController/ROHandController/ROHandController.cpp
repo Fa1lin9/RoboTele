@@ -97,6 +97,8 @@ std::vector<double> ROHandController::GetJointsAngle(){
                          angleDeg << " degrees\n";
         }
     }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     return ret;
 }
 
@@ -150,7 +152,7 @@ bool ROHandController::SetJointsAngle(const Eigen::VectorXd& targetValue)
         rawValues.data()
     );
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::this_thread::sleep_for(std::chrono::milliseconds(3));
 
     if (writeNum == -1) {
         std::cerr << "[ROHandController::SetJointsAngle] Modbus write failed: "
@@ -165,12 +167,13 @@ bool ROHandController::SetJointsAngle(const Eigen::VectorXd& targetValue)
     }
 
     // --- 5. 写入成功 ---
-    std::cout << "[ROHandController::SetJointsAngle] Successfully set "
-              << writeNum << " joint angle targets.\n";
+//    std::cout << "[ROHandController::SetJointsAngle] Successfully set "
+//              << writeNum << " joint angle targets.\n";
     return true;
 }
 
 bool ROHandController::BackToInitPose(){
+    std::cout << "[ROHandController::BackToInitPose] Back to inintial pose " << std::endl;
     return this->SetJointsAngle(this->initPose);
 }
 
@@ -201,8 +204,8 @@ void ROHandController::Init(){
     // modified
     this->jointsBoundsLower = {2,
                                102,
-                               100,
-                               104,
+                               98,
+                               102,
                                100,
                                2    };
     this->jointsBoundsUpper = {36,

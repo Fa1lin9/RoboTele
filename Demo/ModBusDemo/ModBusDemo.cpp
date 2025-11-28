@@ -140,13 +140,16 @@ int main()
 
     Eigen::VectorXd angle = handCtrl->GetJointsAngleEigen();
 //    std::cout << "Current Angle: " << angle << std::endl;
-    sleep(1);
+//    sleep(1);
     handCtrl->BackToInitPose();
     sleep(1);
     std::cout << "Start to move! " << std::endl;
     angle(0) = 20;
-//    angle(1) = 175;
-//    angle(2) = 150;
+//    angle(1) = 110;
+//    angle(2) = 110;
+    angle(3) = 110;
+    angle(4) = 110;
+    angle(5) = 80;
     handCtrl->SetJointsAngle(angle);
     std::cout << "Move over! " << std::endl;
 

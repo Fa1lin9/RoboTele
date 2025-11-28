@@ -20,7 +20,7 @@
         ],
         "MaxIteration": 50,
         "RelativeTol": 1e-6,
-        "DofArm": [6, 6] 
+        "DofArm": [5, 5] 
     },
 
     "TransformConfig":{

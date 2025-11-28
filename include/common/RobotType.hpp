@@ -4,6 +4,11 @@
 
 namespace RobotType{
 
+    struct JointInfo {
+        std::string name;
+        int index;
+    };
+
     enum Type{
         Ti5Robot
     };

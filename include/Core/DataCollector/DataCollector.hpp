@@ -54,5 +54,5 @@ private:
     std::mutex mutex;
 
     bool stopFlag = false;
-    std::atomic_bool hasNewData;
+    std::atomic_bool hasNewData = false;
 };

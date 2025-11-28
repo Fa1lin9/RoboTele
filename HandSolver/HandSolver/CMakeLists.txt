@@ -49,6 +49,7 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:Eigen3::Eigen>
         $<BUILD_INTERFACE:Boost::boost>
     PRIVATE
+        $<BUILD_INTERFACE:HandSolver::VisionProHandSolver>
 )
 
 # #   Add Macro compile defination

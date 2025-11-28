@@ -1,8 +1,17 @@
 #include <JsonParser/JsonParser.hpp>
 
+JsonParser::JsonParser(){
+
+}
+
 JsonParser::JsonParser(const std::string &filePath_)
-    :filePath(filePath_)
 {
+    this->Init(filePath_);
+}
+
+void JsonParser::Init(const std::string &filePath_){
+    this->filePath = filePath_;
+
     try {
         // read the file
         std::ifstream file(filePath);
@@ -27,7 +36,6 @@ JsonParser::JsonParser(const std::string &filePath_)
         std::cerr<<"Error:"<<e.what()<<std::endl;
     }
 }
-
 
 JsonParser::~JsonParser(){
 
@@ -104,6 +112,43 @@ std::vector<std::string> JsonParser::JsonArray2StdVecStr(const json::array &arra
             throw std::invalid_argument("[JsonParser::JsonArray2StdVecStr] The input array contains non-string element ");
         }
         vec.push_back(temp.as_string().c_str());
+    }
+
+    return vec;
+}
+
+std::vector<int> JsonParser::JsonArray2StdVecInt(const json::array &array){
+    if(array.empty()){
+        std::cout<<"[JsonParser::JsonArray2StdVecInt] The input array is empty!"<<std::endl;
+        return std::vector<int>();
+    }
+
+    std::vector<int> vec;
+    vec.reserve(array.size());
+
+    for(size_t i = 0; i < array.size(); ++i){
+        const auto& member = array[i];
+
+        // 检查类型是否为 number（int64 / uint64 / double 都可）
+        if(!member.is_double() && !member.is_int64() && !member.is_uint64()){
+            throw std::invalid_argument(
+                "[JsonParser::JsonArray2StdVecInt] Invalid member at index "
+                + std::to_string(i) +
+                ", expected number!"
+            );
+        }
+
+        try {
+            // 这里直接转换为 int
+            vec.push_back(static_cast<int>(json::value_to<int>(member)));
+        } catch (const std::exception& e) {
+            throw std::runtime_error(
+                "[JsonParser::JsonArray2StdVecInt] Failed to convert array["
+                + std::to_string(i)
+                + "] to int: "
+                + e.what()
+            );
+        }
     }
 
     return vec;

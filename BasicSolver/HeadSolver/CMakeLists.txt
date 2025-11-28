@@ -47,6 +47,7 @@ target_include_directories( ${TARGET_NAME}
 target_link_libraries( ${TARGET_NAME}
     PUBLIC     
         $<BUILD_INTERFACE:Eigen3::Eigen>
+        $<BUILD_INTERFACE:Core::JsonParser>
 
     PRIVATE
 )

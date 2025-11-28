@@ -54,6 +54,7 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
         $<BUILD_INTERFACE:FastDDSInterface::Ros2Bridge>
         $<BUILD_INTERFACE:Core::JsonParser>
+        $<BUILD_INTERFACE:BasicSolver::HeadSolver>
     
     PRIVATE
         $<BUILD_INTERFACE:Teleoperate::Ti5RobotTeleoperate>

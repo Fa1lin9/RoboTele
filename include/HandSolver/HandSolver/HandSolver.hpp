@@ -19,6 +19,7 @@ public:
     struct BasicConfig
     {
         HandSolver::Type type;
+        int dofHand;
     };
 
     struct Data{
@@ -38,7 +39,9 @@ public:
     static HandSolver::Type GetTypeFromStr(const std::string& str);
 
 
-private:
+protected:
     static const std::unordered_map<std::string, HandSolver::Type> typeMap;
 
+
+    int dofHand;
 };

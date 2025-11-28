@@ -15,12 +15,14 @@ list( APPEND ${GROUP_NAME}_Components
     # SocketDemo
 #    NLoptDemo
     # PinocchioDemo
-    CrpRobotDemo
+#    CrpRobotDemo
     # CanDriverDemo
     MainDemo
-    FastDDSDemo
-    JsonDemo
+#    FastDDSDemo
+#    JsonDemo
     ModBusDemo
+    HandDemo
+    BasicSolverDemo
 )
 
 ##########################################################################

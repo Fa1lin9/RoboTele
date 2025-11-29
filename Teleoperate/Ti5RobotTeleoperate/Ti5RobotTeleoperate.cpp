@@ -19,6 +19,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 
     // qInit
     this->qInit = Eigen::VectorXd::Zero(21);
+    // Initial Pose
     qInit.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
     qInit.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
 
@@ -127,6 +128,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
 
         auto start = std::chrono::high_resolution_clock::now();
 
+        // Get Data from XR Device
         std::vector<Eigen::Matrix4d> poseMatrix;
         if(this->dataCollector.HasNewData()){
 //            poseMatrix = this->dataCollector.GetValue();
@@ -156,6 +158,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             .rightWrist2xrWorldPose = poseMatrix[2],
         };
 
+        // Transformed the Matrix
         std::vector<Eigen::Matrix4d> transformedMsg = this->transformPtr->Transform(msgConfig);
 
         if(verbose){
@@ -166,6 +169,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             std::cout << "--------------------------------------------" << std::endl;
         }
 
+        // Use ArmSolve to Solve
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
 
 //        auto solveStart = std::chrono::high_resolution_clock::now();
@@ -176,6 +180,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
 
         Eigen::VectorXd qEigen;
 
+        // Check the Solution
         if(q.has_value()){
             qEigen = q.value();
 

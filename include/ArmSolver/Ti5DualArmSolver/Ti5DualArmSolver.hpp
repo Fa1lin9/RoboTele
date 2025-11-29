@@ -75,6 +75,11 @@ class Ti5DualArmSolver
         :public ArmSolver
 {
 public:
+    enum SolverType{
+        Casadi,
+        Nlopt,
+    };
+
     Ti5DualArmSolver(const ArmSolver::BasicConfig &config_);
     ~Ti5DualArmSolver();
 
@@ -87,10 +92,9 @@ public:
 
     size_t GetDofTotal() override;
 
-//    Eigen::VectorXd GetGradient(const IKSolver::CrpRobotConfig& config_);
-
     void Info() override;
 
+private:
     /* ------------------ Basic Info ------------------ */
     // the degree of freedom of CRP's Robot
     // 一只手7个自由度
@@ -102,7 +106,6 @@ public:
 
     const size_t dofArm = 7;
 
-private:
     struct Ti5RobotData{
         Ti5DualArmSolver *solver;
         Eigen::VectorXd qInit;
@@ -112,9 +115,6 @@ private:
     };
 
 private:
-    bool IsPoseMatrix(const Eigen::Matrix4d& mat,
-                      const double& eps = 1e-2);
-
     double ObjectiveFunc(const ArmSolver::Ti5RobotConfig& config_);
 
     casadi::SX ObjectiveFuncSX(const pinocchio::ModelTpl<casadi::SX>::ConfigVectorType& q,
@@ -122,10 +122,7 @@ private:
                         const std::vector<Eigen::Matrix<casadi::SX,4,4>>& targetPose
                         );
 
-    Eigen::VectorXd GradFunc(const ArmSolver::Ti5RobotConfig& config_);
-
-    void NormalizeAngle(Eigen::VectorXd& angle);
-
+    // Initialization
     void InitRobot(const ArmSolver::BasicConfig &config_);
 
     void InitOptim();

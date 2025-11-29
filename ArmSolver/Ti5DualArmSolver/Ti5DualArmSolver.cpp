@@ -60,135 +60,16 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
 {
     // check the target pose
     for(size_t i=0;i<targetPose.size();i++){
-        if(!this->IsPoseMatrix(targetPose[i])){
+        if(!MatrixUtils::IsPoseMatrix(targetPose[i])){
             std::cout<<"targetPose is not a pose matrix"<<std::endl;
             return boost::none;
         }
     }
 
-    bool useNlopt = false;
-    if(useNlopt){
-        // time consumed a lot
-        this->InitAD(targetPose,qInit);
+    Ti5DualArmSolver::SolverType solverType = SolverType::Casadi;
 
-        nlopt::opt opt;
-
-        double (*ObjectWrapper)(const std::vector<double>& x,std::vector<double>& grad,void *data);
-
-        // update casadi variable
-    //    this->qInit = qInit.cast<casadi::SX>();
-    //    for(size_t i=0;i<this->targetPose.size();i++){
-    //        this->targetPose[i] = targetPose[i].cast<casadi::SX>();
-    //    }
-
-        bool useGrad = 1;
-        if(useGrad){
-            opt = nlopt::opt(nlopt::GD_STOGO , qInit.size());
-            ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
-                Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
-                Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
-                ArmSolver::Ti5RobotConfig config = {
-                    .q = q,
-                    .qInit= robotData->qInit,
-                    .targetPose = robotData->targetPose,
-                };
-
-                casadi::DM qVar = casadi::DM(x);
-                grad.resize(robotData->solver->dofTotal);
-                std::vector<casadi::DM> output = robotData->solver->mainFunc({qVar});
-
-                double objectiveFunc = double(output[0]);
-                casadi::DM gradFunc = output[1];
-                std::transform(
-                            gradFunc->begin(), gradFunc->end(), grad.begin(),
-                            [](const auto& v){ return double(v); }
-                );
-
-                return objectiveFunc;
-            };
-        }else{
-            opt = nlopt::opt(nlopt::GN_DIRECT_L , qInit.size());
-            ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
-                Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
-                Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
-                ArmSolver::Ti5RobotConfig config = {
-                    .q = q,
-                    .qInit= robotData->qInit,
-                    .targetPose = robotData->targetPose,
-                };
-
-                return robotData->solver->ObjectiveFunc(config);
-            };
-        }
-
-        // set limitation to joint5
-    //    this->totalBoundsLower[8] = 0;
-    //    this->totalBoundsUpper[8] = 0;
-    //    this->totalBoundsLower[18] = 0;
-    //    this->totalBoundsUpper[18] = 0;
-//        // set limitation to joint6
-//        this->totalBoundsLower[9] = 0;
-//        this->totalBoundsUpper[9] = 0;
-//        this->totalBoundsLower[19] = 0;
-//        this->totalBoundsUpper[19] = 0;
-//        // set limitation to joint7
-//        this->totalBoundsLower[10] = 0;
-//        this->totalBoundsUpper[10] = 0;
-//        this->totalBoundsLower[20] = 0;
-//        this->totalBoundsUpper[20] = 0;
-
-        // set bounds
-        opt.set_lower_bounds(this->totalBoundsLower);
-        opt.set_upper_bounds(this->totalBoundsUpper);
-
-        opt.set_maxeval(this->maxIteration);
-        opt.set_xtol_rel(this->relativeTol);
-
-        Ti5RobotData robotData = {
-            .solver = this,
-            .qInit = qInit,
-            .targetPose = targetPose,
-        };
-
-        opt.set_min_objective(ObjectWrapper, &robotData);
-
-        double funcValue;
-
-        std::vector<double> q(this->dofTotal);
-    //    q = this->qNeutral;
-
-
-        auto start = std::chrono::high_resolution_clock::now();
-
-        nlopt::result result = opt.optimize(q, funcValue);
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        std::cout << " optimazation 耗时: " << duration.count() << " ms" << std::endl;
-        std::cout << " Function Value = " << funcValue << std::endl;
-
-        if(result<0){
-            std::string error = " Optimize failed! ";
-            throw std::logic_error(error);
-
-        }
-
-        Eigen::Map<Eigen::VectorXd> qEigen(q.data(),q.size());
-
-        if(verbose){
-            // check result
-            std::cout<<"------------ Solver Result ------------"<<std::endl;
-            std::cout << " Joint Value =\n" << qEigen << std::endl;
-            std::cout << " Function Value = " << funcValue << std::endl;
-            std::cout<<" Left Arm Translation: \n"<<Forward(qEigen)[0].translation()<<std::endl;
-            std::cout<<" Left Arm Rotation: \n"<<Forward(qEigen)[0].rotation()<<std::endl;
-            std::cout<<" Right Arm Translation: \n"<<Forward(qEigen)[1].translation()<<std::endl;
-            std::cout<<" Rigit Arm Rotation: \n"<<Forward(qEigen)[1].rotation()<<std::endl;
-            std::cout<<"------------ Solver Result ------------"<<std::endl;
-        }
-
-        return boost::optional<Eigen::VectorXd>(qEigen);
-
-    }else{
+    switch (solverType) {
+        case SolverType::Casadi :{
         // set value
         // qInit
         std::vector<double> qInitVec(qInit.data(), qInit.data() + qInit.size());
@@ -243,7 +124,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
             // check result
             std::cout<<"------------ Solver Result ------------"<<std::endl;
             std::cout << " Joint Value =\n" << std::fixed << std::setprecision(5) << qEigen << std::endl;
-    //                std::cout << " Function Value = " << funcValue << std::endl;
+//            std::cout << " Function Value = " << funcValue << std::endl;
             std::cout<<" Left Arm Translation: \n"<<Forward(qEigen)[0].translation()<<std::endl;
             std::cout<<" Left Arm Rotation: \n"<<Forward(qEigen)[0].rotation()<<std::endl;
             std::cout<<" Right Arm Translation: \n"<<Forward(qEigen)[1].translation()<<std::endl;
@@ -253,6 +134,114 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
 
         // 返回 Eigen::VectorXd
         return boost::optional<Eigen::VectorXd>(qEigen);
+        }
+        case SolverType::Nlopt :{
+            // time consumed a lot
+            this->InitAD(targetPose,qInit);
+
+            nlopt::opt opt;
+
+            double (*ObjectWrapper)(const std::vector<double>& x,std::vector<double>& grad,void *data);
+
+            // update casadi variable
+        //    this->qInit = qInit.cast<casadi::SX>();
+        //    for(size_t i=0;i<this->targetPose.size();i++){
+        //        this->targetPose[i] = targetPose[i].cast<casadi::SX>();
+        //    }
+            bool useGrad = 1;
+            if(useGrad){
+                opt = nlopt::opt(nlopt::GD_STOGO , qInit.size());
+                ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
+                    Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
+                    Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
+                    ArmSolver::Ti5RobotConfig config = {
+                        .q = q,
+                        .qInit= robotData->qInit,
+                        .targetPose = robotData->targetPose,
+                    };
+
+                    casadi::DM qVar = casadi::DM(x);
+                    grad.resize(robotData->solver->dofTotal);
+                    std::vector<casadi::DM> output = robotData->solver->mainFunc({qVar});
+
+                    double objectiveFunc = double(output[0]);
+                    casadi::DM gradFunc = output[1];
+                    std::transform(
+                                gradFunc->begin(), gradFunc->end(), grad.begin(),
+                                [](const auto& v){ return double(v); }
+                    );
+
+                    return objectiveFunc;
+                };
+            }else{
+                opt = nlopt::opt(nlopt::GN_DIRECT_L , qInit.size());
+                ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
+                    Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
+                    Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
+                    ArmSolver::Ti5RobotConfig config = {
+                        .q = q,
+                        .qInit= robotData->qInit,
+                        .targetPose = robotData->targetPose,
+                    };
+
+                    return robotData->solver->ObjectiveFunc(config);
+                };
+            }
+
+            // set bounds
+            opt.set_lower_bounds(this->totalBoundsLower);
+            opt.set_upper_bounds(this->totalBoundsUpper);
+
+            opt.set_maxeval(this->maxIteration);
+            opt.set_xtol_rel(this->relativeTol);
+
+            Ti5RobotData robotData = {
+                .solver = this,
+                .qInit = qInit,
+                .targetPose = targetPose,
+            };
+
+            opt.set_min_objective(ObjectWrapper, &robotData);
+
+            double funcValue;
+
+            std::vector<double> q(this->dofTotal);
+//            q = this->qNeutral;
+
+
+            auto start = std::chrono::high_resolution_clock::now();
+
+            nlopt::result result = opt.optimize(q, funcValue);
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+            std::cout << " optimazation 耗时: " << duration.count() << " ms" << std::endl;
+            std::cout << " Function Value = " << funcValue << std::endl;
+
+            if(result<0){
+                std::string error = " Optimize failed! ";
+                throw std::logic_error(error);
+
+            }
+
+            Eigen::Map<Eigen::VectorXd> qEigen(q.data(),q.size());
+
+            if(verbose){
+                // check result
+                std::cout<<"------------ Solver Result ------------"<<std::endl;
+                std::cout << " Joint Value =\n" << qEigen << std::endl;
+                std::cout << " Function Value = " << funcValue << std::endl;
+                std::cout<<" Left Arm Translation: \n"<<Forward(qEigen)[0].translation()<<std::endl;
+                std::cout<<" Left Arm Rotation: \n"<<Forward(qEigen)[0].rotation()<<std::endl;
+                std::cout<<" Right Arm Translation: \n"<<Forward(qEigen)[1].translation()<<std::endl;
+                std::cout<<" Rigit Arm Rotation: \n"<<Forward(qEigen)[1].rotation()<<std::endl;
+                std::cout<<"------------ Solver Result ------------"<<std::endl;
+            }
+
+            return boost::optional<Eigen::VectorXd>(qEigen);
+        }
+        default:{
+            return boost::none;
+        }
     }
 }
 
@@ -383,27 +372,6 @@ size_t Ti5DualArmSolver::GetDofTotal(){
     return this->dofTotal;
 }
 
-bool Ti5DualArmSolver::IsPoseMatrix(const Eigen::Matrix4d &mat,
-                                    const double& eps){
-
-    Eigen::Matrix3d rotation = mat.block<3,3>(0,0);
-    if(!(rotation.transpose() * rotation).isApprox(Eigen::Matrix3d::Identity() , eps)){
-        std::cout<<"rotation.transpose() * rotation: \n"<<rotation.transpose() * rotation<<std::endl;
-        return false;
-    }
-
-    if(std::abs(mat.determinant()-1) > eps){
-        std::cout<<"mat.determinant()-1: "<<mat.determinant()-1<<std::endl;
-        return false;
-    }
-
-    if(mat(3,0) != 0.0 || mat(3,1) != 0.0 || mat(3,2) != 0.0 || mat(3,3) != 1.0){
-        return false;
-    }
-
-    return true;
-}
-
 double Ti5DualArmSolver::ObjectiveFunc(const ArmSolver::Ti5RobotConfig& config_){
 //    LOG_FUNCTION;
     std::vector<pinocchio::SE3> currentPose = this->Forward(config_.q);
@@ -420,7 +388,7 @@ double Ti5DualArmSolver::ObjectiveFunc(const ArmSolver::Ti5RobotConfig& config_)
     targetTrans  << targetLeftTrans, targetRightTrans;
 
     Eigen::VectorXd transErrorVec = currentTrans - targetTrans;
-    double transError = transErrorVec.norm();
+    double transError = transErrorVec.squaredNorm();
 
     // rotation error
 //    std::cout<<" rotation Error "<<std::endl;
@@ -431,20 +399,20 @@ double Ti5DualArmSolver::ObjectiveFunc(const ArmSolver::Ti5RobotConfig& config_)
 
     Eigen::VectorXd rotaErrorVec(6);
     rotaErrorVec << pinocchio::log3(leftArmError), pinocchio::log3(rightArmError);
-    double rotaError = rotaErrorVec.norm();
+    double rotaError = rotaErrorVec.squaredNorm();
 
     // smoothing error
 //    std::cout<<" Smoothing Error "<<std::endl;
     Eigen::VectorXd smoothErrorVec = config_.q - config_.qInit;
-    this->NormalizeAngle(smoothErrorVec);
-    double smoothError = smoothErrorVec.norm();
+    MatrixUtils::WrapAngleToPi(smoothErrorVec);
+    double smoothError = smoothErrorVec.squaredNorm();
 
     // regularization
 //    std::cout<<" Regularization "<<std::endl;
     Eigen::VectorXd reguVec;
     reguVec =
             config_.q - Eigen::VectorXd::Map(this->qNeutral.data(), this->qNeutral.size());
-    double reguError = reguVec.norm();
+    double reguError = reguVec.squaredNorm();
 
     // weight
     double wTrans = 50.0;
@@ -454,43 +422,6 @@ double Ti5DualArmSolver::ObjectiveFunc(const ArmSolver::Ti5RobotConfig& config_)
 
     double error = wTrans * transError + wRota * rotaError + wSmooth * smoothError + wRegu * reguError;
     return error;
-}
-
-//Eigen::VectorXd Ti5RobotIKSolver::GetGradient(const IKSolver::CrpRobotConfig& config_){
-//    return GradFunc(config_);
-//}
-
-//Eigen::VectorXd Ti5RobotIKSolver::GradFunc(const IKSolver::CrpRobotConfig& config_){
-//    double e = 1e-6;
-//    Eigen::VectorXd grad(config_.q.size());
-//    IKSolver::CrpRobotConfig temp = config_;
-
-//    for(size_t i = 0;i<config_.q.size();i++){
-//        double originalValue = config_.q[i];
-//        // plus
-//        temp.q[i] = originalValue + e;
-//        double fPlus = this->ObjectiveFunc(temp);
-
-//        // minus
-//        temp.q[i] = originalValue - e;
-//        double fMinus = this->ObjectiveFunc(temp);
-
-//        grad[i] = (fPlus - fMinus) / (2*e);
-
-//        temp.q[i] = originalValue;
-//    }
-
-//    return grad;
-//}
-
-void Ti5DualArmSolver::NormalizeAngle(Eigen::VectorXd& angle){
-    for(int i=0;i<angle.size();i++){
-        angle(i) = fmod(angle(i) + M_PI, 2 * M_PI); // 先 +π 再取模
-        if (angle(i) < 0) {
-            angle(i) += 2 * M_PI; // 确保在 [0, 2π]
-        }
-        angle(i) -= M_PI; // 回到 [-π, π]
-    }
 }
 
 void Ti5DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){

@@ -6,6 +6,7 @@
 #include <RobotType.hpp>
 #include <source_path.h>
 #include <JsonParser/JsonParser.hpp>
+#include <MatrixUtils.hpp>
 
 class HeadSolver
 {
@@ -22,11 +23,6 @@ public:
     std::vector<RobotType::JointInfo> GetJointsInfo(const RobotType::Type &type);
 
 private:
-    void NormalizeAngle(Eigen::VectorXd& angle);
-
-    Eigen::Vector3d RotationToEulerXYZ(const Eigen::Matrix3d &R);
-
-    Eigen::Vector3d RotationToEulerZYX(const Eigen::Matrix3d &R);
 
     void Init();
 

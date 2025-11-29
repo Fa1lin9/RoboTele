@@ -1,12 +1,14 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <iostream>
+
 #include <Eigen/Dense>
+
+#include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
-#include <iostream>
-#include <FunctionLogger.hpp>
+
 
 #include <pinocchio/algorithm/model.hpp>
 #include <pinocchio/algorithm/frames.hpp>
@@ -19,6 +21,8 @@
 #include <nlopt.hpp>
 
 #include <RobotType.hpp>
+#include <MatrixUtils.hpp>
+#include <FunctionLogger.hpp>
 
 //#include <WeightedMovingFilter/WeightedMovingFilter.hpp>
 

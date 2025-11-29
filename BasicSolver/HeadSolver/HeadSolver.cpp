@@ -22,11 +22,11 @@ Eigen::Vector3d HeadSolver::Solve(const Eigen::Matrix4d &mat){
 
     Eigen::Matrix3d rot = this->headPose.block<3,3>(0,0);
 //    this->rpy = rot.eulerAngles(2,1,0);
-//    this->rpy = RotationToEulerXYZ(rot);
-    this->rpy = RotationToEulerZYX(rot);
+//    this->rpy = MatrixUtils::RotationToEulerXYZ(rot);
+    this->rpy = MatrixUtils::RotationToEulerZYX(rot);
 
 //    // Back to -pi ~ pi
-//    this->NormalizeAngle(this->rpy.value());
+//    MatrixUtils::NormalizeAngle(this->rpy.value());
 
     this->roll = this->rpy.value()(0);
     this->pitch = this->rpy.value()(1);
@@ -88,63 +88,3 @@ std::vector<RobotType::JointInfo> HeadSolver::GetJointsInfo(const RobotType::Typ
     return joints;
 }
 
-void HeadSolver::NormalizeAngle(Eigen::VectorXd& angle){
-    for(int i=0;i<angle.size();i++){
-        angle(i) = fmod(angle(i) + M_PI, 2 * M_PI); // 先 +π 再取模
-        if (angle(i) < 0) {
-            angle(i) += 2 * M_PI; // 确保在 [0, 2π]
-        }
-        angle(i) -= M_PI; // 回到 [-π, π]
-    }
-}
-
-Eigen::Vector3d HeadSolver::RotationToEulerXYZ(const Eigen::Matrix3d &R)
-{
-    Eigen::Vector3d rpy;
-
-    double sy = -R(0,2);
-    if (sy > 1.0) sy = 1.0;
-    if (sy < -1.0) sy = -1.0;
-
-    rpy[1] = std::asin(sy);  // Y
-
-    if (std::abs(std::cos(rpy[1])) > 1e-6)
-    {
-        rpy[0] = std::atan2(R(1,2), R(2,2));  // X
-        rpy[2] = std::atan2(R(0,1), R(0,0));  // Z
-    }
-    else
-    {
-        rpy[0] = 0.0;
-        rpy[2] = std::atan2(-R(1,0), R(1,1));
-    }
-
-    return rpy;
-}
-
-Eigen::Vector3d HeadSolver::RotationToEulerZYX(const Eigen::Matrix3d &R)
-{
-    Eigen::Vector3d rpy;
-
-    // pitch = asin(-R(2,0))
-    double sy = -R(2,0);
-    if (sy > 1.0) sy = 1.0;
-    if (sy < -1.0) sy = -1.0;
-
-    rpy[1] = std::asin(sy);  // pitch
-
-    // Check singularity: |cos(pitch)| < small
-    if (std::abs(std::cos(rpy[1])) > 1e-6)
-    {
-        rpy[0] = std::atan2(R(2,1), R(2,2));  // roll
-        rpy[2] = std::atan2(R(1,0), R(0,0));  // yaw
-    }
-    else
-    {
-        // Gimbal lock: pitch = +-90°
-        rpy[0] = 0.0;
-        rpy[2] = std::atan2(-R(0,1), R(1,1));
-    }
-
-    return rpy;  // [roll, pitch, yaw]
-}

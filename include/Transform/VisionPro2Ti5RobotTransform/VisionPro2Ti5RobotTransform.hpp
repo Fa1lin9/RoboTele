@@ -21,4 +21,5 @@ private:
     Eigen::Matrix<double,4,4>                         T_Robot2RightWrist;//机器人基坐标系到手腕（旋转角度）
 
     Eigen::Vector3d                                   offset;
+
 };

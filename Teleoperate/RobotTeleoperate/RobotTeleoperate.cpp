@@ -65,6 +65,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .T_Robot2RightWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2RightWrist"].as_array()),
         .offset = JsonParser::JsonArray2EigenVectorXd(transformObj["Offset"].as_array()),
         .type = Transform::GetTypeFromStr(transformObj["Type"].as_string().c_str()),
+//        .isLockOrigin = transformObj["IsLockHead"].as_bool(),
     };
 
     // PhysicalRobot

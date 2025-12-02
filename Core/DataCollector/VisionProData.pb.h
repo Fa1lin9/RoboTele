@@ -45,6 +45,9 @@ struct TableStruct_VisionProData_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_VisionProData_2eproto;
 namespace RobotTeleoperate {
+class HandGesture;
+struct HandGestureDefaultTypeInternal;
+extern HandGestureDefaultTypeInternal _HandGesture_default_instance_;
 class HandPositions;
 struct HandPositionsDefaultTypeInternal;
 extern HandPositionsDefaultTypeInternal _HandPositions_default_instance_;
@@ -59,6 +62,7 @@ struct VisionProDataDefaultTypeInternal;
 extern VisionProDataDefaultTypeInternal _VisionProData_default_instance_;
 }  // namespace RobotTeleoperate
 PROTOBUF_NAMESPACE_OPEN
+template<> ::RobotTeleoperate::HandGesture* Arena::CreateMaybeMessage<::RobotTeleoperate::HandGesture>(Arena*);
 template<> ::RobotTeleoperate::HandPositions* Arena::CreateMaybeMessage<::RobotTeleoperate::HandPositions>(Arena*);
 template<> ::RobotTeleoperate::Matrix4d* Arena::CreateMaybeMessage<::RobotTeleoperate::Matrix4d>(Arena*);
 template<> ::RobotTeleoperate::Point3d* Arena::CreateMaybeMessage<::RobotTeleoperate::Point3d>(Arena*);
@@ -556,6 +560,187 @@ class HandPositions final :
 };
 // -------------------------------------------------------------------
 
+class HandGesture final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:RobotTeleoperate.HandGesture) */ {
+ public:
+  inline HandGesture() : HandGesture(nullptr) {}
+  ~HandGesture() override;
+  explicit PROTOBUF_CONSTEXPR HandGesture(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  HandGesture(const HandGesture& from);
+  HandGesture(HandGesture&& from) noexcept
+    : HandGesture() {
+    *this = ::std::move(from);
+  }
+
+  inline HandGesture& operator=(const HandGesture& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline HandGesture& operator=(HandGesture&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const HandGesture& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const HandGesture* internal_default_instance() {
+    return reinterpret_cast<const HandGesture*>(
+               &_HandGesture_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(HandGesture& a, HandGesture& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(HandGesture* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(HandGesture* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  HandGesture* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<HandGesture>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const HandGesture& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const HandGesture& from) {
+    HandGesture::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(HandGesture* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "RobotTeleoperate.HandGesture";
+  }
+  protected:
+  explicit HandGesture(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPinchValueFieldNumber = 2,
+    kPinchStateFieldNumber = 1,
+    kSqueezeStateFieldNumber = 3,
+    kSqueezeValueFieldNumber = 4,
+  };
+  // float pinchValue = 2;
+  void clear_pinchvalue();
+  float pinchValue() const;
+  void set_pinchvalue(float value);
+  private:
+  float _internal_pinchvalue() const;
+  void _internal_set_pinchvalue(float value);
+  public:
+
+  // bool pinchState = 1;
+  void clear_pinchstate();
+  bool pinchState() const;
+  void set_pinchstate(bool value);
+  private:
+  bool _internal_pinchstate() const;
+  void _internal_set_pinchstate(bool value);
+  public:
+
+  // bool SqueezeState = 3;
+  void clear_squeezestate();
+  bool squeezestate() const;
+  void set_squeezestate(bool value);
+  private:
+  bool _internal_squeezestate() const;
+  void _internal_set_squeezestate(bool value);
+  public:
+
+  // float SqueezeValue = 4;
+  void clear_squeezevalue();
+  float squeezevalue() const;
+  void set_squeezevalue(float value);
+  private:
+  float _internal_squeezevalue() const;
+  void _internal_set_squeezevalue(float value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:RobotTeleoperate.HandGesture)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    float pinchvalue_;
+    bool pinchstate_;
+    bool squeezestate_;
+    float squeezevalue_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_VisionProData_2eproto;
+};
+// -------------------------------------------------------------------
+
 class VisionProData final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:RobotTeleoperate.VisionProData) */ {
  public:
@@ -604,7 +789,7 @@ class VisionProData final :
                &_VisionProData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(VisionProData& a, VisionProData& b) {
     a.Swap(&b);
@@ -682,6 +867,8 @@ class VisionProData final :
     kRightArmPoseFieldNumber = 3,
     kLeftHandPositionsFieldNumber = 4,
     kRightHandPositionsFieldNumber = 5,
+    kLeftHandGestureFieldNumber = 6,
+    kRightHandGestureFieldNumber = 7,
   };
   // .RobotTeleoperate.Matrix4d headPose = 1;
   bool has_headpose() const;
@@ -773,6 +960,42 @@ class VisionProData final :
       ::RobotTeleoperate::HandPositions* righthandpositions);
   ::RobotTeleoperate::HandPositions* unsafe_arena_release_righthandpositions();
 
+  // .RobotTeleoperate.HandGesture leftHandGesture = 6;
+  bool has_lefthandgesture() const;
+  private:
+  bool _internal_has_lefthandgesture() const;
+  public:
+  void clear_lefthandgesture();
+  const ::RobotTeleoperate::HandGesture& leftHandGesture() const;
+  PROTOBUF_NODISCARD ::RobotTeleoperate::HandGesture* release_lefthandgesture();
+  ::RobotTeleoperate::HandGesture* mutable_lefthandgesture();
+  void set_allocated_lefthandgesture(::RobotTeleoperate::HandGesture* lefthandgesture);
+  private:
+  const ::RobotTeleoperate::HandGesture& _internal_lefthandgesture() const;
+  ::RobotTeleoperate::HandGesture* _internal_mutable_lefthandgesture();
+  public:
+  void unsafe_arena_set_allocated_lefthandgesture(
+      ::RobotTeleoperate::HandGesture* lefthandgesture);
+  ::RobotTeleoperate::HandGesture* unsafe_arena_release_lefthandgesture();
+
+  // .RobotTeleoperate.HandGesture rightHandGesture = 7;
+  bool has_righthandgesture() const;
+  private:
+  bool _internal_has_righthandgesture() const;
+  public:
+  void clear_righthandgesture();
+  const ::RobotTeleoperate::HandGesture& rightHandGesture() const;
+  PROTOBUF_NODISCARD ::RobotTeleoperate::HandGesture* release_righthandgesture();
+  ::RobotTeleoperate::HandGesture* mutable_righthandgesture();
+  void set_allocated_righthandgesture(::RobotTeleoperate::HandGesture* righthandgesture);
+  private:
+  const ::RobotTeleoperate::HandGesture& _internal_righthandgesture() const;
+  ::RobotTeleoperate::HandGesture* _internal_mutable_righthandgesture();
+  public:
+  void unsafe_arena_set_allocated_righthandgesture(
+      ::RobotTeleoperate::HandGesture* righthandgesture);
+  ::RobotTeleoperate::HandGesture* unsafe_arena_release_righthandgesture();
+
   // @@protoc_insertion_point(class_scope:RobotTeleoperate.VisionProData)
  private:
   class _Internal;
@@ -786,6 +1009,8 @@ class VisionProData final :
     ::RobotTeleoperate::Matrix4d* rightarmpose_;
     ::RobotTeleoperate::HandPositions* lefthandpositions_;
     ::RobotTeleoperate::HandPositions* righthandpositions_;
+    ::RobotTeleoperate::HandGesture* lefthandgesture_;
+    ::RobotTeleoperate::HandGesture* righthandgesture_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -955,6 +1180,90 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::RobotTeleoperate::Poin
 HandPositions::joints() const {
   // @@protoc_insertion_point(field_list:RobotTeleoperate.HandPositions.joints)
   return _impl_.joints_;
+}
+
+// -------------------------------------------------------------------
+
+// HandGesture
+
+// bool pinchState = 1;
+inline void HandGesture::clear_pinchstate() {
+  _impl_.pinchstate_ = false;
+}
+inline bool HandGesture::_internal_pinchstate() const {
+  return _impl_.pinchstate_;
+}
+inline bool HandGesture::pinchState() const {
+  // @@protoc_insertion_point(field_get:RobotTeleoperate.HandGesture.pinchState)
+  return _internal_pinchstate();
+}
+inline void HandGesture::_internal_set_pinchstate(bool value) {
+  
+  _impl_.pinchstate_ = value;
+}
+inline void HandGesture::set_pinchstate(bool value) {
+  _internal_set_pinchstate(value);
+  // @@protoc_insertion_point(field_set:RobotTeleoperate.HandGesture.pinchState)
+}
+
+// float pinchValue = 2;
+inline void HandGesture::clear_pinchvalue() {
+  _impl_.pinchvalue_ = 0;
+}
+inline float HandGesture::_internal_pinchvalue() const {
+  return _impl_.pinchvalue_;
+}
+inline float HandGesture::pinchValue() const {
+  // @@protoc_insertion_point(field_get:RobotTeleoperate.HandGesture.pinchValue)
+  return _internal_pinchvalue();
+}
+inline void HandGesture::_internal_set_pinchvalue(float value) {
+  
+  _impl_.pinchvalue_ = value;
+}
+inline void HandGesture::set_pinchvalue(float value) {
+  _internal_set_pinchvalue(value);
+  // @@protoc_insertion_point(field_set:RobotTeleoperate.HandGesture.pinchValue)
+}
+
+// bool SqueezeState = 3;
+inline void HandGesture::clear_squeezestate() {
+  _impl_.squeezestate_ = false;
+}
+inline bool HandGesture::_internal_squeezestate() const {
+  return _impl_.squeezestate_;
+}
+inline bool HandGesture::squeezestate() const {
+  // @@protoc_insertion_point(field_get:RobotTeleoperate.HandGesture.SqueezeState)
+  return _internal_squeezestate();
+}
+inline void HandGesture::_internal_set_squeezestate(bool value) {
+  
+  _impl_.squeezestate_ = value;
+}
+inline void HandGesture::set_squeezestate(bool value) {
+  _internal_set_squeezestate(value);
+  // @@protoc_insertion_point(field_set:RobotTeleoperate.HandGesture.SqueezeState)
+}
+
+// float SqueezeValue = 4;
+inline void HandGesture::clear_squeezevalue() {
+  _impl_.squeezevalue_ = 0;
+}
+inline float HandGesture::_internal_squeezevalue() const {
+  return _impl_.squeezevalue_;
+}
+inline float HandGesture::squeezevalue() const {
+  // @@protoc_insertion_point(field_get:RobotTeleoperate.HandGesture.SqueezeValue)
+  return _internal_squeezevalue();
+}
+inline void HandGesture::_internal_set_squeezevalue(float value) {
+  
+  _impl_.squeezevalue_ = value;
+}
+inline void HandGesture::set_squeezevalue(float value) {
+  _internal_set_squeezevalue(value);
+  // @@protoc_insertion_point(field_set:RobotTeleoperate.HandGesture.SqueezeValue)
 }
 
 // -------------------------------------------------------------------
@@ -1411,9 +1720,191 @@ inline void VisionProData::set_allocated_righthandpositions(::RobotTeleoperate::
   // @@protoc_insertion_point(field_set_allocated:RobotTeleoperate.VisionProData.rightHandPositions)
 }
 
+// .RobotTeleoperate.HandGesture leftHandGesture = 6;
+inline bool VisionProData::_internal_has_lefthandgesture() const {
+  return this != internal_default_instance() && _impl_.lefthandgesture_ != nullptr;
+}
+inline bool VisionProData::has_lefthandgesture() const {
+  return _internal_has_lefthandgesture();
+}
+inline void VisionProData::clear_lefthandgesture() {
+  if (GetArenaForAllocation() == nullptr && _impl_.lefthandgesture_ != nullptr) {
+    delete _impl_.lefthandgesture_;
+  }
+  _impl_.lefthandgesture_ = nullptr;
+}
+inline const ::RobotTeleoperate::HandGesture& VisionProData::_internal_lefthandgesture() const {
+  const ::RobotTeleoperate::HandGesture* p = _impl_.lefthandgesture_;
+  return p != nullptr ? *p : reinterpret_cast<const ::RobotTeleoperate::HandGesture&>(
+      ::RobotTeleoperate::_HandGesture_default_instance_);
+}
+inline const ::RobotTeleoperate::HandGesture& VisionProData::leftHandGesture() const {
+  // @@protoc_insertion_point(field_get:RobotTeleoperate.VisionProData.leftHandGesture)
+  return _internal_lefthandgesture();
+}
+inline void VisionProData::unsafe_arena_set_allocated_lefthandgesture(
+    ::RobotTeleoperate::HandGesture* lefthandgesture) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.lefthandgesture_);
+  }
+  _impl_.lefthandgesture_ = lefthandgesture;
+  if (lefthandgesture) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:RobotTeleoperate.VisionProData.leftHandGesture)
+}
+inline ::RobotTeleoperate::HandGesture* VisionProData::release_lefthandgesture() {
+  
+  ::RobotTeleoperate::HandGesture* temp = _impl_.lefthandgesture_;
+  _impl_.lefthandgesture_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::RobotTeleoperate::HandGesture* VisionProData::unsafe_arena_release_lefthandgesture() {
+  // @@protoc_insertion_point(field_release:RobotTeleoperate.VisionProData.leftHandGesture)
+  
+  ::RobotTeleoperate::HandGesture* temp = _impl_.lefthandgesture_;
+  _impl_.lefthandgesture_ = nullptr;
+  return temp;
+}
+inline ::RobotTeleoperate::HandGesture* VisionProData::_internal_mutable_lefthandgesture() {
+  
+  if (_impl_.lefthandgesture_ == nullptr) {
+    auto* p = CreateMaybeMessage<::RobotTeleoperate::HandGesture>(GetArenaForAllocation());
+    _impl_.lefthandgesture_ = p;
+  }
+  return _impl_.lefthandgesture_;
+}
+inline ::RobotTeleoperate::HandGesture* VisionProData::mutable_lefthandgesture() {
+  ::RobotTeleoperate::HandGesture* _msg = _internal_mutable_lefthandgesture();
+  // @@protoc_insertion_point(field_mutable:RobotTeleoperate.VisionProData.leftHandGesture)
+  return _msg;
+}
+inline void VisionProData::set_allocated_lefthandgesture(::RobotTeleoperate::HandGesture* lefthandgesture) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.lefthandgesture_;
+  }
+  if (lefthandgesture) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(lefthandgesture);
+    if (message_arena != submessage_arena) {
+      lefthandgesture = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, lefthandgesture, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.lefthandgesture_ = lefthandgesture;
+  // @@protoc_insertion_point(field_set_allocated:RobotTeleoperate.VisionProData.leftHandGesture)
+}
+
+// .RobotTeleoperate.HandGesture rightHandGesture = 7;
+inline bool VisionProData::_internal_has_righthandgesture() const {
+  return this != internal_default_instance() && _impl_.righthandgesture_ != nullptr;
+}
+inline bool VisionProData::has_righthandgesture() const {
+  return _internal_has_righthandgesture();
+}
+inline void VisionProData::clear_righthandgesture() {
+  if (GetArenaForAllocation() == nullptr && _impl_.righthandgesture_ != nullptr) {
+    delete _impl_.righthandgesture_;
+  }
+  _impl_.righthandgesture_ = nullptr;
+}
+inline const ::RobotTeleoperate::HandGesture& VisionProData::_internal_righthandgesture() const {
+  const ::RobotTeleoperate::HandGesture* p = _impl_.righthandgesture_;
+  return p != nullptr ? *p : reinterpret_cast<const ::RobotTeleoperate::HandGesture&>(
+      ::RobotTeleoperate::_HandGesture_default_instance_);
+}
+inline const ::RobotTeleoperate::HandGesture& VisionProData::rightHandGesture() const {
+  // @@protoc_insertion_point(field_get:RobotTeleoperate.VisionProData.rightHandGesture)
+  return _internal_righthandgesture();
+}
+inline void VisionProData::unsafe_arena_set_allocated_righthandgesture(
+    ::RobotTeleoperate::HandGesture* righthandgesture) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.righthandgesture_);
+  }
+  _impl_.righthandgesture_ = righthandgesture;
+  if (righthandgesture) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:RobotTeleoperate.VisionProData.rightHandGesture)
+}
+inline ::RobotTeleoperate::HandGesture* VisionProData::release_righthandgesture() {
+  
+  ::RobotTeleoperate::HandGesture* temp = _impl_.righthandgesture_;
+  _impl_.righthandgesture_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::RobotTeleoperate::HandGesture* VisionProData::unsafe_arena_release_righthandgesture() {
+  // @@protoc_insertion_point(field_release:RobotTeleoperate.VisionProData.rightHandGesture)
+  
+  ::RobotTeleoperate::HandGesture* temp = _impl_.righthandgesture_;
+  _impl_.righthandgesture_ = nullptr;
+  return temp;
+}
+inline ::RobotTeleoperate::HandGesture* VisionProData::_internal_mutable_righthandgesture() {
+  
+  if (_impl_.righthandgesture_ == nullptr) {
+    auto* p = CreateMaybeMessage<::RobotTeleoperate::HandGesture>(GetArenaForAllocation());
+    _impl_.righthandgesture_ = p;
+  }
+  return _impl_.righthandgesture_;
+}
+inline ::RobotTeleoperate::HandGesture* VisionProData::mutable_righthandgesture() {
+  ::RobotTeleoperate::HandGesture* _msg = _internal_mutable_righthandgesture();
+  // @@protoc_insertion_point(field_mutable:RobotTeleoperate.VisionProData.rightHandGesture)
+  return _msg;
+}
+inline void VisionProData::set_allocated_righthandgesture(::RobotTeleoperate::HandGesture* righthandgesture) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.righthandgesture_;
+  }
+  if (righthandgesture) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(righthandgesture);
+    if (message_arena != submessage_arena) {
+      righthandgesture = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, righthandgesture, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.righthandgesture_ = righthandgesture;
+  // @@protoc_insertion_point(field_set_allocated:RobotTeleoperate.VisionProData.rightHandGesture)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

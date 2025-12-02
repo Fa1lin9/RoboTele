@@ -156,6 +156,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             .head2xrWorldPose = poseMatrix[0],
             .leftWrist2xrWorldPose = poseMatrix[1],
             .rightWrist2xrWorldPose = poseMatrix[2],
+            .isLockHead = true,
         };
 
         // Transformed the Matrix
@@ -166,14 +167,18 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             std::cout << "Transformed Left Wrist Pose:\n" << transformedMsg[0] << std::endl;
             std::cout << "Transformed Right Wrist Pose:\n" << transformedMsg[1] << std::endl;
             std::cout << "Transformed Head Robot World Pose:\n" << transformedMsg[2] << std::endl;
+            std::cout << "Locked Head Robot World Pose:\n" << transformedMsg[3] << std::endl;
             std::cout << "--------------------------------------------" << std::endl;
         }
 
-        // Use ArmSolve to Solve
+        // Use ArmSolver to Solve
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
 
 //        auto solveStart = std::chrono::high_resolution_clock::now();
-        boost::optional<Eigen::VectorXd> q = ikSolverPtr->Solve(transformedMsg, qInit, false);
+        boost::optional<Eigen::VectorXd> q =
+                ikSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
+                                   qInit,
+                                   false);
 //        auto solveEnd = std::chrono::high_resolution_clock::now();
 //        auto solveDuration = std::chrono::duration_cast<std::chrono::milliseconds>(solveEnd - solveStart);
 //        std::cout << " Solve 耗时: " << solveDuration.count() << " ms" << std::endl;

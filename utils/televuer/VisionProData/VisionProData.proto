@@ -17,6 +17,13 @@ message HandPositions {
     repeated Point3d joints = 1;
 }
 
+message HandGesture {
+    bool pinchState = 1;
+    float pinchValue = 2;
+    bool SqueezeState = 3;
+    float SqueezeValue = 4;
+}
+
 message VisionProData {
     // Matrix
     Matrix4d headPose = 1;
@@ -26,4 +33,6 @@ message VisionProData {
     // Hand
     HandPositions leftHandPositions = 4;
     HandPositions rightHandPositions = 5;
+    HandGesture leftHandGesture = 6;
+    HandGesture rightHandGesture = 7;
 }

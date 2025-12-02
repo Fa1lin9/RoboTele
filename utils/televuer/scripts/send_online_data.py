@@ -48,11 +48,8 @@ tv = TeleVuer(
     webrtc=False
 )
 
-
 # ==================== 主循环 ====================
 def main(tv):
-
-
     prev_head = prev_left = prev_right = None
 
     # CSV 初始化（加入左右手）

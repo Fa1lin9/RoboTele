@@ -130,10 +130,21 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
 
         // Get Data from XR Device
         std::vector<Eigen::Matrix4d> poseMatrix;
+
+        std::vector<Eigen::Vector3d> leftHandPositions;
+        std::vector<Eigen::Vector3d> rightHandPositions;
+
+        DataCollector::HandGesture leftHandGesture;
+        DataCollector::HandGesture rightHandGesture;
         if(this->dataCollector.HasNewData()){
-//            poseMatrix = this->dataCollector.GetValue();
 //            std::cout << "Get New Data! " << std::endl;
             poseMatrix = this->dataCollector.GetPoseMatrix();
+
+            leftHandPositions = this->dataCollector.GetLeftHandPositions();
+            rightHandPositions = this->dataCollector.GetRightHandPositions();
+
+            leftHandGesture = this->dataCollector.GetLeftHandGesture();
+            rightHandGesture = this->dataCollector.GetRightHandGesture();
         }else{
             continue;
         }
@@ -158,6 +169,10 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             .rightWrist2xrWorldPose = poseMatrix[2],
             .isLockHead = true,
         };
+
+        if(leftHandGesture.pinchState || rightHandGesture.pinchState){
+
+        }
 
         // Transformed the Matrix
         std::vector<Eigen::Matrix4d> transformedMsg = this->transformPtr->Solve(msgConfig);

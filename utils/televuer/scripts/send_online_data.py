@@ -52,7 +52,7 @@ tv = TeleVuer(
 def main(tv):
     prev_head = prev_left = prev_right = None
 
-    # CSV 初始化（加入左右手）
+    # === CSV 初始化 ===
     csv_file = open(CSV_FILE, 'w', newline='')
     writer = csv.writer(csv_file)
     writer.writerow([
@@ -60,7 +60,11 @@ def main(tv):
         'Left Arm Pose',
         'Right Arm Pose',
         'Left Hand (25x3)',
-        'Right Hand (25x3)'
+        'Right Hand (25x3)',
+        'Left PinchState', 'Left PinchValue',
+        'Left SqueezeState', 'Left SqueezeValue',
+        'Right PinchState', 'Right PinchValue',
+        'Right SqueezeState', 'Right SqueezeValue'
     ])
 
     frame_times = deque(maxlen=30)
@@ -76,7 +80,18 @@ def main(tv):
             left_hand = tv.left_hand_positions
             right_hand = tv.right_hand_positions
 
-            # ===== 基础异常检查 =====
+            # ===== 手势字段（来自你刚给的 API）=====
+            left_pinch_state = tv.left_hand_pinch_state
+            left_pinch_value = tv.left_hand_pinch_value
+            left_squeeze_state = tv.left_hand_squeeze_state
+            left_squeeze_value = tv.left_hand_squeeze_value
+
+            right_pinch_state = tv.right_hand_pinch_state
+            right_pinch_value = tv.right_hand_pinch_value
+            right_squeeze_state = tv.right_hand_squeeze_state
+            right_squeeze_value = tv.right_hand_squeeze_value
+
+            # ===== 基础检查 =====
             if head is None or left is None or right is None:
                 print("[WARN] Pose is None, skipping frame.")
                 time.sleep(0.01)
@@ -87,12 +102,10 @@ def main(tv):
                 continue
 
             if left_hand is None or right_hand is None:
-                print("[WARN] Hand positions missing.")
                 left_hand = np.zeros((25, 3))
                 right_hand = np.zeros((25, 3))
 
             if left_hand.shape != (25, 3) or right_hand.shape != (25, 3):
-                print("[WARN] Invalid hand shape, restoring zeros.")
                 left_hand = np.zeros((25, 3))
                 right_hand = np.zeros((25, 3))
 
@@ -107,15 +120,10 @@ def main(tv):
             if changed:
                 data = VisionProData_pb2.VisionProData()
 
-                # ===== 矩阵填充（修复你原本的错误用法）=====
-                data.headPose.data.clear()
-                data.headPose.data.extend(head.flatten().astype(float))
-
-                data.leftArmPose.data.clear()
-                data.leftArmPose.data.extend(left.flatten().astype(float))
-
-                data.rightArmPose.data.clear()
-                data.rightArmPose.data.extend(right.flatten().astype(float))
+                # ===== 矩阵 =====
+                data.headPose.data[:] = head.flatten().astype(float)
+                data.leftArmPose.data[:] = left.flatten().astype(float)
+                data.rightArmPose.data[:] = right.flatten().astype(float)
 
                 # ===== 左手 =====
                 data.leftHandPositions.joints.clear()
@@ -133,6 +141,18 @@ def main(tv):
                     p.y = float(y)
                     p.z = float(z)
 
+                # ===== 左手手势 =====
+                data.leftHandGesture.pinchState = bool(left_pinch_state)
+                data.leftHandGesture.pinchValue = float(left_pinch_value)
+                data.leftHandGesture.SqueezeState = bool(left_squeeze_state)
+                data.leftHandGesture.SqueezeValue = float(left_squeeze_value)
+
+                # ===== 右手手势 =====
+                data.rightHandGesture.pinchState = bool(right_pinch_state)
+                data.rightHandGesture.pinchValue = float(right_pinch_value)
+                data.rightHandGesture.SqueezeState = bool(right_squeeze_state)
+                data.rightHandGesture.SqueezeValue = float(right_squeeze_value)
+
                 # ===== 发送 =====
                 socket.send(data.SerializeToString())
 
@@ -142,10 +162,20 @@ def main(tv):
                     left.tolist(),
                     right.tolist(),
                     left_hand.tolist(),
-                    right_hand.tolist()
+                    right_hand.tolist(),
+
+                    left_pinch_state,
+                    left_pinch_value,
+                    left_squeeze_state,
+                    left_squeeze_value,
+
+                    right_pinch_state,
+                    right_pinch_value,
+                    right_squeeze_state,
+                    right_squeeze_value,
                 ])
 
-                print(">>> New pose updated & sent.")
+                print(">>> New pose + gesture updated & sent.")
 
             # 更新上一帧
             prev_head = head.copy()

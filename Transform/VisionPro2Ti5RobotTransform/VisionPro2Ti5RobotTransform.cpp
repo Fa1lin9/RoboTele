@@ -1,5 +1,5 @@
 #include <VisionPro2Ti5RobotTransform/VisionPro2Ti5RobotTransform.hpp>
-VisionPro2Ti5RobotTransform::VisionPro2Ti5RobotTransform(const CoordinateTransform::BasicConfig &config_)
+VisionPro2Ti5RobotTransform::VisionPro2Ti5RobotTransform(const Transform::BasicConfig &config_)
     :T_Head2Waist(config_.T_Head2Waist),
      T_XR2Robot(config_.T_XR2Robot),
      T_Robot2LeftWrist(config_.T_Robot2LeftWrist),
@@ -13,8 +13,8 @@ VisionPro2Ti5RobotTransform::~VisionPro2Ti5RobotTransform(){
 
 }
 
-std::vector<Eigen::Matrix4d> VisionPro2Ti5RobotTransform::Transform(
-        const CoordinateTransform::MsgConfig &config_){
+std::vector<Eigen::Matrix4d> VisionPro2Ti5RobotTransform::Solve(
+        const Transform::MsgConfig &config_){
 
     // 相似变化到标准坐标系Robot
     Eigen::Matrix4d head2RobotWorldPose =

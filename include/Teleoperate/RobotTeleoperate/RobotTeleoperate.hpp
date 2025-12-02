@@ -4,7 +4,7 @@
 
 #include <ArmSolver/ArmSolver.hpp>
 #include <PhysicalRobot/PhysicalRobot.hpp>
-#include <CoordinateTransform/CoordinateTransform.hpp>
+#include <Transform/Transform.hpp>
 #include <CsvWriter/CsvWriter.hpp>
 #include <WeightedMovingFilter/WeightedMovingFilter.hpp>
 #include <JsonParser/JsonParser.hpp>
@@ -31,7 +31,7 @@ public:
 
         ArmSolver::BasicConfig solverConfig;
         PhysicalRobot::BasicConfig robotConfig;
-        CoordinateTransform::BasicConfig transformConfig;
+        Transform::BasicConfig transformConfig;
         Ros2Bridge::BasicConfig bridgeConfig;
 
         bool isSim;
@@ -55,7 +55,7 @@ protected:
 
     boost::shared_ptr<PhysicalRobot> physicalRobotPtr;
 
-    boost::shared_ptr<CoordinateTransform> transformPtr;
+    boost::shared_ptr<Transform> transformPtr;
 
     HeadSolver headSolver;
 

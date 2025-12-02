@@ -24,14 +24,14 @@ int main(){
         .dofArm = std::vector<int>{6, 6},
     };
 
-    // CoordinateTransform
+    // Transform
     Eigen::Matrix4d temp;
     temp<<1,0,0,0,
          0,-1,0,0,
          0,0,-1,0,
          0,0,0,1;
-    CoordinateTransform::BasicConfig transformConfig;
-    transformConfig.type = CoordinateTransform::Type::VisionPro2Ti5Robot;
+    Transform::BasicConfig transformConfig;
+    transformConfig.type = Transform::Type::VisionPro2Ti5Robot;
     transformConfig.T_Head2Waist = Eigen::Matrix4d::Identity();
     transformConfig.T_XR2Robot <<   0, 0, -1, 0,
                                     -1, 0, 0, 0,

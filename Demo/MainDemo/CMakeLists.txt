@@ -47,7 +47,7 @@ target_link_libraries( ${TARGET_NAME}
     PUBLIC 
         
     PRIVATE
-        $<BUILD_INTERFACE:CoordinateTransform::CoordinateTransform>
+        $<BUILD_INTERFACE:Transform::Transform>
         $<BUILD_INTERFACE:Core::DataCollector>
         $<BUILD_INTERFACE:ArmSolver::ArmSolver>
         $<BUILD_INTERFACE:Teleoperate::RobotTeleoperate>

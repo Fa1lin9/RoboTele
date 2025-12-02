@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 3.20 )
 #############################################################
 #	Set project name, files, dependancies
 #############################################################
-set( TARGET_NAME "VisionPro2Ti5RobotTransform" )
+set( TARGET_NAME "Transform" )
 message( STATUS "\n-------------  ${GROUP_NAME} - ${TARGET_NAME}  -------------" )
 
 
@@ -46,9 +46,13 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC     
-        $<BUILD_INTERFACE:CoordinateTransform::CoordinateTransform>
-    PRIVATE
+        $<BUILD_INTERFACE:Eigen3::Eigen>
+        $<BUILD_INTERFACE:Boost::headers>
+        $<BUILD_INTERFACE:Boost::filesystem>
+        $<BUILD_INTERFACE:Boost::program_options>
         
+    PRIVATE
+        $<BUILD_INTERFACE:Transform::VisionPro2Ti5RobotTransform>
 
 )
 

@@ -92,9 +92,9 @@ if( BuildPackages_ArmSolver )
     add_subdirectory( ArmSolver )
 endif()
 
-option( BuildPackages_CoordinateTransform "Whether generate Core package?" ON )
-if( BuildPackages_CoordinateTransform )
-    add_subdirectory( CoordinateTransform )
+option( BuildPackages_Transform "Whether generate Core package?" ON )
+if( BuildPackages_Transform )
+    add_subdirectory( Transform )
 endif()
 
 option( BuildPackages_FastDDSInterface "Whether generate Core package?" ON )

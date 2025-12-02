@@ -4,7 +4,7 @@
 #include <Eigen/Dense>
 #include <boost/make_shared.hpp>
 
-class CoordinateTransform
+class Transform
 {
 public:
     enum Type{
@@ -21,7 +21,7 @@ public:
 
         Eigen::Vector3d                         offset;
 
-        CoordinateTransform::Type type;
+        Transform::Type type;
     };
 
     struct MsgConfig{
@@ -35,17 +35,17 @@ public:
         Eigen::Matrix<double,25,3>      rightHandPositions;
     };
 
-    CoordinateTransform();
+    Transform();
 
-    ~CoordinateTransform();
+    ~Transform();
 
-    virtual std::vector<Eigen::Matrix4d> Transform(const CoordinateTransform::MsgConfig &config_) = 0;
+    virtual std::vector<Eigen::Matrix4d> Solve(const Transform::MsgConfig &config_) = 0;
 
-    static boost::shared_ptr<CoordinateTransform> GetPtr(const CoordinateTransform::BasicConfig &config_);
+    static boost::shared_ptr<Transform> GetPtr(const Transform::BasicConfig &config_);
 
-    static CoordinateTransform::Type GetTypeFromStr(const std::string& str);
+    static Transform::Type GetTypeFromStr(const std::string& str);
 
 private:
-    static const std::unordered_map<std::string, CoordinateTransform::Type> typeMap;
+    static const std::unordered_map<std::string, Transform::Type> typeMap;
 
 };

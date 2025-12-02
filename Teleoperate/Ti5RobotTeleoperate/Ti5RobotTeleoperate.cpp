@@ -25,7 +25,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 
     this->ikSolverPtr = ArmSolver::GetPtr(config.solverConfig);
 
-    this->transformPtr = CoordinateTransform::GetPtr(config.transformConfig);
+    this->transformPtr = Transform::GetPtr(config.transformConfig);
 
     this->physicalRobotPtr = PhysicalRobot::GetPtr(config.robotConfig);
 
@@ -68,14 +68,14 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 //        .dofRightArm = static_cast<int>(solverObj["DofRightArm"].as_int64()),
 //    };
 
-//    // CoordinateTransform
-//    CoordinateTransform::BasicConfig transformConfig = {
+//    // Transform
+//    Transform::BasicConfig transformConfig = {
 //        .T_Head2Waist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Head2Waist"].as_array()),
 //        .T_XR2Robot = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_XR2Robot"].as_array()),
 //        .T_Robot2LeftWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2LeftWrist"].as_array()),
 //        .T_Robot2RightWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2RightWrist"].as_array()),
 //        .offset = JsonParser::JsonArray2EigenVectorXd(transformObj["Offset"].as_array()),
-//        .type = CoordinateTransform::GetTypeFromStr(transformObj["Type"].as_string().c_str()),
+//        .type = Transform::GetTypeFromStr(transformObj["Type"].as_string().c_str()),
 //    };
 
 //    // PhysicalRobot
@@ -97,7 +97,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 
 //    this->ikSolverPtr = IKSolver::GetPtr(solverConfig);
 
-//    this->transformPtr = CoordinateTransform::GetPtr(transformConfig);
+//    this->transformPtr = Transform::GetPtr(transformConfig);
 
 //    this->physicalRobotPtr = PhysicalRobot::GetPtr(physicalRobotConfig);
 
@@ -152,14 +152,14 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             std::cout << "-----------------------------------------" << std::endl;
         }
 
-        CoordinateTransform::MsgConfig msgConfig{
+        Transform::MsgConfig msgConfig{
             .head2xrWorldPose = poseMatrix[0],
             .leftWrist2xrWorldPose = poseMatrix[1],
             .rightWrist2xrWorldPose = poseMatrix[2],
         };
 
         // Transformed the Matrix
-        std::vector<Eigen::Matrix4d> transformedMsg = this->transformPtr->Transform(msgConfig);
+        std::vector<Eigen::Matrix4d> transformedMsg = this->transformPtr->Solve(msgConfig);
 
         if(verbose){
             std::cout << "------------- Transformed Data -------------" << std::endl;

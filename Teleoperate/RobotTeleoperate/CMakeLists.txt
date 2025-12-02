@@ -46,7 +46,7 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC 
-        $<BUILD_INTERFACE:CoordinateTransform::CoordinateTransform>
+        $<BUILD_INTERFACE:Transform::Transform>
         $<BUILD_INTERFACE:Core::DataCollector>
         $<BUILD_INTERFACE:Core::CsvWriter>
         $<BUILD_INTERFACE:Core::WeightedMovingFilter>

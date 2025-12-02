@@ -1,16 +1,16 @@
 #pragma once
 
-#include <CoordinateTransform/CoordinateTransform.hpp>
+#include <Transform/Transform.hpp>
 
 // 实现坐标系从VisionPro到CrpRobot的转换
 class VisionPro2Ti5RobotTransform
-    : public CoordinateTransform
+    : public Transform
 {
 public:
-    VisionPro2Ti5RobotTransform(const CoordinateTransform::BasicConfig &config_);
+    VisionPro2Ti5RobotTransform(const Transform::BasicConfig &config_);
     ~VisionPro2Ti5RobotTransform();
 
-    std::vector<Eigen::Matrix4d> Transform(const CoordinateTransform::MsgConfig &config_) override;
+    std::vector<Eigen::Matrix4d> Solve(const Transform::MsgConfig &config_) override;
 
 private:
 

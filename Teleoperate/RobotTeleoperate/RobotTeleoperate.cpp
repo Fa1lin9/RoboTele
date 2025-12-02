@@ -57,14 +57,14 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
     solverConfig.baseOffset = baseOffset;
 
 
-    // CoordinateTransform
-    CoordinateTransform::BasicConfig transformConfig = {
+    // Transform
+    Transform::BasicConfig transformConfig = {
         .T_Head2Waist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Head2Waist"].as_array()),
         .T_XR2Robot = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_XR2Robot"].as_array()),
         .T_Robot2LeftWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2LeftWrist"].as_array()),
         .T_Robot2RightWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2RightWrist"].as_array()),
         .offset = JsonParser::JsonArray2EigenVectorXd(transformObj["Offset"].as_array()),
-        .type = CoordinateTransform::GetTypeFromStr(transformObj["Type"].as_string().c_str()),
+        .type = Transform::GetTypeFromStr(transformObj["Type"].as_string().c_str()),
     };
 
     // PhysicalRobot

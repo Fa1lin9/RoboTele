@@ -706,7 +706,7 @@ class HandGesture final :
 
   // bool SqueezeState = 3;
   void clear_squeezestate();
-  bool squeezestate() const;
+  bool squeezeState() const;
   void set_squeezestate(bool value);
   private:
   bool _internal_squeezestate() const;
@@ -715,7 +715,7 @@ class HandGesture final :
 
   // float SqueezeValue = 4;
   void clear_squeezevalue();
-  float squeezevalue() const;
+  float squeezeValue() const;
   void set_squeezevalue(float value);
   private:
   float _internal_squeezevalue() const;
@@ -1233,7 +1233,7 @@ inline void HandGesture::clear_squeezestate() {
 inline bool HandGesture::_internal_squeezestate() const {
   return _impl_.squeezestate_;
 }
-inline bool HandGesture::squeezestate() const {
+inline bool HandGesture::squeezeState() const {
   // @@protoc_insertion_point(field_get:RobotTeleoperate.HandGesture.SqueezeState)
   return _internal_squeezestate();
 }
@@ -1253,7 +1253,7 @@ inline void HandGesture::clear_squeezevalue() {
 inline float HandGesture::_internal_squeezevalue() const {
   return _impl_.squeezevalue_;
 }
-inline float HandGesture::squeezevalue() const {
+inline float HandGesture::squeezeValue() const {
   // @@protoc_insertion_point(field_get:RobotTeleoperate.HandGesture.SqueezeValue)
   return _internal_squeezevalue();
 }

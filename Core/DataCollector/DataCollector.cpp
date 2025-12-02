@@ -99,6 +99,18 @@ void DataCollector::Run() {
                     this->rightHandPositions[i] = Eigen::Vector3d(p.x(), p.y(), p.z());
                 }
             }
+
+            // LeftHandGesture
+            this->leftHandGesture.pinchState = data.leftHandGesture().pinchState();
+            this->leftHandGesture.pinchValue = data.leftHandGesture().pinchValue();
+            this->leftHandGesture.squeezeState = data.leftHandGesture().squeezeState();
+            this->leftHandGesture.squeezeValue = data.leftHandGesture().squeezeValue();
+
+            // RightHandGesture
+            this->rightHandGesture.pinchState = data.rightHandGesture().pinchState();
+            this->rightHandGesture.pinchValue = data.rightHandGesture().pinchValue();
+            this->rightHandGesture.squeezeState = data.rightHandGesture().squeezeState();
+            this->rightHandGesture.squeezeValue = data.rightHandGesture().squeezeValue();
         }
 
         this->hasNewData = true;
@@ -182,6 +194,16 @@ std::vector<Eigen::Vector3d> DataCollector::GetLeftHandPositions(){
 std::vector<Eigen::Vector3d> DataCollector::GetRightHandPositions(){
     std::lock_guard<std::mutex> lock(this->mutex);
     return this->rightHandPositions;
+}
+
+DataCollector::HandGesture DataCollector::GetLeftHandGesture(){
+    std::lock_guard<std::mutex> lock(this->mutex);
+    return this->leftHandGesture;
+}
+
+DataCollector::HandGesture DataCollector::GetRightHandGesture(){
+    std::lock_guard<std::mutex> lock(this->mutex);
+    return this->rightHandGesture;
 }
 
 bool DataCollector::HasNewData(){

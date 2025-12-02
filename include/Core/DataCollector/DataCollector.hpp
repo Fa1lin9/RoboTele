@@ -12,6 +12,13 @@
 class DataCollector
 {
 public:
+    struct HandGesture{
+        bool pinchState;
+        double pinchValue;
+        bool squeezeState;
+        double squeezeValue;
+    };
+
     DataCollector();
     DataCollector(const std::string &address_);
     ~DataCollector();
@@ -27,6 +34,10 @@ public:
     std::vector<Eigen::Vector3d> GetLeftHandPositions();
 
     std::vector<Eigen::Vector3d> GetRightHandPositions();
+
+    HandGesture GetLeftHandGesture();
+
+    HandGesture GetRightHandGesture();
 
     bool HasNewData();
 
@@ -49,6 +60,10 @@ private:
     // 两只手的点位
     std::vector<Eigen::Vector3d> leftHandPositions;
     std::vector<Eigen::Vector3d> rightHandPositions;
+
+    // Hand Gesture
+    HandGesture leftHandGesture;
+    HandGesture rightHandGesture;
 
     // lock
     std::mutex mutex;

@@ -1,6 +1,7 @@
 {
     "Ti5Robot":{
         "JointsIndex": [1, 2, 3],
-        "JointsName" : ["WAIST_R", "WAIST_Y", "WAIST_P"]
+        "JointsName" : ["WAIST_R", "WAIST_Y", "WAIST_P"],
+        "EulerAxis": ["Roll", "Yaw", "Pitch"]
     }
 }

@@ -1,12 +1,14 @@
 #pragma once
 #include <iostream>
 #include <unordered_map>
+#include <MatrixUtils.hpp>
 
 namespace RobotType{
 
     struct JointInfo {
         std::string name;
         int index;
+        MatrixUtils::EulerAxis type;
     };
 
     enum Type{
@@ -24,6 +26,15 @@ namespace RobotType{
         }
 
         throw std::invalid_argument("[RobotType::GetTypeFromStr] Invalid string");
+    }
+
+    static std::string GetStrFromType(const RobotType::Type& type){
+        for(const auto& kv : RobotType::RobotTypeMap){
+            if(kv.second == type){
+                return kv.first;
+            }
+        }
+        throw std::invalid_argument("[RobotType::GetStrFromType] Invalid type");
     }
 
 }

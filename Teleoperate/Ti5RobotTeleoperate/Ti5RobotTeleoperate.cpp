@@ -17,6 +17,10 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
     this->isReal = config.isReal;
     this->FPS = config.FPS;
 
+    // Solver
+    this->headSolver.Init(config.robotType);
+    this->waistSolver.Init(config.robotType);
+
     // qInit
     this->qInit = Eigen::VectorXd::Zero(21);
     // Initial Pose
@@ -210,7 +214,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
                 // Control the Head
                 Eigen::Vector3d headRPY = this->headSolver.Solve(transformedMsg[2]);
                 std::cout<<"HeadRPY: "<<headRPY<<std::endl;
-                auto headJointsInfo = this->headSolver.GetJointsInfo(this->robotType);
+                auto headJointsInfo = this->headSolver.GetJointsInfo();
                 qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
                 qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
                 qEigen(headJointsInfo[2].index) = headRPY(0); // Row
@@ -218,7 +222,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
                 // Control the Waist
                 Eigen::Vector3d waistRPY = this->waistSolver.Solve(transformedMsg[2]);
                 std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
-                auto waistJointsInfo = this->waistSolver.GetJointsInfo(this->robotType);
+                auto waistJointsInfo = this->waistSolver.GetJointsInfo();
                 qEigen(waistJointsInfo[0].index) = 0; // Row
                 qEigen(waistJointsInfo[1].index) = 0; // Yaw
                 qEigen(waistJointsInfo[2].index) = 0; // Pitch
@@ -226,7 +230,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
                 // Control the Head
                 Eigen::Vector3d headRPY = this->headSolver.Solve(transformedMsg[2]);
                 std::cout<<"HeadRPY: "<<headRPY<<std::endl;
-                auto headJointsInfo = this->headSolver.GetJointsInfo(this->robotType);
+                auto headJointsInfo = this->headSolver.GetJointsInfo();
                 qEigen(headJointsInfo[0].index) = 0; // Yaw
                 qEigen(headJointsInfo[1].index) = 0; // Pitch
                 qEigen(headJointsInfo[2].index) = 0; // Row
@@ -234,7 +238,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
                 // Control the Waist
                 Eigen::Vector3d waistRPY = this->waistSolver.Solve(transformedMsg[2]);
                 std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
-                auto waistJointsInfo = this->waistSolver.GetJointsInfo(this->robotType);
+                auto waistJointsInfo = this->waistSolver.GetJointsInfo();
                 qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
                 qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
                 qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch

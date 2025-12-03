@@ -3,6 +3,36 @@
 #include <iostream>
 
 namespace MatrixUtils{
+    enum EulerAxis{
+        Roll,
+        Pitch,
+        Yaw,
+    };
+
+    const std::unordered_map<std::string, MatrixUtils::EulerAxis> EulerAxisMap = {
+        {"Roll", MatrixUtils::EulerAxis::Roll},
+        {"Pitch", MatrixUtils::EulerAxis::Pitch},
+        {"Yaw", MatrixUtils::EulerAxis::Yaw}
+    };
+
+    static MatrixUtils::EulerAxis GetEulerAxisFromStr(const std::string& str){
+        auto temp = MatrixUtils::EulerAxisMap.find(str);
+        if(temp != MatrixUtils::EulerAxisMap.end()){
+            return temp->second;
+        }
+
+        throw std::invalid_argument("[MatrixUtils::GetEulerAxisFromStr] Invalid string");
+    }
+
+    static std::string GetStrFromEulerAxis(const MatrixUtils::EulerAxis& type){
+        for(const auto& kv : MatrixUtils::EulerAxisMap){
+            if(kv.second == type){
+                return kv.first;
+            }
+        }
+        throw std::invalid_argument("[MatrixUtils::GetStrFromType] Invalid type");
+    }
+
 
     // Calculate the Euler Angle
     inline Eigen::Vector3d RotationToEulerXYZ(const Eigen::Matrix3d &R)

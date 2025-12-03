@@ -2,25 +2,31 @@
 #include <WaistSolver/WaistSolver.hpp>
 
 int main(){
-    HeadSolver head;
+    HeadSolver head(RobotType::Type::Ti5Robot);
 
-    auto headJointsIndex = head.GetJointsIndex(RobotType::Ti5Robot);
-    auto headJointsName = head.GetJointsName(RobotType::Ti5Robot);
-    auto headJointsInfo = head.GetJointsInfo(RobotType::Ti5Robot);
+    auto headJointsIndex = head.GetJointsIndex();
+    auto headJointsName = head.GetJointsName();
+    auto headJointsInfo = head.GetJointsInfo();
 
     for(size_t i=0;i<headJointsIndex.size();i++){
 //        std::cout<<"JointsIndex "<<jointsIndex[i]<<": "<<jointsName[i]<<std::endl;
-        std::cout<<"JointsIndex "<<headJointsInfo[i].index<<": "<<headJointsInfo[i].name<<std::endl;
+        std::cout<<"JointsIndex "<<
+                   headJointsInfo[i].index<<": "<<
+                   headJointsInfo[i].name<<", EulerAxis: "<<
+                   headJointsInfo[i].type<<std::endl;
     }
 
-    WaistSolver waist;
+    WaistSolver waist(RobotType::Type::Ti5Robot);
 
-    auto waistJointsIndex = waist.GetJointsIndex(RobotType::Ti5Robot);
-    auto waistJointsName = waist.GetJointsName(RobotType::Ti5Robot);
-    auto waistJointsInfo = waist.GetJointsInfo(RobotType::Ti5Robot);
+    auto waistJointsIndex = waist.GetJointsIndex();
+    auto waistJointsName = waist.GetJointsName();
+    auto waistJointsInfo = waist.GetJointsInfo();
 
     for(size_t i=0;i<waistJointsIndex.size();i++){
 //        std::cout<<"JointsIndex "<<jointsIndex[i]<<": "<<jointsName[i]<<std::endl;
-        std::cout<<"JointsIndex "<<waistJointsInfo[i].index<<": "<<waistJointsInfo[i].name<<std::endl;
+        std::cout<<"JointsIndex "<<
+                   waistJointsInfo[i].index<<": "<<
+                   waistJointsInfo[i].name<<", EulerAxis: "<<
+                   waistJointsInfo[i].type<<std::endl;
     }
 }

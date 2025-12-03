@@ -1,14 +1,20 @@
 #include <WaistSolver/WaistSolver.hpp>
 
 WaistSolver::WaistSolver(){
-    this->Init();
+
+}
+
+WaistSolver::WaistSolver(const RobotType::Type& type){
+    this->Init(type);
 }
 
 WaistSolver::~WaistSolver(){
 
 }
 
-void WaistSolver::Init(){
+void WaistSolver::Init(const RobotType::Type& type){
+    this->type = type;
+
     this->configPath =
             static_cast<std::string>(SOURCE_FILE_PATH) + "/config/BasicSolver/WaistSolver/WaistSolver.json";
     std::cout << "[WaistSolver::Init] Current path of the configuration is " << std::endl;
@@ -40,51 +46,102 @@ Eigen::Vector3d WaistSolver::Solve(const Eigen::Matrix4d &mat){
     }
 };
 
-std::vector<int> WaistSolver::GetJointsIndex(const RobotType::Type &type){
+std::vector<int> WaistSolver::GetJointsIndex(){
     json::object obj = this->jsonParser.GetJsonObject();
-    json::object ti5RobotObj = obj["Ti5Robot"].as_object();
 
-    switch (type) {
-        case RobotType::Type::Ti5Robot :{
-           return JsonParser::JsonArray2StdVecInt(ti5RobotObj["JointsIndex"].as_array());
-        }
-        default:{
-            throw std::logic_error("[WaistSolver::GetJointsIndex] Plz privide legal RobotType");
-        }
+    const std::string typeStr = RobotType::GetStrFromType(this->type);
+
+    if (!obj.contains(typeStr)) {
+        throw std::logic_error("[WaistSolver::GetJointsIndex] JSON does not contain robot '" + typeStr + "'");
+    }
+
+    json::object robotObj;
+    try {
+        robotObj = obj[typeStr].as_object();
+    } catch (const std::exception &e) {
+        throw std::logic_error("[WaistSolver::GetJointsIndex] '" + typeStr + "' is not a JSON object. " + e.what());
+    }
+
+    if (!robotObj.contains("JointsIndex")) {
+        throw std::logic_error("[WaistSolver::GetJointsIndex] '" + typeStr + "' does not contain JointsIndex");
+    }
+
+    try {
+        auto arr = robotObj["JointsIndex"].as_array();
+        return JsonParser::JsonArray2StdVecInt(arr);
+    } catch (const std::exception &e) {
+        throw std::logic_error(
+            std::string("[WaistSolver::GetJointsIndex] Failed to parse JointsIndex for '")
+            + typeStr + "'. " + e.what()
+        );
     }
 }
 
-std::vector<std::string> WaistSolver::GetJointsName(const RobotType::Type &type){
+std::vector<std::string> WaistSolver::GetJointsName(){
     json::object obj = this->jsonParser.GetJsonObject();
-    json::object ti5RobotObj = obj["Ti5Robot"].as_object();
 
-    switch (type) {
-        case RobotType::Type::Ti5Robot :{
-           return JsonParser::JsonArray2StdVecStr(ti5RobotObj["JointsName"].as_array());
-        }
-        default:{
-            throw std::logic_error("[WaistSolver::GetJointsName] Plz privide legal RobotType");
-        }
+    const std::string typeStr = RobotType::GetStrFromType(this->type);
+
+    if (!obj.contains(typeStr)) {
+        throw std::logic_error("[WaistSolver::GetJointsName] JSON does not contain robot '" + typeStr + "'");
+    }
+
+    json::object robotObj;
+    try {
+        robotObj = obj[typeStr].as_object();
+    } catch (const std::exception& e) {
+        throw std::logic_error("[WaistSolver::GetJointsName] '" + typeStr + "' is not a JSON object. " + e.what());
+    }
+
+    if (!robotObj.contains("JointsName")) {
+        throw std::logic_error("[WaistSolver::GetJointsName] '" + typeStr + "' does not contain JointsName");
+    }
+
+    try {
+        auto arr = robotObj["JointsName"].as_array();
+        return JsonParser::JsonArray2StdVecStr(arr);
+    } catch (const std::exception &e) {
+        throw std::logic_error(
+            std::string("[WaistSolver::GetJointsName] Failed to parse JointsName for '")
+            + typeStr + "'. " + e.what());
     }
 }
 
-std::vector<RobotType::JointInfo> WaistSolver::GetJointsInfo(const RobotType::Type &type){
+std::vector<RobotType::JointInfo> WaistSolver::GetJointsInfo(){
     json::object obj = this->jsonParser.GetJsonObject();
-    json::object ti5RobotObj = obj["Ti5Robot"].as_object();
 
-    auto names = this->GetJointsName(type);
-    auto indices = this->GetJointsIndex(type);
+    const std::string typeStr = RobotType::GetStrFromType(this->type);
+
+    if (!obj.contains(typeStr)) {
+        throw std::logic_error("[WaistSolver::GetJointsName] JSON does not contain robot '" + typeStr + "'");
+    }
+
+    json::object robotObj;
+    try {
+        robotObj = obj[typeStr].as_object();
+    } catch (const std::exception& e) {
+        throw std::logic_error("[WaistSolver::GetJointsName] '" + typeStr + "' is not a JSON object. " + e.what());
+    }
+
+    auto names = this->GetJointsName();
+    auto indices = this->GetJointsIndex();
+    auto types = JsonParser::JsonArray2StdVecStr(robotObj["EulerAxis"].as_array());
 
     if(names.size() != indices.size()){
         throw std::logic_error("[WaistSolver::GetJointsInfo] Names and indices size mismatch!");
     }
 
-    std::vector<RobotType::JointInfo> joints;
-    joints.reserve(names.size());
+    std::vector<RobotType::JointInfo> jointsInfo;
+    jointsInfo.reserve(names.size());
     for(size_t i=0; i<names.size(); ++i){
-        joints.push_back({names[i], indices[i]});
+        RobotType::JointInfo item{
+            .name = names[i],
+            .index = indices[i],
+            .type = MatrixUtils::GetEulerAxisFromStr(types[i]),
+        };
+        jointsInfo.push_back(item);
     }
 
-    return joints;
+    return jointsInfo;
 }
 

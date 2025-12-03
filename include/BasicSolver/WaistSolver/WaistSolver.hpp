@@ -12,20 +12,20 @@ class WaistSolver
 {
 public:
     WaistSolver();
+    WaistSolver(const RobotType::Type& type);
     ~WaistSolver();
+
+    void Init(const RobotType::Type& type);
 
     Eigen::Vector3d Solve(const Eigen::Matrix4d &mat);
 
-    std::vector<int> GetJointsIndex(const RobotType::Type &type);
+    std::vector<int> GetJointsIndex();
 
-    std::vector<std::string> GetJointsName(const RobotType::Type &type);
+    std::vector<std::string> GetJointsName();
 
-    std::vector<RobotType::JointInfo> GetJointsInfo(const RobotType::Type &type);
+    std::vector<RobotType::JointInfo> GetJointsInfo();
 
 private:
-
-    void Init();
-
     Eigen::Matrix4d headPose;
     boost::optional<Eigen::VectorXd> rpy;
 
@@ -35,5 +35,10 @@ private:
 
     std::string configPath;
     JsonParser jsonParser;
+
+    std::vector<double> boundsUpper;
+    std::vector<double> boundsLower;
+
+    RobotType::Type type;
 };
 

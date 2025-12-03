@@ -42,7 +42,7 @@ void WaistSolver::Init(const RobotType::Type& type){
     // For Bounds
     this->upperBound = JsonParser::JsonArray2StdVecDouble(this->robotObj["UpperBound"].as_array());
     this->lowerBound = JsonParser::JsonArray2StdVecDouble(this->robotObj["LowerBound"].as_array());
-    if(1){
+    if(0){
         for(size_t i=0;i<this->upperBound.size();i++){
             std::cout << "Joint "
                       << this->jointsInfo[i].index
@@ -65,10 +65,24 @@ Eigen::Vector3d WaistSolver::Solve(const Eigen::Matrix4d &mat){
 //    this->rpy = MatrixUtils::RotationToEulerXYZ(rot);
     this->rpy = MatrixUtils::RotationToEulerZYX(rot);
 
+    // Clip the Angle
+    for(size_t i=0;i<this->jointsInfo.size();i++){
+        const auto& item = this->jointsInfo[i];
+
+        int axis = -1;
+        if(item.type == MatrixUtils::EulerAxis::Roll)  axis = 0;
+        if(item.type == MatrixUtils::EulerAxis::Pitch) axis = 1;
+        if(item.type == MatrixUtils::EulerAxis::Yaw)   axis = 2;
+
+        if(axis >= 0){
+            this->rpy.value()(axis) =
+                std::min(std::max(this->rpy.value()(axis), this->lowerBound[i]), this->upperBound[i]);
+        }
+    }
+
     this->roll = this->rpy.value()(0);
     this->pitch = this->rpy.value()(1);
     this->yaw = this->rpy.value()(2);
-
 
     if(this->rpy.has_value()){
         return this->rpy.value();

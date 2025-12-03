@@ -42,7 +42,7 @@ void HeadSolver::Init(const RobotType::Type& type){
     this->upperBound = JsonParser::JsonArray2StdVecDouble(this->robotObj["UpperBound"].as_array());
     this->lowerBound = JsonParser::JsonArray2StdVecDouble(this->robotObj["LowerBound"].as_array());
 
-    if(1){
+    if(0){
         for(size_t i=0;i<this->upperBound.size();i++){
             std::cout << "Joint "
                       << this->jointsInfo[i].index
@@ -65,10 +65,6 @@ Eigen::Vector3d HeadSolver::Solve(const Eigen::Matrix4d &mat){
 //    this->rpy = MatrixUtils::RotationToEulerXYZ(rot);
     this->rpy = MatrixUtils::RotationToEulerZYX(rot);
 
-    this->roll = this->rpy.value()(0);
-    this->pitch = this->rpy.value()(1);
-    this->yaw = this->rpy.value()(2);
-
     // Clip the Angle
     for(size_t i=0;i<this->jointsInfo.size();i++){
         const auto& item = this->jointsInfo[i];
@@ -80,9 +76,13 @@ Eigen::Vector3d HeadSolver::Solve(const Eigen::Matrix4d &mat){
 
         if(axis >= 0){
             rpy.value()(axis) =
-                std::clamp(rpy.value()(axis), this->lowerBound[i], this->upperBound[i]);
+                std::min(std::max(rpy.value()(axis), this->lowerBound[i]), this->upperBound[i]);
         }
     }
+
+    this->roll = this->rpy.value()(0);
+    this->pitch = this->rpy.value()(1);
+    this->yaw = this->rpy.value()(2);
 
     if(this->rpy.has_value()){
         return this->rpy.value();

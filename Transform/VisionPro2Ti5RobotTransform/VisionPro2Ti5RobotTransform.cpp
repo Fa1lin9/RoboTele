@@ -59,20 +59,19 @@ std::vector<Eigen::Matrix4d> VisionPro2Ti5RobotTransform::Solve(
                 rightWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPoseLocked.block<3,1>(0,3);
     }else{
         // 转化到头坐标系
-    //    head2RobotWorldPose.block<3,3>(0,0) = Eigen::Matrix3d::Identity();
-//        Eigen::Matrix4d head2RobotWorldPoseInv = head2RobotWorldPose.inverse();
-    //    leftWrist2RobotWorldPose = head2RobotWorldPoseInv * leftWrist2RobotWorldPose;
-    //    rightWrist2RobotWorldPose = head2RobotWorldPoseInv * rightWrist2RobotWorldPose;
+        Eigen::Matrix4d head2RobotWorldPoseInv = head2RobotWorldPose.inverse();
+        leftWrist2RobotWorldPose = head2RobotWorldPoseInv * leftWrist2RobotWorldPose;
+        rightWrist2RobotWorldPose = head2RobotWorldPoseInv * rightWrist2RobotWorldPose;
     //    leftWrist2RobotWorldPose.block<3,1>(0,3) =
     //            (head2RobotWorldPoseInv * leftWrist2RobotWorldPose).block<3,1>(0,3);
     //    rightWrist2RobotWorldPose.block<3,1>(0,3) =
     //            (head2RobotWorldPoseInv * rightWrist2RobotWorldPose).block<3,1>(0,3);
 
-        // only for translation
-        leftWrist2RobotWorldPose.block<3,1>(0,3) =
-                leftWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPose.block<3,1>(0,3);
-        rightWrist2RobotWorldPose.block<3,1>(0,3) =
-                rightWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPose.block<3,1>(0,3);
+//        // only for translation
+//        leftWrist2RobotWorldPose.block<3,1>(0,3) =
+//                leftWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPose.block<3,1>(0,3);
+//        rightWrist2RobotWorldPose.block<3,1>(0,3) =
+//                rightWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPose.block<3,1>(0,3);
 
     }
 

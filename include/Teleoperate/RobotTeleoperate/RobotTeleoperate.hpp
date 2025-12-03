@@ -9,6 +9,7 @@
 #include <WeightedMovingFilter/WeightedMovingFilter.hpp>
 #include <JsonParser/JsonParser.hpp>
 #include <HeadSolver/HeadSolver.hpp>
+#include <WaistSolver/WaistSolver.hpp>
 #include <Ros2Bridge/Ros2Bridge.h>
 
 #include <boost/shared_ptr.hpp>
@@ -58,6 +59,8 @@ protected:
     boost::shared_ptr<Transform> transformPtr;
 
     HeadSolver headSolver;
+
+    WaistSolver waistSolver;
 
     int FPS;
 

@@ -25,6 +25,8 @@ public:
 
     static std::vector<int> JsonArray2StdVecInt(const json::array &array);
 
+    static std::vector<double> JsonArray2StdVecDouble(const json::array &array);
+
     inline json::value GetJsonValue(){
         return this->rootValue;};
 

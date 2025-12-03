@@ -189,8 +189,8 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
             }
 
             // set bounds
-            opt.set_lower_bounds(this->totalBoundsLower);
-            opt.set_upper_bounds(this->totalBoundsUpper);
+            opt.set_lower_bounds(this->totalLowerBound);
+            opt.set_upper_bounds(this->totalUpperBound);
 
             opt.set_maxeval(this->maxIteration);
             opt.set_xtol_rel(this->relativeTol);
@@ -438,15 +438,15 @@ void Ti5DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
         // left arm
         min = this->robotModel.lowerPositionLimit(this->leftArmID[0] + i - 1);
         max = this->robotModel.upperPositionLimit(this->leftArmID[0] + i - 1);
-        this->leftArmBoundsLower.push_back(min);
-        this->leftArmBoundsUpper.push_back(max);
+        this->leftArmLowerBound.push_back(min);
+        this->leftArmUpperBound.push_back(max);
         this->qLeftArmNeutral.push_back((min + max) / 2);
 
         // right arm
         min = this->robotModel.lowerPositionLimit(this->rightArmID[0] + i - 1);
         max = this->robotModel.upperPositionLimit(this->rightArmID[0] + i - 1);
-        this->rightArmBoundsLower.push_back(min);
-        this->rightArmBoundsUpper.push_back(max);
+        this->rightArmLowerBound.push_back(min);
+        this->rightArmUpperBound.push_back(max);
         this->qRightArmNeutral.push_back((min + max) / 2);
     }
 
@@ -456,44 +456,44 @@ void Ti5DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
 
     // base
     qNeutral.push_back(0);
-    totalBoundsLower.push_back(0);
-    totalBoundsUpper.push_back(0);
+    totalLowerBound.push_back(0);
+    totalUpperBound.push_back(0);
 
     // waist
     qNeutral.insert(qNeutral.end(), 3, 0);
-    totalBoundsLower.insert(totalBoundsLower.end(), 3, 0);
-    totalBoundsUpper.insert(totalBoundsUpper.end(), 3, 0);
+    totalLowerBound.insert(totalLowerBound.end(), 3, 0);
+    totalUpperBound.insert(totalUpperBound.end(), 3, 0);
 
     // left arm
     qNeutral.insert(qNeutral.end(), qLeftArmNeutral.begin(), qLeftArmNeutral.end());
-    totalBoundsLower.insert(totalBoundsLower.end(), leftArmBoundsLower.begin(), leftArmBoundsLower.end());
-    totalBoundsUpper.insert(totalBoundsUpper.end(), leftArmBoundsUpper.begin(), leftArmBoundsUpper.end());
+    totalLowerBound.insert(totalLowerBound.end(), leftArmLowerBound.begin(), leftArmLowerBound.end());
+    totalUpperBound.insert(totalUpperBound.end(), leftArmUpperBound.begin(), leftArmUpperBound.end());
 
     // neck
     qNeutral.insert(qNeutral.end(), 3, 0);
-    totalBoundsLower.insert(totalBoundsLower.end(), 3, 0);
-    totalBoundsUpper.insert(totalBoundsUpper.end(), 3, 0);
+    totalLowerBound.insert(totalLowerBound.end(), 3, 0);
+    totalUpperBound.insert(totalUpperBound.end(), 3, 0);
 
     // right arm
     qNeutral.insert(qNeutral.end(), qRightArmNeutral.begin(), qRightArmNeutral.end());
-    totalBoundsLower.insert(totalBoundsLower.end(), rightArmBoundsLower.begin(), rightArmBoundsLower.end());
-    totalBoundsUpper.insert(totalBoundsUpper.end(), rightArmBoundsUpper.begin(), rightArmBoundsUpper.end());
+    totalLowerBound.insert(totalLowerBound.end(), rightArmLowerBound.begin(), rightArmLowerBound.end());
+    totalUpperBound.insert(totalUpperBound.end(), rightArmUpperBound.begin(), rightArmUpperBound.end());
 
     // according to the config , set limitation to the joint
     // Left Arm
     std::cout<<"The current DOF of the left arm is "<<config_.dofArm[0]<<std::endl;
     for(size_t i=0;i<this->dofArm - config_.dofArm[0];i++){
         size_t temp = this->leftArmID.back() - 1 - i;
-        this->totalBoundsLower[temp] = 0;
-        this->totalBoundsUpper[temp] = 0;
+        this->totalLowerBound[temp] = 0;
+        this->totalUpperBound[temp] = 0;
         std::cout<<"Set limitation to left arm joint"<<temp<<std::endl;
     }
 
     std::cout<<"The current DOF of the right arm is "<<config_.dofArm[1]<<std::endl;
     for(size_t i=0;i<this->dofArm - config_.dofArm[1];i++){
         size_t temp = this->rightArmID.back() - 1 - i;
-        this->totalBoundsLower[temp] = 0;
-        this->totalBoundsUpper[temp] = 0;
+        this->totalLowerBound[temp] = 0;
+        this->totalUpperBound[temp] = 0;
         std::cout<<"Set limitation to right arm joint"<<temp<<std::endl;
     }
 
@@ -596,9 +596,9 @@ void Ti5DualArmSolver::InitOptim(){
 
     this->opti.subject_to(
                 this->opti.bounded(
-                    this->totalBoundsLower,
+                    this->totalLowerBound,
                     qVar,
-                    this->totalBoundsUpper
+                    this->totalUpperBound
                     ));
 
     this->opti.minimize(totalCost);

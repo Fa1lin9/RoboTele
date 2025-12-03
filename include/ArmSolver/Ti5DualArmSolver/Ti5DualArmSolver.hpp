@@ -172,14 +172,14 @@ private:
     std::vector<double> qRightArmNeutral;
     std::vector<double> qNeutral;
 
-    std::vector<double> leftArmBoundsLower;
-    std::vector<double> rightArmBoundsLower;
+    std::vector<double> leftArmLowerBound;
+    std::vector<double> rightArmLowerBound;
 
-    std::vector<double> leftArmBoundsUpper;
-    std::vector<double> rightArmBoundsUpper;
+    std::vector<double> leftArmUpperBound;
+    std::vector<double> rightArmUpperBound;
 
-    std::vector<double> totalBoundsLower;
-    std::vector<double> totalBoundsUpper;
+    std::vector<double> totalLowerBound;
+    std::vector<double> totalUpperBound;
 
 
     /* ------------------ Casadi Auto-Diff ------------------ */

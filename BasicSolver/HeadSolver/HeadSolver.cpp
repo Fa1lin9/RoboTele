@@ -13,6 +13,7 @@ HeadSolver::~HeadSolver(){
 
 void HeadSolver::Init(const RobotType::Type& type){
     this->type = type;
+
     this->configPath =
             static_cast<std::string>(SOURCE_FILE_PATH) + "/config/BasicSolver/HeadSolver/HeadSolver.json";
     std::cout << "[HeadSolver::Init] Current path of the configuration is " << std::endl;
@@ -20,8 +21,40 @@ void HeadSolver::Init(const RobotType::Type& type){
 
     this->jsonParser.Init(this->configPath);
 
+    // For Json Object
+    this->rootObj = this->jsonParser.GetJsonObject();
+    this->typeStr = RobotType::GetStrFromType(this->type);
+
+    if (!this->rootObj.contains(this->typeStr)) {
+        throw std::logic_error("[HeadSolver::Init] JSON does not contain robot '" + this->typeStr + "'");
+    }
+
+    try {
+        this->robotObj = this->rootObj[this->typeStr].as_object();
+    } catch (const std::exception &e) {
+        throw std::logic_error("[HeadSolver::Init] '" + this->typeStr + "' is not a JSON object. " + e.what());
+    }
+
+    // JointsInfo
+    this->jointsInfo = this->GetJointsInfo();
+
     // For Bounds
-    this->boundsLower = {};
+    this->upperBound = JsonParser::JsonArray2StdVecDouble(this->robotObj["UpperBound"].as_array());
+    this->lowerBound = JsonParser::JsonArray2StdVecDouble(this->robotObj["LowerBound"].as_array());
+
+    if(1){
+        for(size_t i=0;i<this->upperBound.size();i++){
+            std::cout << "Joint "
+                      << this->jointsInfo[i].index
+                      << " "
+                      << this->jointsInfo[i].name
+                      << ": UpperBound "
+                      << this->upperBound[i]
+                      << ", LowerBound "
+                      << this->lowerBound[i]
+                      << std::endl;
+        }
+    }
 }
 
 Eigen::Vector3d HeadSolver::Solve(const Eigen::Matrix4d &mat){
@@ -32,41 +65,35 @@ Eigen::Vector3d HeadSolver::Solve(const Eigen::Matrix4d &mat){
 //    this->rpy = MatrixUtils::RotationToEulerXYZ(rot);
     this->rpy = MatrixUtils::RotationToEulerZYX(rot);
 
-//    // Back to -pi ~ pi
-//    MatrixUtils::NormalizeAngle(this->rpy.value());
-
     this->roll = this->rpy.value()(0);
     this->pitch = this->rpy.value()(1);
     this->yaw = this->rpy.value()(2);
 
     // Clip the Angle
-//    auto jointsInfo = this->GetJointsInfo();
+    for(size_t i=0;i<this->jointsInfo.size();i++){
+        const auto& item = this->jointsInfo[i];
+
+        int axis = -1;
+        if(item.type == MatrixUtils::EulerAxis::Roll)  axis = 0;
+        if(item.type == MatrixUtils::EulerAxis::Pitch) axis = 1;
+        if(item.type == MatrixUtils::EulerAxis::Yaw)   axis = 2;
+
+        if(axis >= 0){
+            rpy.value()(axis) =
+                std::clamp(rpy.value()(axis), this->lowerBound[i], this->upperBound[i]);
+        }
+    }
 
     if(this->rpy.has_value()){
         return this->rpy.value();
     }else{
-        throw std::logic_error("[HeadSolver::GetValue] The rpy don't have value");
+        throw std::logic_error("[HeadSolver::Solve] The rpy don't have value");
     }
 };
 
 std::vector<int> HeadSolver::GetJointsIndex(){
-    json::object obj = this->jsonParser.GetJsonObject();
-
-    const std::string typeStr = RobotType::GetStrFromType(this->type);
-
-    if (!obj.contains(typeStr)) {
-        throw std::logic_error("[HeadSolver::GetJointsIndex] JSON does not contain robot '" + typeStr + "'");
-    }
-
-    json::object robotObj;
-    try {
-        robotObj = obj[typeStr].as_object();
-    } catch (const std::exception &e) {
-        throw std::logic_error("[HeadSolver::GetJointsIndex] '" + typeStr + "' is not a JSON object. " + e.what());
-    }
-
-    if (!robotObj.contains("JointsIndex")) {
-        throw std::logic_error("[HeadSolver::GetJointsIndex] '" + typeStr + "' does not contain JointsIndex");
+   if (!robotObj.contains("JointsIndex")) {
+        throw std::logic_error("[HeadSolver::GetJointsIndex] '" + this->typeStr + "' does not contain JointsIndex");
     }
 
     try {
@@ -75,30 +102,15 @@ std::vector<int> HeadSolver::GetJointsIndex(){
     } catch (const std::exception &e) {
         throw std::logic_error(
             std::string("[HeadSolver::GetJointsIndex] Failed to parse JointsIndex for '")
-            + typeStr + "'. " + e.what()
+            + this->typeStr + "'. " + e.what()
         );
     }
 }
 
 
 std::vector<std::string> HeadSolver::GetJointsName(){
-    json::object obj = this->jsonParser.GetJsonObject();
-
-    const std::string typeStr = RobotType::GetStrFromType(this->type);
-
-    if (!obj.contains(typeStr)) {
-        throw std::logic_error("[HeadSolver::GetJointsName] JSON does not contain robot '" + typeStr + "'");
-    }
-
-    json::object robotObj;
-    try {
-        robotObj = obj[typeStr].as_object();
-    } catch (const std::exception& e) {
-        throw std::logic_error("[HeadSolver::GetJointsName] '" + typeStr + "' is not a JSON object. " + e.what());
-    }
-
     if (!robotObj.contains("JointsName")) {
-        throw std::logic_error("[HeadSolver::GetJointsName] '" + typeStr + "' does not contain JointsName");
+        throw std::logic_error("[HeadSolver::GetJointsName] '" + this->typeStr + "' does not contain JointsName");
     }
 
     try {
@@ -107,25 +119,14 @@ std::vector<std::string> HeadSolver::GetJointsName(){
     } catch (const std::exception &e) {
         throw std::logic_error(
             std::string("[HeadSolver::GetJointsName] Failed to parse JointsName for '")
-            + typeStr + "'. " + e.what());
+            + this->typeStr + "'. " + e.what());
     }
 }
 
 
 std::vector<RobotType::JointInfo> HeadSolver::GetJointsInfo(){
-    json::object obj = this->jsonParser.GetJsonObject();
-
-    const std::string typeStr = RobotType::GetStrFromType(this->type);
-
-    if (!obj.contains(typeStr)) {
-        throw std::logic_error("[HeadSolver::GetJointsName] JSON does not contain robot '" + typeStr + "'");
-    }
-
-    json::object robotObj;
-    try {
-        robotObj = obj[typeStr].as_object();
-    } catch (const std::exception& e) {
-        throw std::logic_error("[HeadSolver::GetJointsName] '" + typeStr + "' is not a JSON object. " + e.what());
+    if (!this->robotObj.contains("EulerAxis")) {
+        throw std::logic_error("[HeadSolver::GetJointsInfo] '" + this->typeStr + "' does not contain EulerAxis");
     }
 
     auto names = this->GetJointsName();

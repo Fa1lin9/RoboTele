@@ -153,3 +153,40 @@ std::vector<int> JsonParser::JsonArray2StdVecInt(const json::array &array){
 
     return vec;
 }
+
+std::vector<double> JsonParser::JsonArray2StdVecDouble(const json::array &array){
+    if(array.empty()){
+        std::cout<<"[JsonParser::JsonArray2StdVecDouble] The input array is empty!"<<std::endl;
+        return std::vector<double>();
+    }
+
+    std::vector<double> vec;
+    vec.reserve(array.size());
+
+    for(size_t i = 0; i < array.size(); ++i){
+        const auto& member = array[i];
+
+        // 检查是否是 number 类型
+        if(!member.is_double() && !member.is_int64() && !member.is_uint64()){
+            throw std::invalid_argument(
+                "[JsonParser::JsonArray2StdVecDouble] Invalid member at index "
+                + std::to_string(i) +
+                ", expected number!"
+            );
+        }
+
+        try {
+            vec.push_back(json::value_to<double>(member));
+        } catch (const std::exception& e) {
+            throw std::runtime_error(
+                "[JsonParser::JsonArray2StdVecDouble] Failed to convert array["
+                + std::to_string(i)
+                + "] to double: "
+                + e.what()
+            );
+        }
+    }
+
+    return vec;
+}
+

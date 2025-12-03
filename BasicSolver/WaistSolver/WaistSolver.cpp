@@ -21,6 +21,40 @@ void WaistSolver::Init(const RobotType::Type& type){
     std::cout << this->configPath << std::endl;
 
     this->jsonParser.Init(this->configPath);
+
+    // For Json Object
+    this->rootObj = this->jsonParser.GetJsonObject();
+    this->typeStr = RobotType::GetStrFromType(this->type);
+
+    if (!this->rootObj.contains(this->typeStr)) {
+        throw std::logic_error("[WaistSolver::Init] JSON does not contain robot '" + this->typeStr + "'");
+    }
+
+    try {
+        this->robotObj = this->rootObj[this->typeStr].as_object();
+    } catch (const std::exception &e) {
+        throw std::logic_error("[WaistSolver::Init] '" + this->typeStr + "' is not a JSON object. " + e.what());
+    }
+
+    // JointsInfo
+    this->jointsInfo = this->GetJointsInfo();
+
+    // For Bounds
+    this->upperBound = JsonParser::JsonArray2StdVecDouble(this->robotObj["UpperBound"].as_array());
+    this->lowerBound = JsonParser::JsonArray2StdVecDouble(this->robotObj["LowerBound"].as_array());
+    if(1){
+        for(size_t i=0;i<this->upperBound.size();i++){
+            std::cout << "Joint "
+                      << this->jointsInfo[i].index
+                      << " "
+                      << this->jointsInfo[i].name
+                      << ": UpperBound "
+                      << this->upperBound[i]
+                      << ", LowerBound "
+                      << this->lowerBound[i]
+                      << std::endl;
+        }
+    }
 }
 
 Eigen::Vector3d WaistSolver::Solve(const Eigen::Matrix4d &mat){
@@ -31,9 +65,6 @@ Eigen::Vector3d WaistSolver::Solve(const Eigen::Matrix4d &mat){
 //    this->rpy = MatrixUtils::RotationToEulerXYZ(rot);
     this->rpy = MatrixUtils::RotationToEulerZYX(rot);
 
-//    // Back to -pi ~ pi
-//    MatrixUtils::NormalizeAngle(this->rpy.value());
-
     this->roll = this->rpy.value()(0);
     this->pitch = this->rpy.value()(1);
     this->yaw = this->rpy.value()(2);
@@ -42,90 +73,49 @@ Eigen::Vector3d WaistSolver::Solve(const Eigen::Matrix4d &mat){
     if(this->rpy.has_value()){
         return this->rpy.value();
     }else{
-        throw std::logic_error("[WaistSolver::GetValue] The rpy don't have value");
+        throw std::logic_error("[WaistSolver::Solve] The rpy don't have value");
     }
 };
 
 std::vector<int> WaistSolver::GetJointsIndex(){
-    json::object obj = this->jsonParser.GetJsonObject();
-
-    const std::string typeStr = RobotType::GetStrFromType(this->type);
-
-    if (!obj.contains(typeStr)) {
-        throw std::logic_error("[WaistSolver::GetJointsIndex] JSON does not contain robot '" + typeStr + "'");
-    }
-
-    json::object robotObj;
-    try {
-        robotObj = obj[typeStr].as_object();
-    } catch (const std::exception &e) {
-        throw std::logic_error("[WaistSolver::GetJointsIndex] '" + typeStr + "' is not a JSON object. " + e.what());
-    }
-
-    if (!robotObj.contains("JointsIndex")) {
-        throw std::logic_error("[WaistSolver::GetJointsIndex] '" + typeStr + "' does not contain JointsIndex");
+    if (!this->robotObj.contains("JointsIndex")) {
+        throw std::logic_error("[WaistSolver::GetJointsIndex] '" + this->typeStr + "' does not contain JointsIndex");
     }
 
     try {
-        auto arr = robotObj["JointsIndex"].as_array();
+        auto arr = this->robotObj["JointsIndex"].as_array();
         return JsonParser::JsonArray2StdVecInt(arr);
     } catch (const std::exception &e) {
         throw std::logic_error(
             std::string("[WaistSolver::GetJointsIndex] Failed to parse JointsIndex for '")
-            + typeStr + "'. " + e.what()
+            + this->typeStr + "'. " + e.what()
         );
     }
 }
 
 std::vector<std::string> WaistSolver::GetJointsName(){
-    json::object obj = this->jsonParser.GetJsonObject();
-
-    const std::string typeStr = RobotType::GetStrFromType(this->type);
-
-    if (!obj.contains(typeStr)) {
-        throw std::logic_error("[WaistSolver::GetJointsName] JSON does not contain robot '" + typeStr + "'");
-    }
-
-    json::object robotObj;
-    try {
-        robotObj = obj[typeStr].as_object();
-    } catch (const std::exception& e) {
-        throw std::logic_error("[WaistSolver::GetJointsName] '" + typeStr + "' is not a JSON object. " + e.what());
-    }
-
-    if (!robotObj.contains("JointsName")) {
-        throw std::logic_error("[WaistSolver::GetJointsName] '" + typeStr + "' does not contain JointsName");
+    if (!this->robotObj.contains("JointsName")) {
+        throw std::logic_error("[WaistSolver::GetJointsName] '" + this->typeStr + "' does not contain JointsName");
     }
 
     try {
-        auto arr = robotObj["JointsName"].as_array();
+        auto arr = this->robotObj["JointsName"].as_array();
         return JsonParser::JsonArray2StdVecStr(arr);
     } catch (const std::exception &e) {
         throw std::logic_error(
             std::string("[WaistSolver::GetJointsName] Failed to parse JointsName for '")
-            + typeStr + "'. " + e.what());
+            + this->typeStr + "'. " + e.what());
     }
 }
 
 std::vector<RobotType::JointInfo> WaistSolver::GetJointsInfo(){
-    json::object obj = this->jsonParser.GetJsonObject();
-
-    const std::string typeStr = RobotType::GetStrFromType(this->type);
-
-    if (!obj.contains(typeStr)) {
-        throw std::logic_error("[WaistSolver::GetJointsName] JSON does not contain robot '" + typeStr + "'");
-    }
-
-    json::object robotObj;
-    try {
-        robotObj = obj[typeStr].as_object();
-    } catch (const std::exception& e) {
-        throw std::logic_error("[WaistSolver::GetJointsName] '" + typeStr + "' is not a JSON object. " + e.what());
+    if (!this->robotObj.contains("EulerAxis")) {
+        throw std::logic_error("[WaistSolver::GetJointsInfo] '" + this->typeStr + "' does not contain EulerAxis");
     }
 
     auto names = this->GetJointsName();
     auto indices = this->GetJointsIndex();
-    auto types = JsonParser::JsonArray2StdVecStr(robotObj["EulerAxis"].as_array());
+    auto types = JsonParser::JsonArray2StdVecStr(this->robotObj["EulerAxis"].as_array());
 
     if(names.size() != indices.size()){
         throw std::logic_error("[WaistSolver::GetJointsInfo] Names and indices size mismatch!");

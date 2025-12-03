@@ -35,10 +35,16 @@ private:
 
     std::string configPath;
     JsonParser jsonParser;
+    json::object rootObj;
+    json::object robotObj;
 
-    std::vector<double> boundsUpper;
-    std::vector<double> boundsLower;
+    std::string typeStr;
+
+    std::vector<double> upperBound;
+    std::vector<double> lowerBound;
 
     RobotType::Type type;
+
+    std::vector<RobotType::JointInfo> jointsInfo;
 };
 

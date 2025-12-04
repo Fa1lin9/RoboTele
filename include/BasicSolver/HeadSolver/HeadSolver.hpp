@@ -3,7 +3,7 @@
 #include <Eigen/Dense>
 #include <iostream>
 #include <boost/optional.hpp>
-#include <RobotType.hpp>
+#include <RobotBase.hpp>
 #include <source_path.h>
 #include <JsonParser/JsonParser.hpp>
 #include <MatrixUtils.hpp>
@@ -12,10 +12,10 @@ class HeadSolver
 {
 public:
     HeadSolver();
-    HeadSolver(const RobotType::Type& type);
+    HeadSolver(const RobotBase::RobotType& type);
     ~HeadSolver();
 
-    void Init(const RobotType::Type& type);
+    void Init(const RobotBase::RobotType& type);
 
     Eigen::Vector3d Solve(const Eigen::Matrix4d &mat);
 
@@ -23,7 +23,7 @@ public:
 
     std::vector<std::string> GetJointsName();
 
-    std::vector<RobotType::JointInfo> GetJointsInfo();
+    std::vector<RobotBase::JointInfo> GetJointsInfo();
 
 private:
     Eigen::Matrix4d headPose;
@@ -43,8 +43,8 @@ private:
     std::vector<double> upperBound;
     std::vector<double> lowerBound;
 
-    RobotType::Type type;
+    RobotBase::RobotType type;
 
-    std::vector<RobotType::JointInfo> jointsInfo;
+    std::vector<RobotBase::JointInfo> jointsInfo;
 };
 

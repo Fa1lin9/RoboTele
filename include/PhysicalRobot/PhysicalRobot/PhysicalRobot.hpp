@@ -6,7 +6,7 @@
 #include <FunctionLogger.hpp>
 #include <iostream>
 
-#include <RobotType.hpp>
+#include <RobotBase.hpp>
 
 class PhysicalRobot
 {
@@ -18,7 +18,7 @@ public:
     struct BasicConfig
     {
         std::string IP;
-        RobotType::Type robotType;
+        RobotBase::RobotType robotType;
     };
 
     struct Ti5RobotConfig

@@ -86,17 +86,17 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
     //    casadi::DM targetPoseRightDM = casadi::DM(targetPoseRightVec);
     //    targetPoseRightDM = casadi::DM::reshape(targetPoseRightDM, targetPose[1].rows(), targetPose[1].cols());
     //    this->opti.set_value(this->targetPoseRight, targetPoseRightDM);
-        casadi::DM targetPoseLeftDM(4,4);
-        casadi::DM targetPoseRightDM(4,4);
+        casadi::DM leftTargetPoseDM(4,4);
+        casadi::DM rightTargetPoseDM(4,4);
         for(size_t i=0;i<4;i++){
             for(size_t j=0;j<4;j++){
-                targetPoseLeftDM(i,j) = targetPose[0](i,j);
-                targetPoseRightDM(i,j) = targetPose[1](i,j);
+                leftTargetPoseDM(i,j) = targetPose[0](i,j);
+                rightTargetPoseDM(i,j) = targetPose[1](i,j);
             }
         }
 
-        this->opti.set_value(this->targetPoseLeft, targetPoseLeftDM);
-        this->opti.set_value(this->targetPoseRight, targetPoseRightDM);
+        this->opti.set_value(this->targetPoseLeft, leftTargetPoseDM);
+        this->opti.set_value(this->targetPoseRight, rightTargetPoseDM);
 
 //        std::cout<<"targetPose in Eigen:"<<targetPose[0]<<std::endl;
 //        std::cout<<"targetPose in Casadi:"<<targetPoseLeftDM<<std::endl;

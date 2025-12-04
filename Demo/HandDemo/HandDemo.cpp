@@ -7,7 +7,7 @@ int main(){
 
     HandSolver::BasicConfig handSolverConfig;
     handSolverConfig.dofHand = 6;
-    handSolverConfig.type = HandSolver::Type::VisionPro;
+    handSolverConfig.type = XRBase::XRType::VisionPro;
     auto handSolver = HandSolver::GetPtr(handSolverConfig);
 
     // Collector VisionPro's Data

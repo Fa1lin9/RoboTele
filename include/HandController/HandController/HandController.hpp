@@ -11,14 +11,11 @@
 #include <boost/make_shared.hpp>
 #include <Eigen/Dense>
 
+#include <HandBase.hpp>
+
 class HandController
 {
 public:
-    enum Type{
-        ROHand,
-
-    };
-
     struct ModBusConfig
     {
         std::string device;
@@ -31,7 +28,7 @@ public:
 
     struct BasicConfig
     {
-        HandController::Type type;
+        HandBase::HandType type;
         HandController::ModBusConfig modbusConfig;
     };
 
@@ -55,10 +52,7 @@ public:
 
     static boost::shared_ptr<HandController> GetPtr(const HandController::BasicConfig& config_);
 
-    static HandController::Type GetTypeFromStr(const std::string& str);
-
 protected:
-    static const std::unordered_map<std::string, HandController::Type> typeMap;
 
     std::vector<std::string> jointsName;
     std::vector<double> jointsBoundsUpper;

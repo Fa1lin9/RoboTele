@@ -132,7 +132,7 @@ int main()
 //    };
 
     HandController::BasicConfig basicConfig = {
-        .type = HandController::Type::ROHand,
+        .type = HandBase::HandType::ROHand,
         .modbusConfig = modbusConfig,
     };
 

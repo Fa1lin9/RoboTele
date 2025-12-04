@@ -1,8 +1,6 @@
 #pragma once
 #include <RobotTeleoperate/RobotTeleoperate.hpp>
 
-#include <DataCollector/DataCollector.hpp>
-
 class Ti5RobotTeleoperate
         :public RobotTeleoperate
 {
@@ -33,5 +31,5 @@ private:
 
     bool saveFlag = true;
 
-    const RobotType::Type robotType = RobotType::Type::Ti5Robot;
+    const RobotBase::RobotType robotType = RobotBase::RobotType::Ti5Robot;
 };

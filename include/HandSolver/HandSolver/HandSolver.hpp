@@ -8,17 +8,15 @@
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
 
+#include <HandBase.hpp>
+
+#include <XRBase.hpp>
 class HandSolver
 {
 public:
-    enum Type{
-        VisionPro,
-
-    };
-
     struct BasicConfig
     {
-        HandSolver::Type type;
+        XRBase::XRType type;
         int dofHand;
     };
 
@@ -36,12 +34,7 @@ public:
 
     static boost::shared_ptr<HandSolver> GetPtr(const HandSolver::BasicConfig& config_);
 
-    static HandSolver::Type GetTypeFromStr(const std::string& str);
-
-
 protected:
-    static const std::unordered_map<std::string, HandSolver::Type> typeMap;
-
 
     int dofHand;
 };

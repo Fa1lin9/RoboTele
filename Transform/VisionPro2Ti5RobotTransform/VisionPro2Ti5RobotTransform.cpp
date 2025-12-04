@@ -28,8 +28,8 @@ std::vector<Eigen::Matrix4d> VisionPro2Ti5RobotTransform::Solve(
     leftWrist2RobotWorldPose = leftWrist2RobotWorldPose * T_Robot2LeftWrist;
     rightWrist2RobotWorldPose = rightWrist2RobotWorldPose * T_Robot2RightWrist;
 
-    // Lock the origin
-    if(config_.isLockHead){
+    // Mode Selection
+    if (config_.mode == Transform::TeleMode::HeadMode){
         Eigen::Matrix4d head2RobotWorldPoseLocked = Eigen::Matrix4d::Identity();
         // X
         head2RobotWorldPoseLocked(0,3) = 0;
@@ -43,36 +43,21 @@ std::vector<Eigen::Matrix4d> VisionPro2Ti5RobotTransform::Solve(
         head2RobotWorldPoseLocked.block<3,3>(0,0) = Eigen::Matrix3d::Identity();
 
         // 转化到头坐标系
-    //    head2RobotWorldPose.block<3,3>(0,0) = Eigen::Matrix3d::Identity();
-//        Eigen::Matrix4d head2RobotWorldPoseInv = head2RobotWorldPose.inverse();
-    //    leftWrist2RobotWorldPose = head2RobotWorldPoseInv * leftWrist2RobotWorldPose;
-    //    rightWrist2RobotWorldPose = head2RobotWorldPoseInv * rightWrist2RobotWorldPose;
-    //    leftWrist2RobotWorldPose.block<3,1>(0,3) =
-    //            (head2RobotWorldPoseInv * leftWrist2RobotWorldPose).block<3,1>(0,3);
-    //    rightWrist2RobotWorldPose.block<3,1>(0,3) =
-    //            (head2RobotWorldPoseInv * rightWrist2RobotWorldPose).block<3,1>(0,3);
-
         // only for translation
         leftWrist2RobotWorldPose.block<3,1>(0,3) =
                 leftWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPoseLocked.block<3,1>(0,3);
         rightWrist2RobotWorldPose.block<3,1>(0,3) =
                 rightWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPoseLocked.block<3,1>(0,3);
-    }else{
+    }else if (config_.mode == Transform::TeleMode::WaistMode)
+    {
         // 转化到头坐标系
         Eigen::Matrix4d head2RobotWorldPoseInv = head2RobotWorldPose.inverse();
         leftWrist2RobotWorldPose = head2RobotWorldPoseInv * leftWrist2RobotWorldPose;
         rightWrist2RobotWorldPose = head2RobotWorldPoseInv * rightWrist2RobotWorldPose;
-    //    leftWrist2RobotWorldPose.block<3,1>(0,3) =
-    //            (head2RobotWorldPoseInv * leftWrist2RobotWorldPose).block<3,1>(0,3);
-    //    rightWrist2RobotWorldPose.block<3,1>(0,3) =
-    //            (head2RobotWorldPoseInv * rightWrist2RobotWorldPose).block<3,1>(0,3);
-
-//        // only for translation
 //        leftWrist2RobotWorldPose.block<3,1>(0,3) =
-//                leftWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPose.block<3,1>(0,3);
+//                (head2RobotWorldPoseInv * leftWrist2RobotWorldPose).block<3,1>(0,3);
 //        rightWrist2RobotWorldPose.block<3,1>(0,3) =
-//                rightWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPose.block<3,1>(0,3);
-
+//                (head2RobotWorldPoseInv * rightWrist2RobotWorldPose).block<3,1>(0,3);
     }
 
     // 补偿

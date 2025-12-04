@@ -2,7 +2,7 @@
 #include <WaistSolver/WaistSolver.hpp>
 
 int main(){
-    HeadSolver head(RobotType::Type::Ti5Robot);
+    HeadSolver head(RobotBase::RobotType::Ti5Robot);
 
     auto headJointsIndex = head.GetJointsIndex();
     auto headJointsName = head.GetJointsName();
@@ -16,7 +16,7 @@ int main(){
                    headJointsInfo[i].type<<std::endl;
     }
 
-    WaistSolver waist(RobotType::Type::Ti5Robot);
+    WaistSolver waist(RobotBase::RobotType::Ti5Robot);
 
     auto waistJointsIndex = waist.GetJointsIndex();
     auto waistJointsName = waist.GetJointsName();

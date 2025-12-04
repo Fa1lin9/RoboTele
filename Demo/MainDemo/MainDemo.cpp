@@ -52,7 +52,7 @@ int main(){
 
     // PhysicalRobot
     PhysicalRobot::BasicConfig robotConfig = {
-        .robotType = RobotType::Type::Ti5Robot,
+        .robotType = RobotBase::RobotType::Ti5Robot,
     };
 
     // Ros2Bridge
@@ -63,7 +63,7 @@ int main(){
     /*************************************************************/
 
     RobotTeleoperate::BasicConfig config = {
-        .robotType = RobotType::Type::Ti5Robot,
+        .robotType = RobotBase::RobotType::Ti5Robot,
         .address = "tcp://127.0.0.1:5555",
 //        .address = "ipc:///tmp/teleoperate",
         .FPS = 25,

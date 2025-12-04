@@ -8,7 +8,7 @@ Ti5RobotBasicControlGUI::Ti5RobotBasicControlGUI(QWidget *parent)
     ui->setupUi(this);
     // Initialize the robot
     PhysicalRobot::BasicConfig config = {
-        .robotType = RobotType::Type::Ti5Robot,
+        .robotType = RobotBase::RobotType::Ti5Robot,
     };
     this->physicalRobotPtr = PhysicalRobot::GetPtr(config);
 }

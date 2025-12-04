@@ -3,7 +3,7 @@
 HeadSolver::HeadSolver(){
 }
 
-HeadSolver::HeadSolver(const RobotType::Type& type){
+HeadSolver::HeadSolver(const RobotBase::RobotType& type){
     this->Init(type);
 }
 
@@ -11,7 +11,7 @@ HeadSolver::~HeadSolver(){
 
 }
 
-void HeadSolver::Init(const RobotType::Type& type){
+void HeadSolver::Init(const RobotBase::RobotType& type){
     this->type = type;
 
     this->configPath =
@@ -23,7 +23,7 @@ void HeadSolver::Init(const RobotType::Type& type){
 
     // For Json Object
     this->rootObj = this->jsonParser.GetJsonObject();
-    this->typeStr = RobotType::GetStrFromType(this->type);
+    this->typeStr = RobotBase::GetStrFromType(this->type);
 
     if (!this->rootObj.contains(this->typeStr)) {
         throw std::logic_error("[HeadSolver::Init] JSON does not contain robot '" + this->typeStr + "'");
@@ -124,7 +124,7 @@ std::vector<std::string> HeadSolver::GetJointsName(){
 }
 
 
-std::vector<RobotType::JointInfo> HeadSolver::GetJointsInfo(){
+std::vector<RobotBase::JointInfo> HeadSolver::GetJointsInfo(){
     if (!this->robotObj.contains("EulerAxis")) {
         throw std::logic_error("[HeadSolver::GetJointsInfo] '" + this->typeStr + "' does not contain EulerAxis");
     }
@@ -137,10 +137,10 @@ std::vector<RobotType::JointInfo> HeadSolver::GetJointsInfo(){
         throw std::logic_error("[HeadSolver::GetJointsInfo] Names and indices size mismatch!");
     }
 
-    std::vector<RobotType::JointInfo> jointsInfo;
+    std::vector<RobotBase::JointInfo> jointsInfo;
     jointsInfo.reserve(names.size());
     for(size_t i=0; i<names.size(); ++i){
-        RobotType::JointInfo item{
+        RobotBase::JointInfo item{
             .name = names[i],
             .index = indices[i],
             .type = MatrixUtils::GetEulerAxisFromStr(types[i]),

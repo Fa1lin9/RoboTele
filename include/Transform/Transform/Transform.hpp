@@ -24,6 +24,11 @@ public:
         Transform::Type type;
     };
 
+    enum TeleMode{
+        HeadMode,
+        WaistMode,
+    };
+
     struct MsgConfig{
         // 头和双臂手腕基于XR设备世界坐标系的位姿矩阵
         Eigen::Matrix4d                 head2xrWorldPose;
@@ -34,7 +39,7 @@ public:
         Eigen::Matrix<double,25,3>      leftHandPositions;
         Eigen::Matrix<double,25,3>      rightHandPositions;
 
-        bool isLockHead;
+        Transform::TeleMode mode;
     };
 
     Transform();

@@ -20,7 +20,7 @@
 
 #include <nlopt.hpp>
 
-#include <RobotType.hpp>
+#include <RobotBase.hpp>
 #include <MatrixUtils.hpp>
 #include <FunctionLogger.hpp>
 

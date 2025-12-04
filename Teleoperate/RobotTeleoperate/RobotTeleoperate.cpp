@@ -11,7 +11,7 @@ RobotTeleoperate::~RobotTeleoperate(){
 
 boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const RobotTeleoperate::BasicConfig &config_){
     switch (config_.robotType) {
-        case RobotType::Type::Ti5Robot :{
+        case RobotBase::RobotType::Ti5Robot :{
            return boost::make_shared<Ti5RobotTeleoperate>(config_);
         }
         default:{
@@ -29,7 +29,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
     json::object physicalRObotObj = rootObj["PhysicalRobotConfig"].as_object();
     json::object ros2BridgeObj = rootObj["Ros2BridgeConfig"].as_object();
 
-    RobotType::Type robotType = RobotType::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
+    RobotBase::RobotType robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
 
     // IKSolver
     ArmSolver::BasicConfig solverConfig = {
@@ -65,7 +65,6 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .T_Robot2RightWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2RightWrist"].as_array()),
         .offset = JsonParser::JsonArray2EigenVectorXd(transformObj["Offset"].as_array()),
         .type = Transform::GetTypeFromStr(transformObj["Type"].as_string().c_str()),
-//        .isLockOrigin = transformObj["IsLockHead"].as_bool(),
     };
 
     // PhysicalRobot
@@ -81,15 +80,15 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 
 
     RobotTeleoperate::BasicConfig config = {
-        .robotType = RobotType::Type::Ti5Robot,
+        .robotType = RobotBase::RobotType::Ti5Robot,
         .address = rootObj["Address"].as_string().c_str(),
         .FPS = static_cast<int>(rootObj["FPS"].as_int64()),
         .solverConfig = solverConfig,
         .robotConfig = physicalRobotConfig,
         .transformConfig = transformConfig,
         .bridgeConfig = bridgeConfig,
-        .isSim = rootObj["IsSimulation"].as_bool(),
-        .isReal = rootObj["IsReal"].as_bool(),
+        .isSim  = rootObj["IsSimulatedRobot"].as_bool(),
+        .isReal = rootObj["IsRealWorldRobot"].as_bool(),
     };
 
     return RobotTeleoperate::GetPtr(config);

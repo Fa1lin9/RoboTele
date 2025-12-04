@@ -15,8 +15,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
-#include <RobotType.hpp>
+#include <RobotBase.hpp>
 
+#include <DataCollector/DataCollector.hpp>
 
 class RobotTeleoperate
 {
@@ -26,7 +27,7 @@ public:
 //    };
 
     struct BasicConfig{
-        RobotType::Type robotType;
+        RobotBase::RobotType robotType;
         std::string address;
         int FPS;
 
@@ -66,5 +67,14 @@ protected:
 
     bool isSim;
     bool isReal;
+
+    // Valuable
+    std::vector<Eigen::Matrix4d> poseMatrix;
+
+    std::vector<Eigen::Vector3d> leftHandPositions;
+    std::vector<Eigen::Vector3d> rightHandPositions;
+
+    DataCollector::HandGesture leftHandGesture;
+    DataCollector::HandGesture rightHandGesture;
 
 };

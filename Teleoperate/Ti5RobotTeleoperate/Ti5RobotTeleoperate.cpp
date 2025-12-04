@@ -133,27 +133,20 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         auto start = std::chrono::high_resolution_clock::now();
 
         // Get Data from XR Device
-        std::vector<Eigen::Matrix4d> poseMatrix;
-
-        std::vector<Eigen::Vector3d> leftHandPositions;
-        std::vector<Eigen::Vector3d> rightHandPositions;
-
-        DataCollector::HandGesture leftHandGesture;
-        DataCollector::HandGesture rightHandGesture;
         if(this->dataCollector.HasNewData()){
 //            std::cout << "Get New Data! " << std::endl;
-            poseMatrix = this->dataCollector.GetPoseMatrix();
+            this->poseMatrix = this->dataCollector.GetPoseMatrix();
 
-            leftHandPositions = this->dataCollector.GetLeftHandPositions();
-            rightHandPositions = this->dataCollector.GetRightHandPositions();
+            this->leftHandPositions = this->dataCollector.GetLeftHandPositions();
+            this->rightHandPositions = this->dataCollector.GetRightHandPositions();
 
-            leftHandGesture = this->dataCollector.GetLeftHandGesture();
-            rightHandGesture = this->dataCollector.GetRightHandGesture();
+            this->leftHandGesture = this->dataCollector.GetLeftHandGesture();
+            this->rightHandGesture = this->dataCollector.GetRightHandGesture();
         }else{
             continue;
         }
 
-        if(poseMatrix.size()==0 || poseMatrix.empty()){
+        if(this->poseMatrix.size()==0 || this->poseMatrix.empty()){
             std::string error = " The pose matrix received is not qualified !";
             throw std::invalid_argument(error);
             continue;
@@ -161,23 +154,29 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
 
         if(verbose){
             std::cout << "------------- Original Data -------------" << std::endl;
-            std::cout << "Head Pose:\n" << poseMatrix[0] << std::endl;
-            std::cout << "Left Wrist Pose:\n" << poseMatrix[1] << std::endl;
-            std::cout << "Right Wrist Pose:\n" << poseMatrix[2] << std::endl;
+            std::cout << "Head Pose:\n" << this->poseMatrix[0] << std::endl;
+            std::cout << "Left Wrist Pose:\n" << this->poseMatrix[1] << std::endl;
+            std::cout << "Right Wrist Pose:\n" << this->poseMatrix[2] << std::endl;
             std::cout << "-----------------------------------------" << std::endl;
         }
 
+        // Message Config
         Transform::MsgConfig msgConfig{
-            .head2xrWorldPose = poseMatrix[0],
-            .leftWrist2xrWorldPose = poseMatrix[1],
-            .rightWrist2xrWorldPose = poseMatrix[2],
+            .head2xrWorldPose = this->poseMatrix[0],
+            .leftWrist2xrWorldPose = this->poseMatrix[1],
+            .rightWrist2xrWorldPose = this->poseMatrix[2],
 //            .isLockHead = true,
         };
 
-        if(leftHandGesture.pinchState || rightHandGesture.pinchState){
-            msgConfig.isLockHead = false;
+        bool modeFlag =
+                this->leftHandGesture.pinchValue < 0.012 || this->rightHandGesture.pinchValue < 0.012;
+//        bool modeFlag =
+//                this->leftHandGesture.pinchState || this->rightHandGesture.pinchState;
+        if(modeFlag)
+        {
+            msgConfig.mode = Transform::TeleMode::WaistMode;
         }else{
-            msgConfig.isLockHead = true;
+            msgConfig.mode = Transform::TeleMode::HeadMode;
         }
 
         // Transformed the Matrix
@@ -195,22 +194,17 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         // Use ArmSolver to Solve
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
 
-//        auto solveStart = std::chrono::high_resolution_clock::now();
         boost::optional<Eigen::VectorXd> q =
                 ikSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
                                    qInit,
                                    false);
-//        auto solveEnd = std::chrono::high_resolution_clock::now();
-//        auto solveDuration = std::chrono::duration_cast<std::chrono::milliseconds>(solveEnd - solveStart);
-//        std::cout << " Solve 耗时: " << solveDuration.count() << " ms" << std::endl;
-
-        Eigen::VectorXd qEigen;
 
         // Check the Solution
+        Eigen::VectorXd qEigen;
         if(q.has_value()){
             qEigen = q.value();
 
-            if(msgConfig.isLockHead){
+            if (msgConfig.mode == Transform::TeleMode::HeadMode){
                 // Control the Head
                 Eigen::Vector3d headRPY = this->headSolver.Solve(transformedMsg[2]);
                 std::cout<<"HeadRPY: "<<headRPY<<std::endl;
@@ -226,7 +220,8 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
                 qEigen(waistJointsInfo[0].index) = 0; // Row
                 qEigen(waistJointsInfo[1].index) = 0; // Yaw
                 qEigen(waistJointsInfo[2].index) = 0; // Pitch
-            }else{
+            }else if (msgConfig.mode == Transform::TeleMode::WaistMode)
+            {
                 // Control the Head
                 Eigen::Vector3d headRPY = this->headSolver.Solve(transformedMsg[2]);
                 std::cout<<"HeadRPY: "<<headRPY<<std::endl;
@@ -274,8 +269,10 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             }
 
             // set the initial value of the joint
+            // For Simulated Robot
             qInit = qEigen;
 
+            // For Real Robot
 //            qInit = physicalRobotPtr->GetJointsAngleEigen();
             std::cout << "q:\n" << std::fixed << std::setprecision(5) << q << std::endl;
         }else{
@@ -292,7 +289,6 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         std::cout << " Main Loop 耗时: " << duration.count() << " ms" << std::endl;
-
 
         int framePeriod = static_cast<int>(1000.0 / this->FPS);
         int sleepTime = framePeriod - duration.count();

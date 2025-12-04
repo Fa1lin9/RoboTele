@@ -3,8 +3,8 @@
     "Address": "tcp://127.0.0.1:5555",
     "FPS": 25,
 
-    "IsSimulation": true,
-    "IsReal": false,
+    "IsSimulatedRobot": true,
+    "IsRealWorldRobot": false,
 
     "SolverConfig":{
         "Type": "Ti5DualArm",

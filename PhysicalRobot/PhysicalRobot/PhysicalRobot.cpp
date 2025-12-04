@@ -26,7 +26,7 @@ bool PhysicalRobot::MoveJ(const PhysicalRobot::Ti5RobotConfig& config_){
 
 boost::shared_ptr<PhysicalRobot> PhysicalRobot::GetPtr(const PhysicalRobot::BasicConfig &config_){
     switch (config_.robotType) {
-        case RobotType::Type::Ti5Robot :{
+        case RobotBase::RobotType::Ti5Robot :{
            return boost::make_shared<Ti5PhysicalRobot>(config_);
         }
         default:{

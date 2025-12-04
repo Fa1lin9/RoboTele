@@ -85,7 +85,45 @@ namespace MatrixUtils{
 
         return rpy;  // [roll, pitch, yaw]
     }
-    
+
+    inline Eigen::Vector3d RotationToEulerXZY(const Eigen::Matrix3d &R)
+    {
+        Eigen::Vector3d eul;  // [roll(X), pitch(Y), yaw(Z)]
+
+        // pitch = atan2(R(0,2), R(0,0))
+        double sp = std::atan2(R(0,2), R(0,0));  // pitch (beta)
+        // clamp not needed for atan2 result, but keep variable
+        eul[1] = sp;  // pitch -> eul[1]
+
+        double cp = std::cos(eul[1]);
+
+        if (std::abs(cp) > 1e-6)
+        {
+            // 非奇异
+            // yaw (gamma): 从 R(0,1) = -sin(gamma) 和 R(0,0) = cos(gamma)*cos(beta)
+            // 得到 cos(gamma) = R(0,0)/cos(beta)
+            double yaw = std::atan2(-R(0,1), R(0,0) / cp);
+            // roll (alpha): 从 R(2,1) = sin(alpha)*cos(gamma), R(1,1) = cos(alpha)*cos(gamma)
+            double roll = std::atan2(R(2,1), R(1,1));
+
+            eul[0] = roll;
+            eul[2] = yaw;
+        }
+        else
+        {
+            // Gimbal lock (cos(pitch) ≈ 0), pitch = ±90°
+            // 在这种情况下，cos(yaw) 因为乘以 cos(beta) 在很多元素中丢失，
+            // roll 和 yaw 会耦合。按照常见做法固定一个角为 0（这里设 roll = 0）
+            // 并用剩余的矩阵元解出 yaw（或用其它一致策略）。
+            eul[0] = 0.0;  // roll = 0 (约定)
+            // 选择用 R(1,2) 和 R(2,2) 来恢复 yaw（见上文推导的特殊情形）
+            eul[2] = std::atan2(R(1,2), R(2,2)); // yaw
+            // pitch 已经赋给 eul[1]
+        }
+
+        return eul; // [roll, pitch, yaw]
+    }
+
 
     inline void WrapAngleToPi(Eigen::VectorXd& angle){
         for(int i=0;i<angle.size();i++){

@@ -22,10 +22,6 @@
 class RobotTeleoperate
 {
 public:
-//    enum Type{
-//        Ti5Robot
-//    };
-
     struct BasicConfig{
         RobotBase::RobotType robotType;
         std::string address;
@@ -74,7 +70,8 @@ protected:
     std::vector<Eigen::Vector3d> leftHandPositions;
     std::vector<Eigen::Vector3d> rightHandPositions;
 
-    DataCollector::HandGesture leftHandGesture;
-    DataCollector::HandGesture rightHandGesture;
+    HandBase::HandGesture leftHandGesture;
+    HandBase::HandGesture rightHandGesture;
 
+    Eigen::VectorXd qInit;
 };

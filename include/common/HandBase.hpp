@@ -3,6 +3,12 @@
 #include <unordered_map>
 
 namespace HandBase{
+    struct HandGesture{
+        bool pinchState;
+        double pinchValue;
+        bool squeezeState;
+        double squeezeValue;
+    };
 
     enum HandType{
         ROHand

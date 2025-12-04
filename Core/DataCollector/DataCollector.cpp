@@ -196,12 +196,12 @@ std::vector<Eigen::Vector3d> DataCollector::GetRightHandPositions(){
     return this->rightHandPositions;
 }
 
-DataCollector::HandGesture DataCollector::GetLeftHandGesture(){
+HandBase::HandGesture DataCollector::GetLeftHandGesture(){
     std::lock_guard<std::mutex> lock(this->mutex);
     return this->leftHandGesture;
 }
 
-DataCollector::HandGesture DataCollector::GetRightHandGesture(){
+HandBase::HandGesture DataCollector::GetRightHandGesture(){
     std::lock_guard<std::mutex> lock(this->mutex);
     return this->rightHandGesture;
 }

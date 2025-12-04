@@ -123,6 +123,16 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     // Collector VisionPro's Data
     std::thread dataThread(&DataCollector::Run, &dataCollector);
 
+    // Some Valuables
+    Transform::MsgConfig msgConfig;
+    Eigen::VectorXd qEigen;
+    boost::optional<Eigen::VectorXd> q;
+
+    Eigen::Vector3d headRPY;
+    auto headJointsInfo = this->headSolver.GetJointsInfo();
+    Eigen::Vector3d waistRPY;
+    auto waistJointsInfo = this->waistSolver.GetJointsInfo();
+
     while(this->startFlag){
         if(this->pauseFlag){
             std::cout<<"Teleoperation Stop ! "<<std::endl;
@@ -146,6 +156,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             continue;
         }
 
+        // Check the poseMatrix
         if(this->poseMatrix.size()==0 || this->poseMatrix.empty()){
             std::string error = " The pose matrix received is not qualified !";
             throw std::invalid_argument(error);
@@ -161,12 +172,9 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         }
 
         // Message Config
-        Transform::MsgConfig msgConfig{
-            .head2xrWorldPose = this->poseMatrix[0],
-            .leftWrist2xrWorldPose = this->poseMatrix[1],
-            .rightWrist2xrWorldPose = this->poseMatrix[2],
-//            .isLockHead = true,
-        };
+        msgConfig.head2XRWorldPose = this->poseMatrix[0];
+        msgConfig.leftWrist2XRWorldPose = this->poseMatrix[1];
+        msgConfig.rightWrist2XRWorldPose = this->poseMatrix[2];
 
         bool modeFlag =
                 this->leftHandGesture.pinchValue < 0.012 || this->rightHandGesture.pinchValue < 0.012;
@@ -175,6 +183,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         if(modeFlag)
         {
             msgConfig.mode = Transform::TeleMode::WaistMode;
+            msgConfig.headPose = this->poseMatrix[0];
         }else{
             msgConfig.mode = Transform::TeleMode::HeadMode;
         }
@@ -187,60 +196,42 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             std::cout << "Transformed Left Wrist Pose:\n" << transformedMsg[0] << std::endl;
             std::cout << "Transformed Right Wrist Pose:\n" << transformedMsg[1] << std::endl;
             std::cout << "Transformed Head Robot World Pose:\n" << transformedMsg[2] << std::endl;
-            std::cout << "Locked Head Robot World Pose:\n" << transformedMsg[3] << std::endl;
+            std::cout << "Upper-Body Robot World Pose:\n" << transformedMsg[3] << std::endl;
             std::cout << "--------------------------------------------" << std::endl;
         }
 
         // Use ArmSolver to Solve
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
 
-        boost::optional<Eigen::VectorXd> q =
-                ikSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
-                                   qInit,
-                                   false);
+        q = ikSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
+                                this->qInit,
+                                false);
 
         // Check the Solution
-        Eigen::VectorXd qEigen;
         if(q.has_value()){
             qEigen = q.value();
 
             if (msgConfig.mode == Transform::TeleMode::HeadMode){
                 // Control the Head
-                Eigen::Vector3d headRPY = this->headSolver.Solve(transformedMsg[2]);
+                headRPY = this->headSolver.Solve(transformedMsg[3].inverse() * transformedMsg[2]);
                 std::cout<<"HeadRPY: "<<headRPY<<std::endl;
-                auto headJointsInfo = this->headSolver.GetJointsInfo();
-                qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
-                qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
-                qEigen(headJointsInfo[2].index) = headRPY(0); // Row
-
-                // Control the Waist
-                Eigen::Vector3d waistRPY = this->waistSolver.Solve(transformedMsg[2]);
-                std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
-                auto waistJointsInfo = this->waistSolver.GetJointsInfo();
-                qEigen(waistJointsInfo[0].index) = 0; // Row
-                qEigen(waistJointsInfo[1].index) = 0; // Yaw
-                qEigen(waistJointsInfo[2].index) = 0; // Pitch
             }else if (msgConfig.mode == Transform::TeleMode::WaistMode)
             {
-                // Control the Head
-                Eigen::Vector3d headRPY = this->headSolver.Solve(transformedMsg[2]);
-                std::cout<<"HeadRPY: "<<headRPY<<std::endl;
-                auto headJointsInfo = this->headSolver.GetJointsInfo();
-                qEigen(headJointsInfo[0].index) = 0; // Yaw
-                qEigen(headJointsInfo[1].index) = 0; // Pitch
-                qEigen(headJointsInfo[2].index) = 0; // Row
-
                 // Control the Waist
-                Eigen::Vector3d waistRPY = this->waistSolver.Solve(transformedMsg[2]);
+                waistRPY = this->waistSolver.Solve(transformedMsg[2]);
                 std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
-                auto waistJointsInfo = this->waistSolver.GetJointsInfo();
-                qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
-                qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
-                qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
             }
+            // Set Value to Head
+            qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
+            qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
+            qEigen(headJointsInfo[2].index) = headRPY(0); // Row
 
+            // Set Value to Waist
+            qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
+            qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
+            qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
 
-            // Filter
+            // Filter the Eigen
             filter.AddData(qEigen);
             qEigen = filter.GetFilteredData();
 
@@ -270,11 +261,12 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
 
             // set the initial value of the joint
             // For Simulated Robot
-            qInit = qEigen;
+            this->qInit = qEigen;
 
             // For Real Robot
 //            qInit = physicalRobotPtr->GetJointsAngleEigen();
-            std::cout << "q:\n" << std::fixed << std::setprecision(5) << q << std::endl;
+
+            std::cout << "q:\n" << std::fixed << std::setprecision(5) << qEigen << std::endl;
         }else{
             std::cout<<" Solve failed! "<<std::endl;
             continue;

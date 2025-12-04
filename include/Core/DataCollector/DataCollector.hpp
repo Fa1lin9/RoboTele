@@ -3,6 +3,7 @@
 #include <zmq.hpp>
 #include <iostream>
 #include <mutex>
+#include <HandBase.hpp>
 
 // 打印函数信息
 #include <FunctionLogger.hpp>
@@ -12,13 +13,6 @@
 class DataCollector
 {
 public:
-    struct HandGesture{
-        bool pinchState;
-        double pinchValue;
-        bool squeezeState;
-        double squeezeValue;
-    };
-
     DataCollector();
     DataCollector(const std::string &address_);
     ~DataCollector();
@@ -35,9 +29,9 @@ public:
 
     std::vector<Eigen::Vector3d> GetRightHandPositions();
 
-    HandGesture GetLeftHandGesture();
+    HandBase::HandGesture GetLeftHandGesture();
 
-    HandGesture GetRightHandGesture();
+    HandBase::HandGesture GetRightHandGesture();
 
     bool HasNewData();
 
@@ -62,8 +56,8 @@ private:
     std::vector<Eigen::Vector3d> rightHandPositions;
 
     // Hand Gesture
-    HandGesture leftHandGesture;
-    HandGesture rightHandGesture;
+    HandBase::HandGesture leftHandGesture;
+    HandBase::HandGesture rightHandGesture;
 
     // lock
     std::mutex mutex;

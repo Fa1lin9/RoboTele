@@ -18,36 +18,60 @@ std::vector<Eigen::Matrix4d> VisionPro2Ti5RobotTransform::Solve(
 
     // 相似变化到Robot标准坐标系
     Eigen::Matrix4d head2RobotWorldPose =
-            T_XR2Robot * config_.head2xrWorldPose * T_XR2Robot.inverse();
+            T_XR2Robot * config_.head2XRWorldPose * T_XR2Robot.inverse();
     Eigen::Matrix4d leftWrist2RobotWorldPose =
-            T_XR2Robot * config_.leftWrist2xrWorldPose * T_XR2Robot.inverse();
+            T_XR2Robot * config_.leftWrist2XRWorldPose * T_XR2Robot.inverse();
     Eigen::Matrix4d rightWrist2RobotWorldPose =
-            T_XR2Robot * config_.rightWrist2xrWorldPose * T_XR2Robot.inverse();
+            T_XR2Robot * config_.rightWrist2XRWorldPose * T_XR2Robot.inverse();
 
     // 与urdf定义的手腕坐标xyz轴重合
     leftWrist2RobotWorldPose = leftWrist2RobotWorldPose * T_Robot2LeftWrist;
     rightWrist2RobotWorldPose = rightWrist2RobotWorldPose * T_Robot2RightWrist;
 
     // Mode Selection
+    Eigen::Matrix4d upperBody2RobotWorldPose;
     if (config_.mode == Transform::TeleMode::HeadMode){
-        Eigen::Matrix4d head2RobotWorldPoseLocked = Eigen::Matrix4d::Identity();
-        // X
-        head2RobotWorldPoseLocked(0,3) = 0;
-        // Y
-        head2RobotWorldPoseLocked(1,3) = 0;
-        // Z
-//        head2RobotWorldPoseLocked(2,3) =
-//                head2RobotWorldPose(2,3);
-        head2RobotWorldPoseLocked(2,3) = 1.1;
-        // Rotation
-        head2RobotWorldPoseLocked.block<3,3>(0,0) = Eigen::Matrix3d::Identity();
+        if (config_.headPose.has_value()){
+            upperBody2RobotWorldPose = config_.headPose.value();
+            upperBody2RobotWorldPose =
+                    T_XR2Robot * upperBody2RobotWorldPose * T_XR2Robot.inverse();
+//            std::cout << "HeadPose: " << head2RobotWorldPoseLocked << std::endl;
+
+            // Rotation
+            Eigen::Vector3d rpy =
+                    MatrixUtils::RotationToEulerZYX(upperBody2RobotWorldPose.block<3,3>(0,0));
+
+//            std::cout << "HeadPose.yaw: " << rpy(2) << std::endl;
+            Eigen::Matrix3d rot = Eigen::AngleAxisd(rpy(2), Eigen::Vector3d::UnitZ()).toRotationMatrix();
+
+            upperBody2RobotWorldPose.block<3,3>(0,0) = rot;
+
+//            std::cout << "HeadPose: " << head2RobotWorldPoseLocked << std::endl;
+
+        } else{
+            upperBody2RobotWorldPose = Eigen::Matrix4d::Identity();
+            // X
+            upperBody2RobotWorldPose(0,3) = 0;
+            // Y
+            upperBody2RobotWorldPose(1,3) = 0;
+            // Z
+    //        head2RobotWorldPoseLocked(2,3) =
+    //                head2RobotWorldPose(2,3);
+            upperBody2RobotWorldPose(2,3) = 1.1;
+            // Rotation
+            upperBody2RobotWorldPose.block<3,3>(0,0) = Eigen::Matrix3d::Identity();
+        }
 
         // 转化到头坐标系
         // only for translation
-        leftWrist2RobotWorldPose.block<3,1>(0,3) =
-                leftWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPoseLocked.block<3,1>(0,3);
-        rightWrist2RobotWorldPose.block<3,1>(0,3) =
-                rightWrist2RobotWorldPose.block<3,1>(0,3) - head2RobotWorldPoseLocked.block<3,1>(0,3);
+//        leftWrist2RobotWorldPose.block<3,1>(0,3) =
+//                leftWrist2RobotWorldPose.block<3,1>(0,3) - upperBody2RobotWorldPose.block<3,1>(0,3);
+//        rightWrist2RobotWorldPose.block<3,1>(0,3) =
+//                rightWrist2RobotWorldPose.block<3,1>(0,3) - upperBody2RobotWorldPose.block<3,1>(0,3);
+            leftWrist2RobotWorldPose.block<3,1>(0,3) =
+                    (upperBody2RobotWorldPose.inverse() * leftWrist2RobotWorldPose).block<3,1>(0,3);
+            rightWrist2RobotWorldPose.block<3,1>(0,3) =
+                    (upperBody2RobotWorldPose.inverse() * rightWrist2RobotWorldPose).block<3,1>(0,3);
     }else if (config_.mode == Transform::TeleMode::WaistMode)
     {
         // 转化到头坐标系
@@ -69,5 +93,5 @@ std::vector<Eigen::Matrix4d> VisionPro2Ti5RobotTransform::Solve(
     Eigen::Matrix4d RightWrist2RobotWaistPose = T_Head2Waist * rightWrist2RobotWorldPose;
 
     // 实际上最后就是相对于头的坐标系
-    return {LeftWrist2RobotWaistPose , RightWrist2RobotWaistPose, head2RobotWorldPose};
+    return {LeftWrist2RobotWaistPose , RightWrist2RobotWaistPose, head2RobotWorldPose, upperBody2RobotWorldPose};
 }

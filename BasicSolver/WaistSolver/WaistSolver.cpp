@@ -63,7 +63,7 @@ Eigen::Vector3d WaistSolver::Solve(const Eigen::Matrix4d &mat){
     Eigen::Matrix3d rot = this->headPose.block<3,3>(0,0);
 //    this->rpy = rot.eulerAngles(2,1,0);
 //    this->rpy = MatrixUtils::RotationToEulerXYZ(rot);
-    this->rpy = MatrixUtils::RotationToEulerZYX(rot);
+    this->rpy = MatrixUtils::RotationToEulerXZY(rot);
 
     // Clip the Angle
     for(size_t i=0;i<this->jointsInfo.size();i++){

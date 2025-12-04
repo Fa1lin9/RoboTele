@@ -3,7 +3,8 @@
         "JointsIndex": [11, 12, 13],
         "JointsName" : ["NECK_Y", "NECK_P", "NECK_R"],
         "EulerAxis": ["Yaw", "Pitch", "Roll"],
-        "UpperBound": [1.3926, 0.6981, 0.3490], 
-        "LowerBound": [-1.3926, -0.6981, -0.3490]
+        "UpperBound": [1.3926, 0.6981, 0.6981], 
+        "LowerBound": [-1.3926, -0.6981, -0.6981],
+        "EulerOrder": "ZYX"
     }
 }

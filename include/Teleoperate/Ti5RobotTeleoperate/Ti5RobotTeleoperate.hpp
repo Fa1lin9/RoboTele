@@ -21,9 +21,6 @@ private:
     DataCollector dataCollector;
     Ros2Bridge ros2Bridge;
 
-    Eigen::VectorXd qInit;
-
-
     // some flags
     bool startFlag = false;
 

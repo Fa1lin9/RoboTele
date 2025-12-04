@@ -3,6 +3,9 @@
 #include <boost/shared_ptr.hpp>
 #include <Eigen/Dense>
 #include <boost/make_shared.hpp>
+#include <boost/optional.hpp>
+
+#include <MatrixUtils.hpp>
 
 class Transform
 {
@@ -31,15 +34,17 @@ public:
 
     struct MsgConfig{
         // 头和双臂手腕基于XR设备世界坐标系的位姿矩阵
-        Eigen::Matrix4d                 head2xrWorldPose;
-        Eigen::Matrix4d                 leftWrist2xrWorldPose;
-        Eigen::Matrix4d                 rightWrist2xrWorldPose;
+        Eigen::Matrix4d                 head2XRWorldPose;
+        Eigen::Matrix4d                 leftWrist2XRWorldPose;
+        Eigen::Matrix4d                 rightWrist2XRWorldPose;
 
         // 双手的局部坐标系，包含25个点
         Eigen::Matrix<double,25,3>      leftHandPositions;
         Eigen::Matrix<double,25,3>      rightHandPositions;
 
         Transform::TeleMode mode;
+
+        boost::optional<Eigen::Matrix4d> headPose;
     };
 
     Transform();

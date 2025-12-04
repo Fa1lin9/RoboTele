@@ -55,8 +55,6 @@ std::vector<Eigen::Matrix4d> VisionPro2Ti5RobotTransform::Solve(
             // Y
             upperBody2RobotWorldPose(1,3) = 0;
             // Z
-    //        head2RobotWorldPoseLocked(2,3) =
-    //                head2RobotWorldPose(2,3);
             upperBody2RobotWorldPose(2,3) = 1.1;
             // Rotation
             upperBody2RobotWorldPose.block<3,3>(0,0) = Eigen::Matrix3d::Identity();

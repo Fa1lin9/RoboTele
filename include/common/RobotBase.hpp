@@ -19,7 +19,7 @@ namespace RobotBase{
         {"Ti5Robot", RobotBase::RobotType::Ti5Robot}
     };
 
-    static RobotBase::RobotType GetTypeFromStr(const std::string& str){
+    inline RobotBase::RobotType GetTypeFromStr(const std::string& str){
         auto temp = RobotBase::RobotTypeMap.find(str);
         if(temp != RobotBase::RobotTypeMap.end()){
             return temp->second;
@@ -28,7 +28,7 @@ namespace RobotBase{
         throw std::invalid_argument("[RobotBase::RobotType::GetTypeFromStr] Invalid string");
     }
 
-    static std::string GetStrFromType(const RobotBase::RobotType& type){
+    inline std::string GetStrFromType(const RobotBase::RobotType& type){
         for(const auto& kv : RobotBase::RobotTypeMap){
             if(kv.second == type){
                 return kv.first;

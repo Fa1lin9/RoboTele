@@ -10,89 +10,168 @@ VisionProHandSolver::~VisionProHandSolver(){
 
 }
 
-Eigen::VectorXd VisionProHandSolver::Solve(const HandSolver::Data& data){
-    return this->SolveDualHand(data.leftHandPositions,
-                               data.rightHandPositions);
-}
-
-Eigen::VectorXd VisionProHandSolver::SolveSingleHand(const std::vector<Eigen::Vector3d> handPositions){
+Eigen::VectorXd VisionProHandSolver::SolveSingleHand(const HandBase::HandData& data,
+                                                     const HandBase::HandType& type){
     std::vector<double> ret;
-    auto data = handPositions;
+    auto handPositions = data.handPositions;
 
-    // Thumb Finger
+    // Thumb Finger 1-4-6
+//    double thumbAngle =
+//            MatrixUtils::CalVecAngle(  handPositions[this->thumbFingerJointsIndex[0]],
+//                                handPositions[this->indexFingerJointsIndex[1]],
+//                                handPositions[this->thumbFingerJointsIndex[3]]);
+//    ret.push_back(thumbAngle);
+
+//    // Thumb Finger 2-3-4
+//    double thumbAngle =
+//            MatrixUtils::CalVecAngle(  handPositions[this->thumbFingerJointsIndex[1]],
+//                                handPositions[this->thumbFingerJointsIndex[2]],
+//                                handPositions[this->thumbFingerJointsIndex[3]]);
+//    std::cout << "Original Thumb Finger's Angle: " << thumbAngle << std::endl;
+//    thumbAngle = this->fingersUpperBound[0] - thumbAngle;
+//    ret.push_back(thumbAngle);
+
+    // Thumb Finger 1-2-4
     double thumbAngle =
-            this->CalVecAngle(  data[this->thumbFingerJointsIndex[1]],
-                                data[this->thumbFingerJointsIndex[2]],
-                                data[this->thumbFingerJointsIndex[3]]);
+            MatrixUtils::CalVecAngle(  handPositions[this->thumbFingerJointsIndex[0]],
+                                handPositions[this->thumbFingerJointsIndex[1]],
+                                handPositions[this->thumbFingerJointsIndex[3]]);
+    std::cout << "Original Thumb Finger's Angle: " << thumbAngle << std::endl;
+    thumbAngle = this->fingersUpperBound[0] - thumbAngle;
     ret.push_back(thumbAngle);
 
-    // Index Finger
+    // Index Finger 6-5-9
     double indexAngle =
-            this->CalVecAngle(  data[this->indexFingerJointsIndex[1]],
-                                data[this->indexFingerJointsIndex[0]],
-                                data[this->indexFingerJointsIndex[2]]);
+            MatrixUtils::CalVecAngle(  handPositions[this->indexFingerJointsIndex[1]],
+                                handPositions[this->indexFingerJointsIndex[0]],
+                                handPositions[this->indexFingerJointsIndex[4]]);
     ret.push_back(indexAngle);
 
-    // Middle Finger
+    // Middle Finger 11-10-14
     double middleAngle =
-            this->CalVecAngle(  data[this->middleFingerJointsIndex[1]],
-                                data[this->middleFingerJointsIndex[0]],
-                                data[this->middleFingerJointsIndex[2]]);
+            MatrixUtils::CalVecAngle(  handPositions[this->middleFingerJointsIndex[1]],
+                                handPositions[this->middleFingerJointsIndex[0]],
+                                handPositions[this->middleFingerJointsIndex[4]]);
     ret.push_back(middleAngle);
 
-    // Ring Finger
+    // Ring Finger 16-15-19
     double ringAngle =
-            this->CalVecAngle(  data[this->ringFingerJointsIndex[1]],
-                                data[this->ringFingerJointsIndex[0]],
-                                data[this->ringFingerJointsIndex[2]]);
+            MatrixUtils::CalVecAngle(  handPositions[this->ringFingerJointsIndex[1]],
+                                handPositions[this->ringFingerJointsIndex[0]],
+                                handPositions[this->ringFingerJointsIndex[4]]);
     ret.push_back(ringAngle);
 
-    // Little Finger
+    // Little Finger 21-20-23
     double littleAngle =
-            this->CalVecAngle(  data[this->littleFingerJointsIndex[1]],
-                                data[this->littleFingerJointsIndex[0]],
-                                data[this->littleFingerJointsIndex[2]]);
+            MatrixUtils::CalVecAngle(  handPositions[this->littleFingerJointsIndex[1]],
+                                handPositions[this->littleFingerJointsIndex[0]],
+                                handPositions[this->littleFingerJointsIndex[4]]);
     ret.push_back(littleAngle);
 
-    // Thumb Finger Rotation
+    // Thumb Finger Rotation 6-3-21
     double thumbRotAngle =
-            this->CalVecAngle(  data[this->indexFingerJointsIndex[1]], // 6
-                                data[this->thumbFingerJointsIndex[2]], // 3
-                                data[this->littleFingerJointsIndex[1]]); // 21
+            MatrixUtils::CalVecAngle(  handPositions[this->indexFingerJointsIndex[1]], // 6
+                                    handPositions[this->thumbFingerJointsIndex[2]], // 3
+                                    handPositions[this->littleFingerJointsIndex[1]]); // 21
     thumbRotAngle = 180.0 - thumbRotAngle;
+//    std::cout<<"Thumb Rotation: "<<thumbRotAngle<<std::endl;
     ret.push_back(thumbRotAngle);
 
-    return Eigen::VectorXd::Map(ret.data(), ret.size());
+    // Clamp
+    for(size_t i=0;i<ret.size();i++){
+//        std::cout<<"Original Angle: "<<ret[i]<<std::endl;
+        ret[i] = std::min(std::max(ret[i], this->fingersLowerBound[i]), this->fingersUpperBound[i]);
+//        std::cout<<"Clamped Angle: "<<ret[i]<<std::endl;
+    }
+
+    // Temp print for HandGestureDetector
+    double dist = MatrixUtils::CalPoint2PlaneDist({handPositions[this->middleFingerJointsIndex[0]],
+                                                   handPositions[this->indexFingerJointsIndex[1]],
+                                                   handPositions[this->littleFingerJointsIndex[1]]},
+                                                   handPositions[this->thumbFingerJointsIndex[3]]);
+//    std::cout<<"Dist: "<<dist<<std::endl;
+
+    // map
+    return this->MapXR2Hand(ret, type);
 }
 
-Eigen::VectorXd VisionProHandSolver::SolveDualHand(const std::vector<Eigen::Vector3d> leftHandPositions_,
-                                                   const std::vector<Eigen::Vector3d> rightHandPositions_)
+Eigen::VectorXd VisionProHandSolver::SolveDualHand(const HandBase::DualHandData& data)
 {
-    auto leftHandAngle = this->SolveSingleHand(leftHandPositions_);
-    auto rightHandAngle = this->SolveSingleHand(rightHandPositions_);
+    auto leftHandAngle = this->SolveSingleHand(data.leftHandData,data.type);
+    auto rightHandAngle = this->SolveSingleHand(data.rightHandData,data.type);
 
     Eigen::VectorXd ret(leftHandAngle.size() + rightHandAngle.size());
     ret << leftHandAngle, rightHandAngle;
 
+//    std::cout<<"[VisionProHandSolver::SolveDualHand] Result: "<<std::endl;
+//    std::cout<<ret<<std::endl;
+
+    // Filter the data
+    filter.AddData(ret);
+    ret = filter.GetFilteredData();
+
     return ret;
 }
 
-double VisionProHandSolver::CalVecAngle(const Eigen::Vector3d& origin,
-                                        const Eigen::Vector3d& point1,
-                                        const Eigen::Vector3d& point2){
-    Eigen::Vector3d vec1 = point1 - origin;
-    Eigen::Vector3d vec2 = point2 - origin;
+void VisionProHandSolver::Init(){
+    this->thumbFingerJointsIndex = std::vector<size_t>(XRBase::VisionProConfig::ThumbFingerJointsIndex.begin(),
+                                                       XRBase::VisionProConfig::ThumbFingerJointsIndex.end());
+    this->indexFingerJointsIndex = std::vector<size_t>(XRBase::VisionProConfig::IndexFingerJointsIndex.begin(),
+                                                       XRBase::VisionProConfig::IndexFingerJointsIndex.end());
+    this->middleFingerJointsIndex = std::vector<size_t>(XRBase::VisionProConfig::MiddleFingerJointsIndex.begin(),
+                                                        XRBase::VisionProConfig::MiddleFingerJointsIndex.end());
+    this->ringFingerJointsIndex = std::vector<size_t>(XRBase::VisionProConfig::RingFingerJointsIndex.begin(),
+                                                      XRBase::VisionProConfig::RingFingerJointsIndex.end());
+    this->littleFingerJointsIndex = std::vector<size_t>(XRBase::VisionProConfig::LittleFingerJointsIndex.begin(),
+                                                        XRBase::VisionProConfig::LittleFingerJointsIndex.end());
 
-    double cos = vec1.normalized().dot(vec2.normalized());
-    cos = std::clamp(cos, -1.0, 1.0);
+    // Original Angle Limits
+    this->fingersLowerBound = {0,
+                               45,
+                               45,
+                               45,
+                               45,
+                               30};
+    this->fingersUpperBound = {36,
+                               170,
+                               170,
+                               170,
+                               170,
+                               110};
 
-    return std::acos(cos) * 180.0 / M_PI;
+    this->fingersName = {
+        "thumb",
+        "index",
+        "middle",
+        "ring",
+        "little",
+        "thumbRot",
+    };
+
+    // Filter
+    this->filter.Init(std::vector<double>{0.6, 0.2, 0.2}, this->dofHand);
 }
 
-void VisionProHandSolver::Init(){
-    this->thumbFingerJointsIndex = {1, 2, 3, 4};
-    this->indexFingerJointsIndex = {5 ,6, 7, 8, 9};
-    this->middleFingerJointsIndex = {10, 11, 12, 13, 14};
-    this->ringFingerJointsIndex = {15, 16, 17, 18, 19};
-    this->littleFingerJointsIndex = {20, 21, 22, 23, 24};
+Eigen::VectorXd VisionProHandSolver::MapXR2Hand(const std::vector<double>& angles,
+                                                const HandBase::HandType& type){
+    Eigen::VectorXd ret;
+    switch (type) {
+    case HandBase::HandType::ROHand:
+        ret.resize(HandBase::ROHandConfig::NumFingers);
+        for(size_t i=0;i<HandBase::ROHandConfig::NumFingers;i++){
+            double targetLow = HandBase::ROHandConfig::FingersLowerBound[i];
+            double targetHigh = HandBase::ROHandConfig::FingersUpperBound[i];
+
+            double currentLow = this->fingersLowerBound[i];
+            double currentHigh = this->fingersUpperBound[i];
+
+            ret(i) =
+                    targetLow + (angles[i] - currentLow)/(currentHigh - currentLow) * (targetHigh - targetLow);
+        }
+        return ret;
+    default:
+        throw std::invalid_argument("[VisionProHandSolver::Map] Plz provide valid HandType! ");
+    }
+
+
 }

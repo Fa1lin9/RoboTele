@@ -1,5 +1,6 @@
 #pragma once
-#include <Eigen/Dense>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 #include <iostream>
 
 namespace MatrixUtils{
@@ -137,7 +138,7 @@ namespace MatrixUtils{
 
     // Check the Pose Matrix
     inline bool IsPoseMatrix(const Eigen::Matrix4d &mat,
-                      const double& eps = 1e-2){
+                             const double& eps = 1e-2){
         Eigen::Matrix3d rotation = mat.block<3,3>(0,0);
         if(!(rotation.transpose() * rotation).isApprox(Eigen::Matrix3d::Identity() , eps)){
             std::cout<<"rotation.transpose() * rotation: \n"<<rotation.transpose() * rotation<<std::endl;
@@ -157,9 +158,57 @@ namespace MatrixUtils{
     }
 
     // Calculate the Distance between Two Pose Matrix
-    inline double CalTransDist(const Eigen::Matrix4d& mat1,
+    inline double CalL2Dist(const Eigen::Matrix4d& mat1,
                                const Eigen::Matrix4d& mat2){
         return (mat1.block<3,1>(0,3) - mat2.block<3,1>(0,3)).norm();
     }
+
+    inline double CalL2Dist(const Eigen::Vector3d& vec1,
+                               const Eigen::Vector3d& vec2){
+        return (vec1 - vec2).norm();
+    }
+
+    inline double CalVecAngle(const Eigen::Vector3d& origin,
+                              const Eigen::Vector3d& point1,
+                              const Eigen::Vector3d& point2){
+        Eigen::Vector3d vec1 = point1 - origin;
+        Eigen::Vector3d vec2 = point2 - origin;
+
+        double cos = vec1.normalized().dot(vec2.normalized());
+        cos = std::clamp(cos, -1.0, 1.0);
+
+        return std::acos(cos) * 180.0 / M_PI;
+    }
+
+    inline double CalPoint2PlaneDist(const std::array<Eigen::Vector3d, 3>& plane,
+                                     const Eigen::Vector3d& point)
+    {
+        // 3 points in the plane
+        const Eigen::Vector3d& p0 = plane[0];
+        const Eigen::Vector3d& p1 = plane[1];
+        const Eigen::Vector3d& p2 = plane[2];
+
+        Eigen::Vector3d normal = (p1 - p0).cross(p2 - p0);
+
+        double norm_len = normal.norm();
+        if (norm_len < 1e-9) {
+            throw std::invalid_argument("[MatrixUtils::CalPoint2PlaneDist] The three plane points are collinear! ");
+            return 0.0;
+        }
+
+        normal /= norm_len;
+
+        double dist = (point - p0).dot(normal);
+
+        return std::abs(dist);
+    }
+
+
+
+
+
+
+
+
 
 }

@@ -1,5 +1,13 @@
 #pragma once
-
+#ifdef ON
+#undef ON
+#endif
+#ifdef OFF
+#undef OFF
+#endif
+#ifdef AUTO
+#undef AUTO
+#endif
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>

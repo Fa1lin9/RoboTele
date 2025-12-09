@@ -54,8 +54,8 @@ public:
 
 protected:
 
-    std::vector<std::string> jointsName;
-    std::vector<double> jointsBoundsUpper;
-    std::vector<double> jointsBoundsLower;
+    std::vector<std::string> fingersName;
+    std::vector<double> fingersUpperBound;
+    std::vector<double> fingersLowerBound;
 
 };

@@ -62,21 +62,21 @@ ROHandController::~ROHandController(){
 std::vector<double> ROHandController::GetJointsAngle(){
     std::vector<double> ret;
     // The size of the angle must be defined
-    std::vector<uint16_t> angle(this->numJoints);
+    std::vector<uint16_t> angle(this->numFingers);
     // modbus_read_registers(ctx, 起始地址, 寄存器数量, 存储结果的数组)
     int readNum = modbus_read_registers(
         this->ctx,
         ROH_FINGER_ANGLE0,
-        this->numJoints,
+        this->numFingers,
         angle.data()
     );
 
     if (readNum == -1) {
         // 读取失败
         std::cerr << "[ROHandController::GetJointsAngle] Modbus read failed : " << modbus_strerror(errno) << "\n";
-    } else if (readNum != this->numJoints) {
+    } else if (readNum != this->numFingers) {
         // 实际读取数量与请求数量不符
-        std::cerr << "[ROHandController::GetJointsAngle] Modbus read incomplete. Expected " << this->numJoints
+        std::cerr << "[ROHandController::GetJointsAngle] Modbus read incomplete. Expected " << this->numFingers
                   << ", but read " << readNum << "\n";
     } else {
         // 读取成功
@@ -90,7 +90,7 @@ std::vector<double> ROHandController::GetJointsAngle(){
             ret.push_back(angleDeg);
 
             std::cout << "  [Joint( "
-                      << this->jointsName[i] << " ) "
+                      << this->fingersName[i] << " ) "
                       << i << " at "
                       << (ROH_FINGER_ANGLE0 + i) << "]: "
                       << value << " (Raw) => " <<
@@ -111,20 +111,20 @@ Eigen::VectorXd ROHandController::GetJointsAngleEigen(){
 bool ROHandController::SetJointsAngle(const Eigen::VectorXd& targetValue)
 {
     // --- 1. 输入大小检查 ---
-    if (targetValue.size() != this->numJoints) {
+    if (targetValue.size() != this->numFingers) {
         std::cerr << "[ROHandController::SetJointsAngle] Wrong target size! Expect "
-                  << this->numJoints << ", got " << targetValue.size() << std::endl;
+                  << this->numFingers << ", got " << targetValue.size() << std::endl;
         return false;
     }
 
     // --- 2. 存放要写入寄存器的原始 uint16 值 ---
     std::vector<uint16_t> rawValues;
-    rawValues.resize(this->numJoints);
+    rawValues.resize(this->numFingers);
 
     // --- 3. Clamp + 转换成寄存器格式 ---
-    for (int i = 0; i < this->numJoints; ++i) {
-        double lower = this->jointsBoundsLower[i];
-        double upper = this->jointsBoundsUpper[i];
+    for (int i = 0; i < this->numFingers; ++i) {
+        double lower = this->fingersLowerBound[i];
+        double upper = this->fingersUpperBound[i];
         double angle = targetValue[i];
 
         // 裁剪
@@ -134,7 +134,7 @@ bool ROHandController::SetJointsAngle(const Eigen::VectorXd& targetValue)
         if (angle != clamped) {
             std::cout << "[ROHandController::SetJointsAngle] Joint "
                       << i << "( "
-                      << this->jointsName[i] << " ) angle "
+                      << this->fingersName[i] << " ) angle "
                       << angle << " out of bounds, clamped to "
                       << clamped << std::endl;
         }
@@ -148,7 +148,7 @@ bool ROHandController::SetJointsAngle(const Eigen::VectorXd& targetValue)
     int writeNum = modbus_write_registers(
         this->ctx,
         ROH_FINGER_ANGLE_TARGET0,
-        this->numJoints,
+        this->numFingers,
         rawValues.data()
     );
 
@@ -160,9 +160,9 @@ bool ROHandController::SetJointsAngle(const Eigen::VectorXd& targetValue)
         return false;
     }
 
-    if (writeNum != this->numJoints) {
+    if (writeNum != this->numFingers) {
         std::cerr << "[ROHandController::SetJointsAngle] Incomplete write. Expected "
-                  << this->numJoints << ", wrote " << writeNum << std::endl;
+                  << this->numFingers << ", wrote " << writeNum << std::endl;
         return false;
     }
 
@@ -188,42 +188,16 @@ void ROHandController::Init(){
     // little   4       98.84       174.86
     // thumbRot 5       0           90
 
-//    this->jointsBoundsLower = {2.26,
-//                               100.22,
-//                               97.81,
-//                               101.38,
-//                               98.84,
-//                               0    };
-//    this->jointsBoundsUpper = {36.76,
-//                               178.37,
-//                               176.06,
-//                               176.54,
-//                               174.86,
-//                               90   };
+    this->numFingers = HandBase::ROHandConfig::NumFingers;
 
-    // modified
-    this->jointsBoundsLower = {2,
-                               102,
-                               98,
-                               102,
-                               100,
-                               2    };
-    this->jointsBoundsUpper = {36,
-                               178,
-                               176,
-                               176,
-                               174,
-                               88   };
+    this->fingersLowerBound = std::vector<double>(HandBase::ROHandConfig::FingersLowerBound.begin(),
+                                                  HandBase::ROHandConfig::FingersLowerBound.end());
+    this->fingersUpperBound = std::vector<double>(HandBase::ROHandConfig::FingersUpperBound.begin(),
+                                                  HandBase::ROHandConfig::FingersUpperBound.end());
 
-    this->jointsName = {
-        "thumb",
-        "index",
-        "middle",
-        "ring",
-        "little",
-        "thumbRot",
-    };
+    this->fingersName = std::vector<std::string>(HandBase::ROHandConfig::FingersName.begin(),
+                                                 HandBase::ROHandConfig::FingersName.end());
 
-    this->initPose.resize(this->numJoints);
+    this->initPose.resize(this->numFingers);
     this->initPose << 36, 178, 176, 176, 174, 2;
 }

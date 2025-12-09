@@ -15,11 +15,11 @@ public:
     Eigen::VectorXd GetJointsAngleEigen() override;
 
     inline std::vector<double> GetJointsBoundsUpper() override{
-        return this->jointsBoundsUpper;
+        return this->fingersUpperBound;
     };
 
     inline std::vector<double> GetJointsBoundsLower() override{
-        return this->jointsBoundsLower;
+        return this->fingersLowerBound;
     };
 
     bool SetJointsAngle(const Eigen::VectorXd& targetValue) override;
@@ -27,7 +27,7 @@ public:
     bool BackToInitPose() override;
 
 private:
-    const int numJoints = 6;
+    int numFingers;
     void Init();
 
     modbus_t* ctx;

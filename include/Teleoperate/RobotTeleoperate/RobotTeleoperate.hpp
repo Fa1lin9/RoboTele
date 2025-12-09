@@ -16,6 +16,8 @@
 #include <boost/make_shared.hpp>
 
 #include <RobotBase.hpp>
+#include <XRBase.hpp>
+#include <HandBase.hpp>
 
 #include <DataCollector/DataCollector.hpp>
 
@@ -67,11 +69,12 @@ protected:
     // Valuable
     std::vector<Eigen::Matrix4d> poseMatrix;
 
-    std::vector<Eigen::Vector3d> leftHandPositions;
-    std::vector<Eigen::Vector3d> rightHandPositions;
+//    std::vector<Eigen::Vector3d> leftHandPositions;
+//    std::vector<Eigen::Vector3d> rightHandPositions;
 
-    HandBase::HandGesture leftHandGesture;
-    HandBase::HandGesture rightHandGesture;
+//    HandBase::HandGesture leftHandGesture;
+//    HandBase::HandGesture rightHandGesture;
+    HandBase::DualHandData dualHandData;
 
     Eigen::VectorXd qInit;
 };

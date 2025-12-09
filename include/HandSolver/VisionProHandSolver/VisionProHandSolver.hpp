@@ -1,7 +1,7 @@
 #pragma once
 
 #include <HandSolver/HandSolver.hpp>
-
+#include <MatrixUtils.hpp>
 
 class VisionProHandSolver
         : public HandSolver
@@ -10,19 +10,16 @@ public:
     VisionProHandSolver(const HandSolver::BasicConfig &config_);
     ~VisionProHandSolver();
 
-    Eigen::VectorXd Solve(const HandSolver::Data& data) override;
+    Eigen::VectorXd SolveSingleHand(const HandBase::HandData& data,
+                                    const HandBase::HandType& type) override;
 
-    Eigen::VectorXd SolveSingleHand(const std::vector<Eigen::Vector3d> handPositions);
-
-    Eigen::VectorXd SolveDualHand(const std::vector<Eigen::Vector3d> leftHandPositions_,
-                                  const std::vector<Eigen::Vector3d> rightHandPositions_);
+    Eigen::VectorXd SolveDualHand(const HandBase::DualHandData& data) override;
 
 private:
     void Init();
 
-    double CalVecAngle(const Eigen::Vector3d& origin,
-                       const Eigen::Vector3d& point1,
-                       const Eigen::Vector3d& point2);
+    Eigen::VectorXd MapXR2Hand(const std::vector<double>& angles,
+                        const HandBase::HandType& type);
 
     std::vector<Eigen::Vector3d> leftHandPositions;
     std::vector<Eigen::Vector3d> rightHandPositions;
@@ -33,4 +30,9 @@ private:
     std::vector<size_t> ringFingerJointsIndex;
     std::vector<size_t> littleFingerJointsIndex;
 
+    // Filter
+    WeightedMovingFilter filter;
+
 };
+
+

@@ -8,6 +8,8 @@
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
 
+#include <WeightedMovingFilter/WeightedMovingFilter.hpp>
+
 #include <HandBase.hpp>
 
 #include <XRBase.hpp>
@@ -20,21 +22,26 @@ public:
         int dofHand;
     };
 
-    struct Data{
-        std::vector<Eigen::Vector3d> leftHandPositions;
-        std::vector<Eigen::Vector3d> rightHandPositions;
-    };
-
-
     HandSolver();
     ~HandSolver();
 
-    virtual Eigen::VectorXd Solve(const HandSolver::Data& data) = 0;
+    virtual Eigen::VectorXd SolveDualHand(const HandBase::DualHandData& data) = 0;
 
+    virtual Eigen::VectorXd SolveSingleHand(const HandBase::HandData& data,
+                                            const HandBase::HandType& type) = 0;
+
+    static std::vector<double> GetLowerBound(const XRBase::XRType& type);
+
+    static std::vector<double> GetUpperBound(const XRBase::XRType& type);
 
     static boost::shared_ptr<HandSolver> GetPtr(const HandSolver::BasicConfig& config_);
 
 protected:
 
     int dofHand;
+
+    std::vector<std::string> fingersName;
+    std::vector<double> fingersUpperBound;
+    std::vector<double> fingersLowerBound;
+
 };

@@ -8,7 +8,10 @@ class WeightedMovingFilter
 {
 public:
     WeightedMovingFilter(const std::vector<double> weights_, size_t dataSize_);
+    WeightedMovingFilter();
     ~WeightedMovingFilter();
+
+    void Init(const std::vector<double> weights_, size_t dataSize_);
 
     void AddData(const Eigen::VectorXd& newData);
 

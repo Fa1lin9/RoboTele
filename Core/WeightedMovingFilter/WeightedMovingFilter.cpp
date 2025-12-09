@@ -12,8 +12,25 @@ WeightedMovingFilter::WeightedMovingFilter(const std::vector<double> weights_, s
     }
 }
 
+WeightedMovingFilter::WeightedMovingFilter(){
+
+}
+
 WeightedMovingFilter::~WeightedMovingFilter(){
 
+}
+
+void WeightedMovingFilter::Init(const std::vector<double> weights_, size_t dataSize_)
+{
+    this->windowSize = weights_.size();
+    this->weights = weights_;
+    this->dataSize = dataSize_;
+    this->filteredData = Eigen::VectorXd::Zero(this->dataSize);
+
+    double sum = std::accumulate(weights_.begin(), weights_.end(), 0.0);
+    if(std::abs(sum - 1) > 1e-5){
+        throw std::logic_error("The sum of the weights must be 1");
+    }
 }
 
 void WeightedMovingFilter::AddData(const Eigen::VectorXd &newData){

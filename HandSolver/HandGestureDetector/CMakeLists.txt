@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 3.20 )
 #############################################################
 #	Set project name, files, dependancies
 #############################################################
-set( TARGET_NAME "HandSolver" )
+set( TARGET_NAME "HandGestureDetector" )
 message( STATUS "\n-------------  ${GROUP_NAME} - ${TARGET_NAME}  -------------" )
 
 
@@ -48,9 +48,9 @@ target_link_libraries( ${TARGET_NAME}
     PUBLIC     
         $<BUILD_INTERFACE:Eigen3::Eigen>
         $<BUILD_INTERFACE:Boost::boost>
-        $<BUILD_INTERFACE:Core::WeightedMovingFilter>
+
     PRIVATE
-        $<BUILD_INTERFACE:HandSolver::VisionProHandSolver>
+
 )
 
 # #   Add Macro compile defination

@@ -13,6 +13,7 @@ set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 list( APPEND ${GROUP_NAME}_Components
     HandSolver
     VisionProHandSolver
+    HandGestureDetector
     
 )
 

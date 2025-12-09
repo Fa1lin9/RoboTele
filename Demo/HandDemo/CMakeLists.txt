@@ -45,12 +45,12 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC 
-        
-    PRIVATE
+        $<BUILD_INTERFACE:FastDDSInterface::Ros2Bridge>
         $<BUILD_INTERFACE:HandController::HandController>
         $<BUILD_INTERFACE:HandSolver::HandSolver>
         $<BUILD_INTERFACE:Core::DataCollector>
 
+    PRIVATE
 
 )
 

@@ -147,11 +147,11 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
 //            std::cout << "Get New Data! " << std::endl;
             this->poseMatrix = this->dataCollector.GetPoseMatrix();
 
-            this->leftHandPositions = this->dataCollector.GetLeftHandPositions();
-            this->rightHandPositions = this->dataCollector.GetRightHandPositions();
+            this->dualHandData.leftHandData.handPositions = this->dataCollector.GetLeftHandPositions();
+            this->dualHandData.rightHandData.handPositions = this->dataCollector.GetRightHandPositions();
 
-            this->leftHandGesture = this->dataCollector.GetLeftHandGesture();
-            this->rightHandGesture = this->dataCollector.GetRightHandGesture();
+            this->dualHandData.leftHandData.handGesture = this->dataCollector.GetLeftHandGesture();
+            this->dualHandData.leftHandData.handGesture = this->dataCollector.GetRightHandGesture();
         }else{
             continue;
         }
@@ -177,9 +177,10 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         msgConfig.rightWrist2XRWorldPose = this->poseMatrix[2];
 
         bool modeFlag =
-                this->leftHandGesture.pinchValue < 0.012 || this->rightHandGesture.pinchValue < 0.012;
+                this->dualHandData.leftHandData.handGesture.pinchValue < 0.012 ||
+                this->dualHandData.rightHandData.handGesture.pinchValue < 0.012;
 //        bool modeFlag =
-//                this->leftHandGesture.pinchState || this->rightHandGesture.pinchState;
+//                this->handData.leftHandGesture.pinchState || this->handData.rightHandGesture.pinchState;
         if(modeFlag)
         {
             msgConfig.mode = Transform::TeleMode::WaistMode;

@@ -37,6 +37,7 @@ bool HandGestureDetector::IsOkGesture(const HandBase::HandData& data){
     case XRBase::XRType::VisionPro:
         return this->IsOkGestureByVisionPro(data);
     default:
+        throw std::invalid_argument("[HandGestureDetector] Plz provide the XRBase::XRType");
         break;
     }
 }
@@ -47,6 +48,7 @@ bool HandGestureDetector::IsThumbsUpGesture(const HandBase::HandData& data){
     case XRBase::XRType::VisionPro:
         return this->IsThumbsUpGestureByVisionPro(data);
     default:
+        throw std::invalid_argument("[HandGestureDetector] Plz provide the XRBase::XRType");
         break;
     }
 }
@@ -57,16 +59,29 @@ bool HandGestureDetector::IsPinchGesture(const HandBase::HandData& data){
     case XRBase::XRType::VisionPro:
         return this->IsPinchGestureByVisionPro(data);
     default:
+        throw std::invalid_argument("[HandGestureDetector] Plz provide the XRBase::XRType");
         break;
     }
 }
+
+bool HandGestureDetector::IsFistGesture(const HandBase::HandData& data){
+
+    switch (this->type) {
+    case XRBase::XRType::VisionPro:
+        return this->IsFistGestureByVisionPro(data);
+    default:
+        throw std::invalid_argument("[HandGestureDetector] Plz provide the XRBase::XRType");
+        break;
+    }
+}
+
 
 bool HandGestureDetector::IsOkGestureByVisionPro(const HandBase::HandData& data){
     auto handPositions = data.handPositions;
     auto handGesture = data.handGesture;
 
     // threshold
-    double angleThreshold = 165.0;
+    double angleThreshold = 160.0;
     double distThreshold = 0.02;// 2cm
 
     // Middle Finger 11-10-14
@@ -74,7 +89,7 @@ bool HandGestureDetector::IsOkGestureByVisionPro(const HandBase::HandData& data)
             MatrixUtils::CalVecAngle(  handPositions[this->middleFingerJointsIndex[1]],
                                 handPositions[this->middleFingerJointsIndex[0]],
                                 handPositions[this->middleFingerJointsIndex[4]]);
-    std::cout<<"[HandGestureDetector::IsOkGestureByVisionPro] middleAngle: "<<middleAngle<<std::endl;
+//    std::cout<<"[HandGestureDetector::IsOkGestureByVisionPro] middleAngle: "<<middleAngle<<std::endl;
     bool middleFlag = middleAngle < 180.0 && middleAngle > angleThreshold;
 
     // Ring Finger 16-15-19
@@ -82,7 +97,7 @@ bool HandGestureDetector::IsOkGestureByVisionPro(const HandBase::HandData& data)
             MatrixUtils::CalVecAngle(  handPositions[this->ringFingerJointsIndex[1]],
                                 handPositions[this->ringFingerJointsIndex[0]],
                                 handPositions[this->ringFingerJointsIndex[4]]);
-    std::cout<<"[HandGestureDetector::IsOkGestureByVisionPro] ringAngle: "<<ringAngle<<std::endl;
+//    std::cout<<"[HandGestureDetector::IsOkGestureByVisionPro] ringAngle: "<<ringAngle<<std::endl;
     bool ringFlag = ringAngle < 180.0 && ringAngle > angleThreshold;
 
     // Little Finger 21-20-23
@@ -90,7 +105,7 @@ bool HandGestureDetector::IsOkGestureByVisionPro(const HandBase::HandData& data)
             MatrixUtils::CalVecAngle(  handPositions[this->littleFingerJointsIndex[1]],
                                 handPositions[this->littleFingerJointsIndex[0]],
                                 handPositions[this->littleFingerJointsIndex[4]]);
-    std::cout<<"[HandGestureDetector::IsOkGestureByVisionPro] littleAngle: "<<littleAngle<<std::endl;
+//    std::cout<<"[HandGestureDetector::IsOkGestureByVisionPro] littleAngle: "<<littleAngle<<std::endl;
     bool littleFlag = littleAngle < 180.0 && littleAngle > angleThreshold;
 
     // Thumb and Index Finger
@@ -107,24 +122,43 @@ bool HandGestureDetector::IsOkGestureByVisionPro(const HandBase::HandData& data)
 
 bool HandGestureDetector::IsThumbsUpGestureByVisionPro(const HandBase::HandData& data){
     auto handPositions = data.handPositions;
+    auto handGesture = data.handGesture;
 
     // threshold
-    double angleThreshold = 5.0;
+    double thumbAngleThreshold = 5.0;
+    double thumbRotAngleThreshold = 50;
     double distThreshold = 0.015;
+    double squeezeValueThreshold = 0.04;
 
+    // thumbAngle
     double thumbAngle =
             MatrixUtils::CalVecAngle(  handPositions[this->thumbFingerJointsIndex[0]],
                                 handPositions[this->thumbFingerJointsIndex[1]],
                                 handPositions[this->thumbFingerJointsIndex[3]]);
-    bool thumbFlag = thumbAngle < angleThreshold;
+    bool thumbFlag = thumbAngle < thumbAngleThreshold;
 
-    double dist = MatrixUtils::CalPoint2PlaneDist({handPositions[this->middleFingerJointsIndex[0]],
-                                                   handPositions[this->indexFingerJointsIndex[1]],
-                                                   handPositions[this->littleFingerJointsIndex[1]]},
-                                                   handPositions[this->thumbFingerJointsIndex[3]]);
-    bool distFalg = dist < distThreshold;
+    // SqueezeValue
+    bool squeezeFlag = handGesture.squeezeValue < squeezeValueThreshold;
 
-    if( thumbFlag && distFalg ){
+    // Distancs
+    // We also can use the thumbRotAngle
+    // Maybe thumbRotAngle < 8.0 ?
+//    double dist = MatrixUtils::CalPoint2PlaneDist({handPositions[this->middleFingerJointsIndex[0]],
+//                                                   handPositions[this->indexFingerJointsIndex[1]],
+//                                                   handPositions[this->littleFingerJointsIndex[1]]},
+//                                                   handPositions[this->thumbFingerJointsIndex[3]]);
+//    bool distFalg = dist < distThreshold;
+
+    // thumbRotAngle
+    double thumbRotAngle =
+            MatrixUtils::CalVecAngle(  handPositions[this->indexFingerJointsIndex[1]], // 6
+                                    handPositions[this->thumbFingerJointsIndex[2]], // 3
+                                    handPositions[this->littleFingerJointsIndex[1]]); // 21
+    thumbRotAngle = 180.0 - thumbRotAngle;
+    std::cout<<"[HandGestureDetector::IsFistGestureByVisionPro] thumbRotAngle: "<<thumbRotAngle<<std::endl;
+    bool thumbRotFlag = thumbRotAngle < thumbRotAngleThreshold;
+
+    if( thumbFlag && thumbRotFlag && squeezeFlag){
         return true;
     }else{
         return false;
@@ -135,6 +169,9 @@ bool HandGestureDetector::IsPinchGestureByVisionPro(const HandBase::HandData& da
     // threshold
     double pinchThreshold = 0.012;
 
+//    std::cout   <<"[HandGestureDetector::IsPinchGestureByVisionPro] pinchValue: "
+//                <<data.handGesture.pinchValue<<std::endl;
+
     bool pinchFlag = data.handGesture.pinchValue < pinchThreshold;
 
     if(pinchFlag){
@@ -144,3 +181,38 @@ bool HandGestureDetector::IsPinchGestureByVisionPro(const HandBase::HandData& da
     }
 }
 
+bool HandGestureDetector::IsFistGestureByVisionPro(const HandBase::HandData& data){
+    auto handPositions = data.handPositions;
+    auto handGesture = data.handGesture;
+
+    // threshold
+    double squeezeValueThreshold = 0.04;
+    double thumbAngleThreshold = 30.0;
+    double thumbRotAngleThreshold = 95.0;
+
+    // SqueezeValue
+    bool squeezeFlag = handGesture.squeezeValue < squeezeValueThreshold;
+
+    // thumbAngle
+    double thumbAngle =
+            MatrixUtils::CalVecAngle(  handPositions[this->thumbFingerJointsIndex[0]],
+                                handPositions[this->thumbFingerJointsIndex[1]],
+                                handPositions[this->thumbFingerJointsIndex[3]]);
+    std::cout<<"[HandGestureDetector::IsFistGestureByVisionPro] thumbAngle: "<<thumbAngle<<std::endl;
+    bool thumbFlag = thumbAngle > thumbAngleThreshold;
+
+    // thumbRotAngle
+    double thumbRotAngle =
+            MatrixUtils::CalVecAngle(  handPositions[this->indexFingerJointsIndex[1]], // 6
+                                    handPositions[this->thumbFingerJointsIndex[2]], // 3
+                                    handPositions[this->littleFingerJointsIndex[1]]); // 21
+    thumbRotAngle = 180.0 - thumbRotAngle;
+    std::cout<<"[HandGestureDetector::IsFistGestureByVisionPro] thumbRotAngle: "<<thumbRotAngle<<std::endl;
+    bool thumbRotFlag = thumbRotAngle > thumbRotAngleThreshold;
+
+    if( squeezeFlag && thumbFlag && thumbRotFlag ){
+        return true;
+    }else{
+        return false;
+    }
+}

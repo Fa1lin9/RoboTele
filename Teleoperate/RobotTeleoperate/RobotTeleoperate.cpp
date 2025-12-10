@@ -81,6 +81,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 
     RobotTeleoperate::BasicConfig config = {
         .robotType = RobotBase::RobotType::Ti5Robot,
+        .xrType = XRBase::GetTypeFromStr(rootObj["XRType"].as_string().c_str()),
         .address = rootObj["Address"].as_string().c_str(),
         .FPS = static_cast<int>(rootObj["FPS"].as_int64()),
         .solverConfig = solverConfig,

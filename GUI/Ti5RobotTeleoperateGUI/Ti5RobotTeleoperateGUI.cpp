@@ -112,15 +112,6 @@ void Ti5RobotTeleoperateGUI::on_startTeleBtn_clicked()
     teleopThread->start();
 }
 
-
-void Ti5RobotTeleoperateGUI::on_pauseTeleBtn_clicked()
-{
-    if (teleop) {
-        teleop->PauseTeleoperate();
-    }
-}
-
-
 void Ti5RobotTeleoperateGUI::on_stopTeleBtn_clicked()
 {
     if (teleop) {

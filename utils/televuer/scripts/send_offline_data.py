@@ -12,10 +12,13 @@ from VisionProData import VisionProData_pb2
 # file_name = "20251203_095737.csv" # good data
 # file_name = "20251204_144546.csv"
 # file_name = "20251204_152315.csv"
+file_name = "20251210_152553.csv"
+
 # for hand
-# file_name = "20251208_134912.csv"
-# file_name = "20251209_093632.csv"
-file_name = "20251209_152951.csv"
+# file_name = "20251210_141749.csv"
+# file_name = "ok_gesture.csv"
+# file_name = "thumbs_up_gesture.csv"
+# file_name = "fist_gesture.csv"
 CSV_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', f"{file_name}")
 
 # ZeroMQ

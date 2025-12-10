@@ -11,10 +11,14 @@ public:
 
     bool Init() override;
     bool StartTeleoperate(bool verbose) override;
-    bool PauseTeleoperate() override;
     bool StopTeleoperate() override;
 
 private:
+    bool CheckDataValid();
+
+    bool CheckSolutionValid(const Eigen::VectorXd& sol,
+                            const Eigen::VectorXd& qInit);
+
     std::string address;
     CsvWriter csvWriter;
 
@@ -24,9 +28,10 @@ private:
     // some flags
     bool startFlag = false;
 
-    bool pauseFlag = false;
-
     bool saveFlag = true;
 
     const RobotBase::RobotType robotType = RobotBase::RobotType::Ti5Robot;
+
+    // Speed Limits
+    Eigen::VectorXd speedThreshold;
 };

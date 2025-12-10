@@ -10,7 +10,7 @@ namespace MatrixUtils{
         Yaw,
     };
 
-    const std::unordered_map<std::string, MatrixUtils::EulerAxis> EulerAxisMap = {
+    inline const std::unordered_map<std::string, MatrixUtils::EulerAxis> EulerAxisMap = {
         {"Roll", MatrixUtils::EulerAxis::Roll},
         {"Pitch", MatrixUtils::EulerAxis::Pitch},
         {"Yaw", MatrixUtils::EulerAxis::Yaw}

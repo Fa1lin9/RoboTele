@@ -23,6 +23,8 @@ public:
 
     bool IsPinchGesture(const HandBase::HandData& data);
 
+    bool IsFistGesture(const HandBase::HandData& data);
+
 private:
 
     bool IsOkGestureByVisionPro(const HandBase::HandData& data);
@@ -30,6 +32,8 @@ private:
     bool IsThumbsUpGestureByVisionPro(const HandBase::HandData& data);
 
     bool IsPinchGestureByVisionPro(const HandBase::HandData& data);
+
+    bool IsFistGestureByVisionPro(const HandBase::HandData& data);
 
     XRBase::XRType type;
 

@@ -20,7 +20,7 @@ namespace XRBase {
         inline constexpr std::array<size_t, 5> LittleFingerJointsIndex = {20, 21, 22, 23, 24};
     }
 
-    const std::unordered_map<std::string, XRBase::XRType> XRTypeMap = {
+    inline const std::unordered_map<std::string, XRBase::XRType> XRTypeMap = {
         {"VisionPro", XRBase::XRType::VisionPro}
     };
 

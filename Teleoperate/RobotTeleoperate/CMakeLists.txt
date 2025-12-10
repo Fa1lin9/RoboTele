@@ -56,6 +56,9 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:Core::JsonParser>
         $<BUILD_INTERFACE:BasicSolver::HeadSolver>
         $<BUILD_INTERFACE:BasicSolver::WaistSolver>
+        $<BUILD_INTERFACE:HandSolver::HandSolver>
+        $<BUILD_INTERFACE:HandSolver::HandGestureDetector>
+        $<BUILD_INTERFACE:HandController::HandController>
     
     PRIVATE
         $<BUILD_INTERFACE:Teleoperate::Ti5RobotTeleoperate>

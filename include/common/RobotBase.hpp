@@ -15,7 +15,7 @@ namespace RobotBase{
         Ti5Robot
     };
 
-    const std::unordered_map<std::string, RobotBase::RobotType> RobotTypeMap = {
+    inline const std::unordered_map<std::string, RobotBase::RobotType> RobotTypeMap = {
         {"Ti5Robot", RobotBase::RobotType::Ti5Robot}
     };
 

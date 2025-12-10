@@ -30,8 +30,6 @@ private slots:
 
     void on_startTeleBtn_clicked();
 
-    void on_pauseTeleBtn_clicked();
-
     void on_stopTeleBtn_clicked();
 
 private:

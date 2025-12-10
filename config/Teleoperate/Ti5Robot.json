@@ -1,5 +1,6 @@
 {
     "RobotType": "Ti5Robot",
+    "XRType" : "VisionPro",
     "Address": "tcp://127.0.0.1:5555",
     "FPS": 25,
 

@@ -36,7 +36,7 @@ Eigen::VectorXd VisionProHandSolver::SolveSingleHand(const HandBase::HandData& d
             MatrixUtils::CalVecAngle(  handPositions[this->thumbFingerJointsIndex[0]],
                                 handPositions[this->thumbFingerJointsIndex[1]],
                                 handPositions[this->thumbFingerJointsIndex[3]]);
-    std::cout << "Original Thumb Finger's Angle: " << thumbAngle << std::endl;
+//    std::cout << "Original Thumb Finger's Angle: " << thumbAngle << std::endl;
     thumbAngle = this->fingersUpperBound[0] - thumbAngle;
     ret.push_back(thumbAngle);
 

@@ -2,6 +2,7 @@
 #include <HandSolver/HandSolver.hpp>
 #include <HandController/HandController.hpp>
 #include <Ros2Bridge/Ros2Bridge.h>
+#include <HandGestureDetector/HandGestureDetector.hpp>
 
 double ThumbFingerMap(const double& x){
     return 0.010 * (36 - x) / 34;
@@ -31,12 +32,18 @@ int main(){
     // Collector VisionPro's Data
     std::thread dataThread(&DataCollector::Run, &dataCollector);
 
+    // HandGestureDetector
+    HandGestureDetector leftHandDetector(XRBase::VisionPro);
+    HandGestureDetector rightHandDetector(XRBase::VisionPro);
+
     HandBase::DualHandData dualHandData;
     while(true){        
         if(dataCollector.HasNewData()){
             std::cout << "Get New Data! " << std::endl;
             dualHandData.leftHandData.handPositions = dataCollector.GetLeftHandPositions();
             dualHandData.rightHandData.handPositions = dataCollector.GetRightHandPositions();
+            dualHandData.leftHandData.handGesture = dataCollector.GetLeftHandGesture();
+            dualHandData.rightHandData.handGesture = dataCollector.GetRightHandGesture();
             dualHandData.type = HandBase::HandType::ROHand;
 
             if(dualHandData.leftHandData.handPositions[0].sum() == 0 ||
@@ -46,6 +53,29 @@ int main(){
         }else{
             continue;
         }
+
+        // Check Gesture
+        // For Left Hand
+        bool leftIsOk = leftHandDetector.IsOkGesture(dualHandData.leftHandData);
+        bool leftIsThumbsUp = leftHandDetector.IsThumbsUpGesture(dualHandData.leftHandData);
+        bool leftIsPinch = leftHandDetector.IsPinchGesture(dualHandData.leftHandData);
+        bool leftIsFist = leftHandDetector.IsFistGesture(dualHandData.leftHandData);
+        std::cout<<"Left Hand Gesture Flag: "<<std::endl;
+        std::cout<<"Is Ok: "<<leftIsOk<<std::endl;
+        std::cout<<"Is Thumbs Up: "<<leftIsThumbsUp<<std::endl;
+        std::cout<<"Is Pinch: "<<leftIsPinch<<std::endl;
+        std::cout<<"Is Fist: "<<leftIsFist<<std::endl;
+
+        //For Right Hand
+        bool rightIsOk = rightHandDetector.IsOkGesture(dualHandData.rightHandData);
+        bool rightIsThumbsUp = rightHandDetector.IsThumbsUpGesture(dualHandData.rightHandData);
+        bool rightIsPinch = rightHandDetector.IsPinchGesture(dualHandData.rightHandData);
+        bool rightIsFist = rightHandDetector.IsFistGesture(dualHandData.rightHandData);
+        std::cout<<"Right Hand Gesture Flag: "<<std::endl;
+        std::cout<<"Is Ok: "<<rightIsOk<<std::endl;
+        std::cout<<"Is Thumbs Up: "<<rightIsThumbsUp<<std::endl;
+        std::cout<<"Is Pinch: "<<rightIsPinch<<std::endl;
+        std::cout<<"Is Fist: "<<rightIsFist<<std::endl;
 
         auto start = std::chrono::high_resolution_clock::now();
 //        std::cout <<"Start Time: "

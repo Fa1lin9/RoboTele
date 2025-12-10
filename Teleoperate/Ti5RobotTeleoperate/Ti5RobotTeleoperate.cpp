@@ -23,9 +23,13 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 
     // qInit
     this->qInit = Eigen::VectorXd::Zero(21);
-    // Initial Pose
-    qInit.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
-    qInit.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
+
+    // Initial Pose For Real Robot
+//    this->qInit.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
+//    this->qInit.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
+
+    this->qInit.segment(4,7) << -0.72, -1.0, -1.0, -1.0, 0.83, 0, 0;
+    this->qInit.segment(14,7) << 0.72, 1.0, 1.0, 1.0, -0.83, 0, 0;
 
     this->ikSolverPtr = ArmSolver::GetPtr(config.solverConfig);
 
@@ -34,79 +38,14 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
     this->physicalRobotPtr = PhysicalRobot::GetPtr(config.robotConfig);
 
     this->ros2Bridge.Init(config.bridgeConfig);
+
+    this->handGestureDectector.Init(config.xrType);
+
+    // Speed Limits
+    double threshold = this->FPS * M_PI / 180.0;
+    this->speedThreshold = Eigen::VectorXd::Constant(this->ikSolverPtr->GetDofTotal(), threshold);
+
 }
-
-//Ti5RobotTeleoperate::Ti5RobotTeleoperate(const std::string &filePath)
-//{
-//    // qInit
-//    this->qInit = Eigen::VectorXd::Zero(21);
-//    qInit.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
-//    qInit.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
-
-//    JsonParser jsonParser(filePath);
-//    json::object rootObj = jsonParser.GetJsonObject();
-
-//    json::object solverObj = rootObj["SolverConfig"].as_object();
-//    json::object transformObj = rootObj["TransformConfig"].as_object();
-//    json::object physicalRObotObj = rootObj["PhysicalRobotConfig"].as_object();
-//    json::object ros2BridgeObj = rootObj["Ros2BridgeConfig"].as_object();
-
-//    RobotType::Type robotType = RobotType::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
-
-//    // IKSolver
-//    IKSolver::BasicConfig solverConfig = {
-////        .type = IKSolver::Type::Ti5Robot,
-//        .robotType = robotType,
-////        .baseFrameName = {"BASE_S"},
-//        .baseFrameName = JsonParser::JsonArray2StdVecStr(solverObj["BaseFrameName"].as_array()),
-////        .targetFrameName = {"L_WRIST_R", "R_WRIST_R"},
-//        .targetFrameName = JsonParser::JsonArray2StdVecStr(solverObj["TargetFrameName"].as_array()),
-//        .baseOffset = {JsonParser::JsonArray2EigenMatrixXd(solverObj["BaseOffset"].as_array()[0].as_array())},
-//        // for nlopt
-////        .maxIteration = 400,
-////        .relativeTol = 1e-2,
-//        // for ipopt
-//        .maxIteration = static_cast<int>(solverObj["MaxIteration"].as_int64()),
-//        .relativeTol = solverObj["RelativeTol"].as_double(),
-//        .dofLeftArm = static_cast<int>(solverObj["DofLeftArm"].as_int64()),
-//        .dofRightArm = static_cast<int>(solverObj["DofRightArm"].as_int64()),
-//    };
-
-//    // Transform
-//    Transform::BasicConfig transformConfig = {
-//        .T_Head2Waist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Head2Waist"].as_array()),
-//        .T_XR2Robot = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_XR2Robot"].as_array()),
-//        .T_Robot2LeftWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2LeftWrist"].as_array()),
-//        .T_Robot2RightWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2RightWrist"].as_array()),
-//        .offset = JsonParser::JsonArray2EigenVectorXd(transformObj["Offset"].as_array()),
-//        .type = Transform::GetTypeFromStr(transformObj["Type"].as_string().c_str()),
-//    };
-
-//    // PhysicalRobot
-//    PhysicalRobot::BasicConfig physicalRobotConfig = {
-//        .robotType = robotType,
-//    };
-
-//    // Ros2Bridge
-//    Ros2Bridge::BasicConfig bridgeConfig = {
-//        .topicName = ros2BridgeObj["TopicName"].as_string().c_str(),
-//        .msgType = Ros2Bridge::GetMsgTypeFromStr(ros2BridgeObj["MsgType"].as_string().c_str()),
-//    };
-
-//    this->address = rootObj["Address"].as_string().c_str();
-//    this->dataCollector.Init(this->address);
-//    this->FPS = rootObj["FPS"].as_int64();
-//    this->isSim = rootObj["IsSimulation"].as_bool();
-//    this->isReal = rootObj["IsReal"].as_bool();
-
-//    this->ikSolverPtr = IKSolver::GetPtr(solverConfig);
-
-//    this->transformPtr = Transform::GetPtr(transformConfig);
-
-//    this->physicalRobotPtr = PhysicalRobot::GetPtr(physicalRobotConfig);
-
-//    this->ros2Bridge.Init(bridgeConfig);
-//}
 
 Ti5RobotTeleoperate::~Ti5RobotTeleoperate(){
 
@@ -116,7 +55,6 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     // Filter
     WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, this->ikSolverPtr->GetDofTotal());
 
-    this->pauseFlag = false;
     this->startFlag = true;
     this->saveFlag = false;
 
@@ -133,13 +71,11 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     Eigen::Vector3d waistRPY;
     auto waistJointsInfo = this->waistSolver.GetJointsInfo();
 
+    // Flag
+    bool isStart = false;
+    bool isEnd = false;
+    bool isFirstCheck = false;
     while(this->startFlag){
-        if(this->pauseFlag){
-            std::cout<<"Teleoperation Stop ! "<<std::endl;
-            sleep(1);
-            continue;
-        }
-
         auto start = std::chrono::high_resolution_clock::now();
 
         // Get Data from XR Device
@@ -152,16 +88,14 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
 
             this->dualHandData.leftHandData.handGesture = this->dataCollector.GetLeftHandGesture();
             this->dualHandData.leftHandData.handGesture = this->dataCollector.GetRightHandGesture();
+
+            this->dualHandData.type = HandBase::HandType::ROHand;
         }else{
             continue;
         }
 
-        // Check the poseMatrix
-        if(this->poseMatrix.size()==0 || this->poseMatrix.empty()){
-            std::string error = " The pose matrix received is not qualified !";
-            throw std::invalid_argument(error);
-            continue;
-        }
+        // Check data validity
+        this->CheckDataValid();
 
         if(verbose){
             std::cout << "------------- Original Data -------------" << std::endl;
@@ -171,16 +105,34 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             std::cout << "-----------------------------------------" << std::endl;
         }
 
+        // Start or End the Teleoperation according to the Hand Gesture
+        if(!isStart){
+            isStart =
+                    this->handGestureDectector.IsOkGesture(this->dualHandData.leftHandData) &&
+                    this->handGestureDectector.IsOkGesture(this->dualHandData.rightHandData);
+            if(!isStart){
+                continue;
+            }
+            std::cout << "[Ti5RobotTeleoperate] The handGesture is OK, now start the teleoperation! "<<std::endl;
+        }
+
+        if(!isEnd){
+            isEnd =
+                    this->handGestureDectector.IsThumbsUpGesture(this->dualHandData.leftHandData) ||
+                    this->handGestureDectector.IsThumbsUpGesture(this->dualHandData.rightHandData);
+        }else{
+            std::cout << "[Ti5RobotTeleoperate] The handGesture is thumbs up, now end the teleoperation! "<<std::endl;
+            break;
+        }
+
         // Message Config
         msgConfig.head2XRWorldPose = this->poseMatrix[0];
         msgConfig.leftWrist2XRWorldPose = this->poseMatrix[1];
         msgConfig.rightWrist2XRWorldPose = this->poseMatrix[2];
 
         bool modeFlag =
-                this->dualHandData.leftHandData.handGesture.pinchValue < 0.012 ||
-                this->dualHandData.rightHandData.handGesture.pinchValue < 0.012;
-//        bool modeFlag =
-//                this->handData.leftHandGesture.pinchState || this->handData.rightHandGesture.pinchState;
+                this->handGestureDectector.IsFistGesture(this->dualHandData.leftHandData) &&
+                this->handGestureDectector.IsFistGesture(this->dualHandData.rightHandData);
         if(modeFlag)
         {
             msgConfig.mode = Transform::TeleMode::WaistMode;
@@ -232,6 +184,20 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
             qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
 
+            // Check solution
+//            Eigen::VectorXd current(14);
+//            Eigen::VectorXd last(14);
+//            current << qEigen.segment(4,7), qEigen.segment(14,7);
+//            last << this->qInit.segment(4,7), this->qInit.segment(14,7);
+
+//            if(!isFirstCheck){
+//                isFirstCheck = true;
+//            }else{
+//                if(!this->CheckSolutionValid(current, last)){
+//                    qEigen = this->qInit;
+//                }
+//            }
+
             // Filter the Eigen
             filter.AddData(qEigen);
             qEigen = filter.GetFilteredData();
@@ -273,7 +239,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             continue;
         }
 
-        // save data to log
+        // Save Data to Log
         if(this->saveFlag){
             this->csvWriter.WriteEigenVector(q.value());
         }
@@ -298,11 +264,6 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     return true;
 }
 
-bool Ti5RobotTeleoperate::PauseTeleoperate(){
-    this->pauseFlag = !this->pauseFlag;
-    return true;
-}
-
 bool Ti5RobotTeleoperate::StopTeleoperate(){
     if(!this->startFlag){
         std::cout<<"Teleoperation has ended! "<<std::endl;
@@ -311,4 +272,62 @@ bool Ti5RobotTeleoperate::StopTeleoperate(){
     }
 
     return true;
+}
+
+bool Ti5RobotTeleoperate::CheckDataValid(){
+    // PoseMatrix
+    if (this->poseMatrix[0].isZero(1e-9) ||
+        this->poseMatrix[1].isZero(1e-9) ||
+        this->poseMatrix[2].isZero(1e-9)){
+        std::cerr << "[Ti5RobotTeleoperate::CheckData] One of poseMatrix is zero!" << std::endl;
+        return false;
+    }
+
+    if (this->poseMatrix.empty()) {
+        std::cerr << "[Ti5RobotTeleoperate::CheckData] poseMatrix is empty!" << std::endl;
+        return false;
+    }
+
+    // ensure poseMatrix has at least 3 matrices
+    if (this->poseMatrix.size() < 3) {
+        std::cerr << "[Ti5RobotTeleoperate::CheckData] poseMatrix size < 3!" << std::endl;
+        return false;
+    }
+
+    // HandData
+    const auto& left  = this->dualHandData.leftHandData.handPositions;
+    const auto& right = this->dualHandData.rightHandData.handPositions;
+
+    if (left.empty() || right.empty()) {
+        std::cerr << "[Ti5RobotTeleoperate::CheckData] HandData is empty!" << std::endl;
+        return false;
+    }
+
+    if (left[0].isZero(1e-9) || right[0].isZero(1e-9)) {
+        std::cerr << "[Ti5RobotTeleoperate::CheckData] First hand position is zero!" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool Ti5RobotTeleoperate::CheckSolutionValid(const Eigen::VectorXd& sol,
+                                             const Eigen::VectorXd& qInit)
+{
+    Eigen::VectorXd diff = sol - qInit;
+
+    bool outOfBounds = false;
+    for(size_t i=0;i<diff.size();i++){
+        if(std::abs(diff(i)) > this->speedThreshold[i]){
+            outOfBounds = true;
+            break;
+        }
+    }
+
+    if(outOfBounds){
+        std::cout<<"[Ti5RobotTeleoperate::CheckSolutionValid] The solution is invalid! "<<std::endl;
+        return false;
+    }else{
+        return true;
+    }
 }

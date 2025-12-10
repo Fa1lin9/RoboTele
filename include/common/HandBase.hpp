@@ -55,7 +55,7 @@ namespace HandBase{
                 36, 178, 176, 176, 174, 88
             };
 
-            inline  std::array<const char*, NumFingers> FingersName = {
+            inline std::array<const char*, NumFingers> FingersName = {
                 "thumb",
                 "index",
                 "middle",
@@ -65,7 +65,7 @@ namespace HandBase{
             };
         };
 
-    const std::unordered_map<std::string, HandBase::HandType> HandTypeMap = {
+    inline const std::unordered_map<std::string, HandBase::HandType> HandTypeMap = {
         {"ROHand", HandBase::HandType::ROHand}
     };
 

@@ -11,21 +11,28 @@
 #include <HeadSolver/HeadSolver.hpp>
 #include <WaistSolver/WaistSolver.hpp>
 #include <Ros2Bridge/Ros2Bridge.h>
+#include <DataCollector/DataCollector.hpp>
 
+// For Boost
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
+// For Base
 #include <RobotBase.hpp>
 #include <XRBase.hpp>
 #include <HandBase.hpp>
 
-#include <DataCollector/DataCollector.hpp>
+// For Hand
+#include <HandSolver/HandSolver.hpp>
+#include <HandController/HandController.hpp>
+#include <HandGestureDetector/HandGestureDetector.hpp>
 
 class RobotTeleoperate
 {
 public:
     struct BasicConfig{
         RobotBase::RobotType robotType;
+        XRBase::XRType xrType;
         std::string address;
         int FPS;
 
@@ -47,7 +54,6 @@ public:
 
     virtual bool Init() = 0;
     virtual bool StartTeleoperate(bool verbose) = 0;
-    virtual bool PauseTeleoperate() = 0;
     virtual bool StopTeleoperate() = 0;
 
 protected:
@@ -75,6 +81,8 @@ protected:
 //    HandBase::HandGesture leftHandGesture;
 //    HandBase::HandGesture rightHandGesture;
     HandBase::DualHandData dualHandData;
+
+    HandGestureDetector handGestureDectector;
 
     Eigen::VectorXd qInit;
 };

@@ -42,8 +42,13 @@ Ti5DualArmSolver::Ti5DualArmSolver(const ArmSolver::BasicConfig &config_)
     // Initialize some basic parameter,like the bounds
     this->InitRobot(config_);
 
+    this->wTranslation = config_.wTranslation;
+    this->wRotation = config_.wRotation;
+    this->wRegularization = config_.wRegularization;
+    this->wSmooth = config_.wSmooth;
+
     // Init auto-diff
-    this->InitOptim();
+    this->InitOptim(config_);
 
     std::cout<<" Init Sucessfully! "<<std::endl;
 }
@@ -55,7 +60,7 @@ Ti5DualArmSolver::~Ti5DualArmSolver()
 
 boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
         const std::vector<Eigen::Matrix4d>& targetPose,
-        const Eigen::VectorXd& qInit,
+        const Eigen::VectorXd& qInit_,
         bool verbose)
 {
     // check the target pose
@@ -72,7 +77,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
         case SolverType::Casadi :{
         // set value
         // qInit
-        std::vector<double> qInitVec(qInit.data(), qInit.data() + qInit.size());
+        std::vector<double> qInitVec(qInit_.data(), qInit_.data() + qInit_.size());
         this->opti.set_value(this->qInit, casadi::DM(qInitVec));
 
 
@@ -100,6 +105,10 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
 
 //        std::cout<<"targetPose in Eigen:"<<targetPose[0]<<std::endl;
 //        std::cout<<"targetPose in Casadi:"<<targetPoseLeftDM<<std::endl;
+
+        // qVar
+        // Set decision variables's initial values
+        this->opti.set_initial(this->qVar, casadi::DM(qInitVec));
 
         auto start = std::chrono::high_resolution_clock::now();
 
@@ -137,7 +146,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
         }
         case SolverType::Nlopt :{
             // time consumed a lot
-            this->InitAD(targetPose,qInit);
+            this->InitAD(targetPose,qInit_);
 
             nlopt::opt opt;
 
@@ -150,7 +159,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
         //    }
             bool useGrad = 1;
             if(useGrad){
-                opt = nlopt::opt(nlopt::GD_STOGO , qInit.size());
+                opt = nlopt::opt(nlopt::GD_STOGO , qInit_.size());
                 ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
                     Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
                     Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
@@ -174,7 +183,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
                     return objectiveFunc;
                 };
             }else{
-                opt = nlopt::opt(nlopt::GN_DIRECT_L , qInit.size());
+                opt = nlopt::opt(nlopt::GN_DIRECT_L , qInit_.size());
                 ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
                     Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
                     Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
@@ -197,7 +206,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
 
             Ti5RobotData robotData = {
                 .solver = this,
-                .qInit = qInit,
+                .qInit = qInit_,
                 .targetPose = targetPose,
             };
 
@@ -503,7 +512,7 @@ void Ti5DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
 
 }
 
-void Ti5DualArmSolver::InitOptim(){
+void Ti5DualArmSolver::InitOptim(const ArmSolver::BasicConfig &config_){
 //    pinocchio::DataTpl<casadi::SX> dataSX(this->robotModelSX);
     this->dataPtrSX = std::make_shared<pinocchio::DataTpl<casadi::SX>>(this->robotModelSX);
 
@@ -588,11 +597,10 @@ void Ti5DualArmSolver::InitOptim(){
     this->regularizationCost = casadi::MX::sumsqr(qVar);
 
     this->totalCost =
-        50 * translationalCost +
-//        0.5 * rotationalCost +
-        0.4 * rotationalCost +
-        0.1 * smoothCost +
-        0.02 * regularizationCost;
+        config_.wTranslation * translationalCost +
+        config_.wRotation * rotationalCost +
+        config_.wSmooth * smoothCost +
+        config_.wRegularization * regularizationCost;
 
     this->opti.subject_to(
                 this->opti.bounded(

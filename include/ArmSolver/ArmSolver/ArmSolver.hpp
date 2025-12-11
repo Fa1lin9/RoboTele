@@ -49,6 +49,11 @@ public:
         int maxIteration;
         double relativeTol;
         std::vector<int> dofArm;
+
+        double wTranslation;
+        double wRotation;
+        double wRegularization;
+        double wSmooth;
     };
 
     // just for nlopt

@@ -43,6 +43,7 @@ public:
 
         bool isSim;
         bool isReal;
+        bool isCheckSolution;
     };
 
     RobotTeleoperate();
@@ -71,6 +72,7 @@ protected:
 
     bool isSim;
     bool isReal;
+    bool isCheckSolution;
 
     // Valuable
     std::vector<Eigen::Matrix4d> poseMatrix;

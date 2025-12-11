@@ -31,6 +31,11 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 
     RobotBase::RobotType robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
 
+//    std::cout << "Translation kind = " << (int)solverObj["TranslationWeight"].kind() << std::endl;
+//    std::cout << "Rotation kind = " << (int)solverObj["RotationWeight"].kind() << std::endl;
+//    std::cout << "Regularization kind = " << (int)solverObj["RegularizationWeight"].kind() << std::endl;
+//    std::cout << "Smooth kind = " << (int)solverObj["SmoothWeight"].kind() << std::endl;
+
     // IKSolver
     ArmSolver::BasicConfig solverConfig = {
         .type = ArmSolver::GetTypeFromStr(solverObj["Type"].as_string().c_str()),
@@ -46,6 +51,10 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .maxIteration = static_cast<int>(solverObj["MaxIteration"].as_int64()),
         .relativeTol = solverObj["RelativeTol"].as_double(),
         .dofArm = JsonParser::JsonArray2StdVecInt(solverObj["DofArm"].as_array()),
+        .wTranslation = solverObj["ObjectiveFunc"].as_object()["TranslationWeight"].as_double(),
+        .wRotation = solverObj["ObjectiveFunc"].as_object()["RotationWeight"].as_double(),
+        .wRegularization = solverObj["ObjectiveFunc"].as_object()["RegularizationWeight"].as_double(),
+        .wSmooth = solverObj["ObjectiveFunc"].as_object()["SmoothWeight"].as_double(),
     };
     // In the future, the variable BaseOffset maybe not just 1
     // So I choose to set BaseOffset to 3-D array
@@ -90,6 +99,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .bridgeConfig = bridgeConfig,
         .isSim  = rootObj["IsSimulatedRobot"].as_bool(),
         .isReal = rootObj["IsRealWorldRobot"].as_bool(),
+        .isCheckSolution = rootObj["IsCheckSolution"].as_bool(),
     };
 
     return RobotTeleoperate::GetPtr(config);

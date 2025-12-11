@@ -6,6 +6,8 @@
 
     "IsSimulatedRobot": true,
     "IsRealWorldRobot": false,
+    
+    "IsCheckSolution": true,
 
     "SolverConfig":{
         "Type": "Ti5DualArm",
@@ -21,7 +23,13 @@
         ],
         "MaxIteration": 50,
         "RelativeTol": 1e-6,
-        "DofArm": [5, 5] 
+        "DofArm": [5, 5],
+        "ObjectiveFunc":{
+            "TranslationWeight": 50.0,
+            "RotationWeight": 0.5,
+            "RegularizationWeight": 0.02,
+            "SmoothWeight": 0.1 
+        }
     },
 
     "TransformConfig":{

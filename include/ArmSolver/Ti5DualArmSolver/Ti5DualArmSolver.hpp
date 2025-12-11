@@ -125,7 +125,7 @@ private:
     // Initialization
     void InitRobot(const ArmSolver::BasicConfig &config_);
 
-    void InitOptim();
+    void InitOptim(const ArmSolver::BasicConfig &config_);
 
     void InitAD(const std::vector<Eigen::Matrix4d>& targetPose,
                       const Eigen::VectorXd& qInit);
@@ -213,5 +213,10 @@ private:
     /* ------------------ NLopt ------------------ */
     double relativeTol = 1e-3;
     size_t maxIteration = 400;
+
+    double wTranslation;
+    double wRotation;
+    double wRegularization;
+    double wSmooth;
 
 };

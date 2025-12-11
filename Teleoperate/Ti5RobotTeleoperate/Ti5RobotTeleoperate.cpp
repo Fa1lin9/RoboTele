@@ -15,7 +15,9 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
     this->dataCollector.Init(this->address);
     this->isSim = config.isSim;
     this->isReal = config.isReal;
+    this->isCheckSolution = config.isCheckSolution;
     this->FPS = config.FPS;
+
 
     // Solver
     this->headSolver.Init(config.robotType);
@@ -185,22 +187,24 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
 
             // Check solution
-//            Eigen::VectorXd current(14);
-//            Eigen::VectorXd last(14);
-//            current << qEigen.segment(4,7), qEigen.segment(14,7);
-//            last << this->qInit.segment(4,7), this->qInit.segment(14,7);
+            if(this->isCheckSolution){
+                Eigen::VectorXd current(14);
+                Eigen::VectorXd last(14);
+                current << qEigen.segment(4,7), qEigen.segment(14,7);
+                last << this->qInit.segment(4,7), this->qInit.segment(14,7);
 
-//            if(!isFirstCheck){
-//                isFirstCheck = true;
-//            }else{
-//                if(!this->CheckSolutionValid(current, last)){
-//                    qEigen = this->qInit;
-//                }
-//            }
+                if(!isFirstCheck){
+                    isFirstCheck = true;
+                }else{
+                    if(!this->CheckSolutionValid(current, last)){
+                        qEigen = this->qInit;
+                    }
+                }
+            }
 
-            // Filter the Eigen
-            filter.AddData(qEigen);
-            qEigen = filter.GetFilteredData();
+//            // Filter the Eigen
+//            filter.AddData(qEigen);
+//            qEigen = filter.GetFilteredData();
 
             if(this->isSim){
                 // send to ros2

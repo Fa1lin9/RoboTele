@@ -9,10 +9,14 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from VisionProData import VisionProData_pb2
 
 # ==================== 配置 ====================
+fps = 25
+
 # file_name = "20251203_095737.csv" # good data
 # file_name = "20251204_144546.csv"
 # file_name = "20251204_152315.csv"
-file_name = "20251210_152553.csv"
+
+# new data
+file_name = "20251211_102209.csv"
 
 # for hand
 # file_name = "20251210_141749.csv"
@@ -87,7 +91,6 @@ def load_data_from_csv(csv_file):
 # ==================== 发送循环 ====================
 poses = load_data_from_csv(CSV_FILE)
 count = 0
-fps = 30
 
 while count < len(poses['head_pose']):
     data = VisionProData_pb2.VisionProData()

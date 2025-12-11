@@ -85,7 +85,7 @@ public:
 
     boost::optional<Eigen::VectorXd> Solve(
                     const std::vector<Eigen::Matrix4d>& targetPose,
-                    const Eigen::VectorXd& qInit,
+                    const Eigen::VectorXd& qLast_,
                     bool verbose) override;
 
     std::vector<pinocchio::SE3> Forward(const Eigen::VectorXd& q) override;
@@ -181,6 +181,7 @@ private:
     std::vector<double> totalLowerBound;
     std::vector<double> totalUpperBound;
 
+    Eigen::VectorXd initPose;
 
     /* ------------------ Casadi Auto-Diff ------------------ */
 
@@ -197,7 +198,7 @@ private:
 
     casadi::Opti opti;
     casadi::MX qVar;
-    casadi::MX qInit;
+    casadi::MX qLast;
     casadi::MX targetPoseLeft;
     casadi::MX targetPoseRight;
 

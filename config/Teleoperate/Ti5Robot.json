@@ -7,7 +7,11 @@
     "IsSimulatedRobot": true,
     "IsRealWorldRobot": false,
     
-    "IsCheckSolution": true,
+    "IsCheckSolution": false,
+
+    "IsFilterSolution": true,
+    "FilterWeight": [0.4, 0.3, 0.2, 0.1],
+    "_FilterWeight": [0.7, 0.2, 0.1],
 
     "SolverConfig":{
         "Type": "Ti5DualArm",

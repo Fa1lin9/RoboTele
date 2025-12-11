@@ -100,7 +100,11 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .isSim  = rootObj["IsSimulatedRobot"].as_bool(),
         .isReal = rootObj["IsRealWorldRobot"].as_bool(),
         .isCheckSolution = rootObj["IsCheckSolution"].as_bool(),
+        .isFilterSolution = rootObj["IsFilterSolution"].as_bool(),
     };
+    Eigen::VectorXd filterWeightEigen = JsonParser::JsonArray2EigenVectorXd(rootObj["FilterWeight"].as_array());
+    config.filterWeight = std::vector<double>(filterWeightEigen.data(),
+                                              filterWeightEigen.data() + filterWeightEigen.size());
 
     return RobotTeleoperate::GetPtr(config);
 }

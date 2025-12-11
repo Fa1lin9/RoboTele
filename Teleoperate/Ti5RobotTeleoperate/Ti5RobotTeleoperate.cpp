@@ -16,22 +16,23 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
     this->isSim = config.isSim;
     this->isReal = config.isReal;
     this->isCheckSolution = config.isCheckSolution;
+    this->isFilterSolution = config.isFilterSolution;
     this->FPS = config.FPS;
-
+    this->filterWeight = config.filterWeight;
 
     // Solver
     this->headSolver.Init(config.robotType);
     this->waistSolver.Init(config.robotType);
 
-    // qInit
-    this->qInit = Eigen::VectorXd::Zero(21);
+    // qLast
+    this->qLast = Eigen::VectorXd::Zero(21);
 
     // Initial Pose For Real Robot
-//    this->qInit.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
-//    this->qInit.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
+//    this->qLast.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
+//    this->qLast.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
 
-    this->qInit.segment(4,7) << -0.72, -1.0, -1.0, -1.0, 0.83, 0, 0;
-    this->qInit.segment(14,7) << 0.72, 1.0, 1.0, 1.0, -0.83, 0, 0;
+    this->qLast.segment(4,7) << -0.72, -1.0, -1.0, -1.0, 0.83, 0, 0;
+    this->qLast.segment(14,7) << 0.72, 1.0, 1.0, 1.0, -0.83, 0, 0;
 
     this->ikSolverPtr = ArmSolver::GetPtr(config.solverConfig);
 
@@ -55,7 +56,8 @@ Ti5RobotTeleoperate::~Ti5RobotTeleoperate(){
 
 bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     // Filter
-    WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, this->ikSolverPtr->GetDofTotal());
+//    WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, this->ikSolverPtr->GetDofTotal());
+    WeightedMovingFilter filter(this->filterWeight, this->ikSolverPtr->GetDofTotal());
 
     this->startFlag = true;
     this->saveFlag = false;
@@ -159,7 +161,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
 
         q = ikSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
-                                this->qInit,
+                                this->qLast,
                                 false);
 
         // Check the Solution
@@ -191,20 +193,22 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
                 Eigen::VectorXd current(14);
                 Eigen::VectorXd last(14);
                 current << qEigen.segment(4,7), qEigen.segment(14,7);
-                last << this->qInit.segment(4,7), this->qInit.segment(14,7);
+                last << this->qLast.segment(4,7), this->qLast.segment(14,7);
 
                 if(!isFirstCheck){
                     isFirstCheck = true;
                 }else{
                     if(!this->CheckSolutionValid(current, last)){
-                        qEigen = this->qInit;
+                        qEigen = this->qLast;
                     }
                 }
             }
 
-//            // Filter the Eigen
-//            filter.AddData(qEigen);
-//            qEigen = filter.GetFilteredData();
+            // Filter the Eigen
+            if(this->isFilterSolution){
+                filter.AddData(qEigen);
+                qEigen = filter.GetFilteredData();
+            }
 
             if(this->isSim){
                 // send to ros2
@@ -232,10 +236,10 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
 
             // set the initial value of the joint
             // For Simulated Robot
-            this->qInit = qEigen;
+            this->qLast = qEigen;
 
             // For Real Robot
-//            qInit = physicalRobotPtr->GetJointsAngleEigen();
+//            qLast = physicalRobotPtr->GetJointsAngleEigen();
 
             std::cout << "q:\n" << std::fixed << std::setprecision(5) << qEigen << std::endl;
         }else{
@@ -316,9 +320,9 @@ bool Ti5RobotTeleoperate::CheckDataValid(){
 }
 
 bool Ti5RobotTeleoperate::CheckSolutionValid(const Eigen::VectorXd& sol,
-                                             const Eigen::VectorXd& qInit)
+                                             const Eigen::VectorXd& qLast)
 {
-    Eigen::VectorXd diff = sol - qInit;
+    Eigen::VectorXd diff = sol - qLast;
 
     bool outOfBounds = false;
     for(size_t i=0;i<diff.size();i++){

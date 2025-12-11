@@ -144,16 +144,16 @@ int main()
     handCtrl->BackToInitPose();
     sleep(1);
     std::cout << "Start to move! " << std::endl;
-    angle(0) = 20;
-//    angle(1) = 110;
-//    angle(2) = 110;
-    angle(3) = 110;
-    angle(4) = 110;
-    angle(5) = 80;
+    angle(0) = 32;
+    angle(1) = 102;
+    angle(2) = 98;
+    angle(3) = 102;
+    angle(4) = 100;
+    angle(5) = 2;
     handCtrl->SetJointsAngle(angle);
     std::cout << "Move over! " << std::endl;
 
-    sleep(1);
+    sleep(5);
     handCtrl->BackToInitPose();
 
 }

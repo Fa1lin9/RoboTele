@@ -3,6 +3,7 @@
 #include <HandController/HandController.hpp>
 #include <Ros2Bridge/Ros2Bridge.h>
 #include <HandGestureDetector/HandGestureDetector.hpp>
+#include <WeightedMovingFilter/WeightedMovingFilter.hpp>
 
 double ThumbFingerMap(const double& x){
     return 0.010 * (36 - x) / 34;
@@ -14,7 +15,34 @@ double OtherFingerMap(const double& x){
 
 int FPS = 25;
 
+bool isReal = false;
+
 int main(){
+    // Filter
+    WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, 12);
+
+    // HandController
+    // Right Hand
+    HandController::ModBusConfig modbusConfig = {
+        .device = "/dev/ttyCH341USB0",
+        .baudrate = 115200,
+        .parity = "N",
+        .dataBits = 8,
+        .stopBits = 1,
+        .slaveID = 3,
+    };
+
+    HandController::BasicConfig basicConfig = {
+        .type = HandBase::HandType::ROHand,
+        .modbusConfig = modbusConfig,
+    };
+
+    auto handCtrl = HandController::GetPtr(basicConfig);
+
+    handCtrl->BackToInitPose();
+    sleep(3);
+
+    // DataCollector
     DataCollector dataCollector("tcp://127.0.0.1:5555");
 
     HandSolver::BasicConfig handSolverConfig;
@@ -29,7 +57,7 @@ int main(){
     bridgeConfig.topicName = "rohand_left/external_external_joint_states";
     bridge.Init(bridgeConfig);
 
-    // Collector VisionPro's Data
+    // Collect VisionPro's Data
     std::thread dataThread(&DataCollector::Run, &dataCollector);
 
     // HandGestureDetector
@@ -87,6 +115,11 @@ int main(){
         std::cout << "HandAngle: " << std::endl;
         std::cout << handAngle << std::endl;
 
+        // Filter the handAngle
+//        filter.AddData(handAngle);
+//        handAngle = filter.GetFilteredData();
+
+        // For simulation in ros2
         ti5_interfaces::msg::JointStateWithoutStamp msg;
         std::vector<double> position;
         position.push_back(OtherFingerMap(handAngle(1)));
@@ -104,6 +137,11 @@ int main(){
                                                 "th_root_link"};
         bridge.SendMsg(msg);
 
+        // For real hand
+        if(isReal){
+            handCtrl->SetJointsAngle(handAngle.segment(0, 6));
+        }
+
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         std::cout << " Main Loop 耗时: " << duration.count() << " ms" << std::endl;
@@ -115,6 +153,9 @@ int main(){
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
         }
     }
+
+    handCtrl->BackToInitPose();
+    sleep(3);
 
     // delete the thread
     dataCollector.Stop();

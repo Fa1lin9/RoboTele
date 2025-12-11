@@ -50,6 +50,7 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:HandSolver::HandSolver>
         $<BUILD_INTERFACE:HandSolver::HandGestureDetector>
         $<BUILD_INTERFACE:Core::DataCollector>
+        $<BUILD_INTERFACE:Core::WeightedMovingFilter>
 
     PRIVATE
 

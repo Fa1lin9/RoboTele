@@ -60,7 +60,7 @@ Ti5DualArmSolver::~Ti5DualArmSolver()
 
 boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
         const std::vector<Eigen::Matrix4d>& targetPose,
-        const Eigen::VectorXd& qInit_,
+        const Eigen::VectorXd& qLast_,
         bool verbose)
 {
     // check the target pose
@@ -77,8 +77,8 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
         case SolverType::Casadi :{
         // set value
         // qInit
-        std::vector<double> qInitVec(qInit_.data(), qInit_.data() + qInit_.size());
-        this->opti.set_value(this->qInit, casadi::DM(qInitVec));
+        std::vector<double> qInitVec(qLast_.data(), qLast_.data() + qLast_.size());
+        this->opti.set_value(this->qLast, casadi::DM(qInitVec));
 
 
         // targetPose
@@ -146,7 +146,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
         }
         case SolverType::Nlopt :{
             // time consumed a lot
-            this->InitAD(targetPose,qInit_);
+            this->InitAD(targetPose,qLast_);
 
             nlopt::opt opt;
 
@@ -159,7 +159,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
         //    }
             bool useGrad = 1;
             if(useGrad){
-                opt = nlopt::opt(nlopt::GD_STOGO , qInit_.size());
+                opt = nlopt::opt(nlopt::GD_STOGO , qLast_.size());
                 ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
                     Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
                     Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
@@ -183,7 +183,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
                     return objectiveFunc;
                 };
             }else{
-                opt = nlopt::opt(nlopt::GN_DIRECT_L , qInit_.size());
+                opt = nlopt::opt(nlopt::GN_DIRECT_L , qLast_.size());
                 ObjectWrapper = [](const std::vector<double>& x,std::vector<double>& grad,void *data)->double{
                     Eigen::Map<const Eigen::VectorXd> q(x.data(),x.size());
                     Ti5RobotData *robotData = static_cast<Ti5RobotData*>(data);
@@ -206,7 +206,7 @@ boost::optional<Eigen::VectorXd> Ti5DualArmSolver::Solve(
 
             Ti5RobotData robotData = {
                 .solver = this,
-                .qInit = qInit_,
+                .qInit = qLast_,
                 .targetPose = targetPose,
             };
 
@@ -506,6 +506,16 @@ void Ti5DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
         std::cout<<"Set limitation to right arm joint"<<temp<<std::endl;
     }
 
+    // Initial Pose
+    this->initPose = Eigen::VectorXd::Zero(21);
+
+    // Initial Pose For Real Robot
+//    this->initPose.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
+//    this->initPose.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
+
+    this->initPose.segment(4,7) << -0.72, -1.0, -1.0, -1.0, 0.83, 0, 0;
+    this->initPose.segment(14,7) << 0.72, 1.0, 1.0, 1.0, -0.83, 0, 0;
+
 //    std::cout<<" The size of the totalBoundsLower is "<<totalBoundsLower.size()<<std::endl;
 //    std::cout<<" The size of the totalBoundsUpper is "<<totalBoundsUpper.size()<<std::endl;
 //    std::cout<<" The size of the qNeutral is "<<qNeutral.size()<<std::endl;
@@ -585,7 +595,7 @@ void Ti5DualArmSolver::InitOptim(const ArmSolver::BasicConfig &config_){
 
 //    casadi::Opti opti;
     this->qVar = this->opti.variable(this->dofTotal, 1);
-    this->qInit = this->opti.parameter(this->dofTotal, 1);
+    this->qLast = this->opti.parameter(this->dofTotal, 1);
     this->targetPoseLeft = this->opti.parameter(4, 4);
     this->targetPoseRight = this->opti.parameter(4, 4);
 
@@ -593,7 +603,11 @@ void Ti5DualArmSolver::InitOptim(const ArmSolver::BasicConfig &config_){
             translationalError({qVar, targetPoseLeft, targetPoseRight})[0];
     this->rotationalCost =
             rotationalError({qVar, targetPoseLeft, targetPoseRight})[0];
-    this->smoothCost = casadi::MX::sumsqr(qVar - qInit);
+    this->smoothCost = casadi::MX::sumsqr(qVar - qLast);
+
+    std::vector initPoseVec = std::vector<double>(this->initPose.data(),
+                                                  this->initPose.data() + this->initPose.size());
+//    this->regularizationCost = casadi::MX::sumsqr(qVar - casadi::MX(initPoseVec));
     this->regularizationCost = casadi::MX::sumsqr(qVar);
 
     this->totalCost =

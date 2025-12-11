@@ -44,6 +44,8 @@ public:
         bool isSim;
         bool isReal;
         bool isCheckSolution;
+        bool isFilterSolution;
+        std::vector<double> filterWeight;
     };
 
     RobotTeleoperate();
@@ -73,6 +75,8 @@ protected:
     bool isSim;
     bool isReal;
     bool isCheckSolution;
+    bool isFilterSolution;
+    std::vector<double> filterWeight;
 
     // Valuable
     std::vector<Eigen::Matrix4d> poseMatrix;
@@ -86,5 +90,5 @@ protected:
 
     HandGestureDetector handGestureDectector;
 
-    Eigen::VectorXd qInit;
+    Eigen::VectorXd qLast;
 };

@@ -116,8 +116,8 @@ int main(){
         std::cout << handAngle << std::endl;
 
         // Filter the handAngle
-//        filter.AddData(handAngle);
-//        handAngle = filter.GetFilteredData();
+        filter.AddData(handAngle);
+        handAngle = filter.GetFilteredData();
 
         // For simulation in ros2
         ti5_interfaces::msg::JointStateWithoutStamp msg;

@@ -16,11 +16,11 @@ fps = 25
 # file_name = "20251204_152315.csv"
 
 # new data
-file_name = "20251211_102209.csv"
+# file_name = "20251211_102209.csv"
 
 # for hand
-# file_name = "20251210_141749.csv"
-# file_name = "ok_gesture.csv"
+# file_name = "20251213_153136.csv"
+file_name = "ok_gesture.csv"
 # file_name = "thumbs_up_gesture.csv"
 # file_name = "fist_gesture.csv"
 CSV_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', f"{file_name}")

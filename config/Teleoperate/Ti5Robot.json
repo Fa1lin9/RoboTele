@@ -32,7 +32,7 @@
             "TranslationWeight": 50.0,
             "RotationWeight": 0.5,
             "RegularizationWeight": 0.02,
-            "SmoothWeight": 0.1 
+            "SmoothWeight": 0.5 
         }
     },
 

@@ -4,7 +4,7 @@ using namespace eprosima::fastdds::dds;
 
 static std::unordered_map<Ros2Bridge::MsgType, std::function<TypeSupport()>> typeFactory = {
        { Ros2Bridge::MsgType::JointState, []() {
-            return TypeSupport(new sensor_msgs::msg::JointStatePubSubType());
+            return TypeSupport(new humanoid_msgs::msg::JointStatePubSubType());
        }},
        { Ros2Bridge::MsgType::Demo, []() {
             return TypeSupport(new my_msgs::msg::DemoPubSubType());

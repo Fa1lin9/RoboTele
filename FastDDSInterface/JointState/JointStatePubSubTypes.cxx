@@ -31,16 +31,16 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
-namespace sensor_msgs {
+namespace humanoid_msgs {
     namespace msg {
         JointStatePubSubType::JointStatePubSubType()
         {
-            set_name("sensor_msgs::msg::dds_::JointState_");
-            uint32_t type_size = sensor_msgs_msg_JointState_max_cdr_typesize;
+            set_name("humanoid_msgs::msg::dds_::JointState_");
+            uint32_t type_size = humanoid_msgs_msg_JointState_max_cdr_typesize;
             type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
             max_serialized_type_size = type_size + 4; /*encapsulation*/
             is_compute_key_provided = false;
-            uint32_t key_length = sensor_msgs_msg_JointState_max_key_cdr_typesize > 16 ? sensor_msgs_msg_JointState_max_key_cdr_typesize : 16;
+            uint32_t key_length = humanoid_msgs_msg_JointState_max_key_cdr_typesize > 16 ? humanoid_msgs_msg_JointState_max_key_cdr_typesize : 16;
             key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
             memset(key_buffer_, 0, key_length);
         }
@@ -184,13 +184,13 @@ namespace sensor_msgs {
 
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-                    sensor_msgs_msg_JointState_max_key_cdr_typesize);
+                    humanoid_msgs_msg_JointState_max_key_cdr_typesize);
 
             // Object that serializes the data.
             eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
             ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
             eprosima::fastcdr::serialize_key(ser, *p_type);
-            if (force_md5 || sensor_msgs_msg_JointState_max_key_cdr_typesize > 16)
+            if (force_md5 || humanoid_msgs_msg_JointState_max_key_cdr_typesize > 16)
             {
                 md5_.init();
                 md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
@@ -217,7 +217,7 @@ namespace sensor_msgs {
 
     } // namespace msg
 
-} // namespace sensor_msgs
+} // namespace humanoid_msgs
 
 
 // Include auxiliary functions like for serializing/deserializing.

@@ -20,8 +20,8 @@
  */
 
 
-#ifndef FAST_DDS_GENERATED__SENSOR_MSGS_MSG_JOINTSTATE_PUBSUBTYPES_HPP
-#define FAST_DDS_GENERATED__SENSOR_MSGS_MSG_JOINTSTATE_PUBSUBTYPES_HPP
+#ifndef FAST_DDS_GENERATED__HUMANOID_MSGS_MSG_JOINTSTATE_PUBSUBTYPES_HPP
+#define FAST_DDS_GENERATED__HUMANOID_MSGS_MSG_JOINTSTATE_PUBSUBTYPES_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
@@ -37,7 +37,7 @@
     Generated JointState is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // FASTDDS_GEN_API_VER
 
-namespace sensor_msgs
+namespace humanoid_msgs
 {
     namespace msg
     {
@@ -123,7 +123,7 @@ namespace sensor_msgs
 
         };
     } // namespace msg
-} // namespace sensor_msgs
+} // namespace humanoid_msgs
 
-#endif // FAST_DDS_GENERATED__SENSOR_MSGS_MSG_JOINTSTATE_PUBSUBTYPES_HPP
+#endif // FAST_DDS_GENERATED__HUMANOID_MSGS_MSG_JOINTSTATE_PUBSUBTYPES_HPP
 

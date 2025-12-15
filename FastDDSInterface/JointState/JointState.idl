@@ -1,13 +1,12 @@
 // generated from rosidl_adapter/resource/msg.idl.em
-// with input from sensor_msgs/msg/JointState.msg
+// with input from humanoid_msgs/msg/JointState.msg
 // generated code does not contain a copyright notice
 
 
-module sensor_msgs {
+module humanoid_msgs {
   module msg {
     struct JointState {
-
-      sequence<string> name;    
+      sequence<string> name;
 
       sequence<double> position;
 

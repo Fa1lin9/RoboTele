@@ -40,7 +40,7 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-namespace sensor_msgs {
+namespace humanoid_msgs {
 namespace msg {
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_JointState_type_identifier(
@@ -50,12 +50,12 @@ void register_JointState_type_identifier(
     ReturnCode_t return_code_JointState {eprosima::fastdds::dds::RETCODE_OK};
     return_code_JointState =
         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-        "sensor_msgs::msg::dds_::JointState_", type_ids_JointState);
+        "humanoid_msgs::msg::dds_::JointState_", type_ids_JointState);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_JointState)
     {
         StructTypeFlag struct_flags_JointState = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        QualifiedTypeName type_name_JointState = "sensor_msgs::msg::dds_::JointState_";
+        QualifiedTypeName type_name_JointState = "humanoid_msgs::msg::dds_::JointState_";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_JointState;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_JointState;
         CompleteTypeDetail detail_JointState = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_JointState, ann_custom_JointState, type_name_JointState.to_string());
@@ -323,12 +323,12 @@ void register_JointState_type_identifier(
                 TypeObjectUtils::build_and_register_struct_type_object(struct_type_JointState, type_name_JointState.to_string(), type_ids_JointState))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "sensor_msgs::msg::JointState already registered in TypeObjectRegistry for a different type.");
+                    "humanoid_msgs::msg::JointState already registered in TypeObjectRegistry for a different type.");
         }
     }
 }
 
 } // namespace msg
 
-} // namespace sensor_msgs
+} // namespace humanoid_msgs
 

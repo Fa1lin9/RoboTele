@@ -278,7 +278,7 @@ void Ti5DualArmSolver::Info(){
 
     std::cout << " ----------------------------------------------------- "<< std::endl;
 
-//    std::cout << "Size of joints upper limitation: " << robotModel.upperPositionLimit.rows() << std::endl;
+//    std::cout << "Size of joints upper limitaion: " << robotModel.upperPositionLimit.rows() << std::endl;
     std::cout << "Number of joints: " << robotModel.njoints << std::endl;
     std::cout << "Number of DOFs: " << robotModel.nv << std::endl;
     std::cout << "Number of frames: " << robotModel.nframes << std::endl;
@@ -381,6 +381,10 @@ size_t Ti5DualArmSolver::GetDofTotal(){
     return this->dofTotal;
 }
 
+std::vector<std::string> Ti5DualArmSolver::GetJointNames(){
+    return this->jointNames;
+}
+
 double Ti5DualArmSolver::ObjectiveFunc(const ArmSolver::Ti5RobotConfig& config_){
 //    LOG_FUNCTION;
     std::vector<pinocchio::SE3> currentPose = this->Forward(config_.q);
@@ -441,6 +445,14 @@ void Ti5DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
 //                this->robotModel);
 
 //    this->robotModelSX = this->robotModel.cast<casadi::SX>();
+
+    // Load JointNames
+    for(pinocchio::JointIndex i=1; i<robotModel.njoints; ++i){
+        std::cout << "Joint " << i << ": " << robotModel.names[i]
+                  << ", type: " << robotModel.joints[i].shortname()
+                  << ", parent: " << robotModel.parents[i] << std::endl;
+        this->jointNames.push_back(robotModel.names[i]);
+    }
 
     double min,max;
     for(size_t i = 0;i<this->dofArm;i++){

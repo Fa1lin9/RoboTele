@@ -86,6 +86,8 @@ public:
 
     virtual size_t GetDofTotal() = 0;
 
+    virtual std::vector<std::string> GetJointNames() = 0;
+
     static boost::shared_ptr<ArmSolver> GetPtr(const ArmSolver::BasicConfig& config_);
 
     static ArmSolver::Type GetTypeFromStr(const std::string& str);

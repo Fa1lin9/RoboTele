@@ -16,7 +16,7 @@
     "SolverConfig":{
         "Type": "Ti5DualArm",
         "BaseFrameName": ["BASE_S"],
-        "TargetFrameName": ["L_WRIST_R", "R_WRIST_R"],
+        "TargetFrameName": ["L7_WRIST_R", "R7_WRIST_R"],
         "BaseOffset": [
             [
             [1, 0, 0, 0.08],
@@ -69,8 +69,13 @@
         
     },
 
-    "Ros2BridgeConfig": {
+    "_Ros2BridgeConfig": {
         "MsgType": "JointStateWithoutStamp",
         "TopicName": "position_control/joint_state"
+    },
+
+    "Ros2BridgeConfig": {
+        "MsgType": "JointState",
+        "TopicName": "HumanoidCtrl/humanoid_msgs/msg/JointState"
     }
 }

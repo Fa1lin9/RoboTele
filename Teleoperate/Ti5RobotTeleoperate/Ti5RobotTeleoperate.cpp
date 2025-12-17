@@ -215,6 +215,10 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
                 ti5_interfaces::msg::JointStateWithoutStamp msg;
                 std::vector<double> qVec(qEigen.data(), qEigen.data() + qEigen.size());
                 msg.position() = qVec;
+                msg.name() = this->ikSolverPtr->GetJointNames();
+//                for(size_t i=0;i<msg.name().size();i++){
+//                    std::cout<<"Msg Joint "<<i<<": "<<msg.name()[i]<<std::endl;
+//                }
                 // Temp send 14 joints value just to apply to GunmpGan's current version
 //                std::vector<double> qVecOnlyArm;
 //                qVecOnlyArm.reserve(14);

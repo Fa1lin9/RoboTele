@@ -16,7 +16,7 @@ list( APPEND ${GROUP_NAME}_Components
 #    NLoptDemo
     # PinocchioDemo
 #    CrpRobotDemo
-    # CanDriverDemo
+    CanDriverDemo
     MainDemo
 #    FastDDSDemo
 #    JsonDemo

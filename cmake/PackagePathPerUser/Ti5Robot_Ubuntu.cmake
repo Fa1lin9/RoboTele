@@ -200,7 +200,7 @@ find_package( fastcdr REQUIRED )
 
 find_package( casadi REQUIRED )
 
- if (Qt5_FOUND)
+ if (casadi_FOUND)
     message(STATUS "casadi found!")
 else()
     message(FATAL_ERROR "casadi not found!")
@@ -210,40 +210,40 @@ endif()
 # # #            Find HumanoidDualArmSolver               #
 # # #######################################################
 #set(HumaniodRobot "/home/djr/djr_workspace/djr_libs/HumanoidDualArmSolver" )
-set(HumaniodRobot "/home/ti5robot/workspace_djr/djr_lib/HumanoidDualArmSolver" )
-set(HumaniodRobot_include "${HumaniodRobot}/include")
+# set(HumaniodRobot "/home/ti5robot/workspace_djr/djr_lib/HumanoidDualArmSolver" )
+# set(HumaniodRobot_include "${HumaniodRobot}/include")
 
-find_library(MYLIBTI5_LIB
-    NAMES mylibti5_arm_2004
-    PATHS "${HumaniodRobot}/usrlib/arm/2004"
-    REQUIRED
-)
+# find_library(MYLIBTI5_LIB
+#     NAMES mylibti5_arm_2004
+#     PATHS "${HumaniodRobot}/usrlib/arm/2004"
+#     REQUIRED
+# )
 
-# message(STATUS "CONTROLCAN_LIB Library: ${CONTROLCAN_LIB}")
+# # message(STATUS "CONTROLCAN_LIB Library: ${CONTROLCAN_LIB}")
 
-# find_library(HumaniodRobot_CONTROLCAN_LIB
+# # find_library(HumaniodRobot_CONTROLCAN_LIB
+# #     NAMES controlcan
+# #     PATHS "${HumaniodRobot}/usrlib/arm/2004"
+# #     REQUIRED
+# # )
+
+# find_library(CONTROLCAN_LIB
 #     NAMES controlcan
 #     PATHS "${HumaniodRobot}/usrlib/arm/2004"
 #     REQUIRED
 # )
 
-find_library(CONTROLCAN_LIB
-    NAMES controlcan
-    PATHS "${HumaniodRobot}/usrlib/arm/2004"
-    REQUIRED
-)
+# set(HumaniodRobot_LIBS
+#     ${MYLIBTI5_LIB}
+#     ${CONTROLCAN_LIB}
+#     # ${HumaniodRobot_CONTROLCAN_LIB}
+# )
 
-set(HumaniodRobot_LIBS
-    ${MYLIBTI5_LIB}
-    ${CONTROLCAN_LIB}
-    # ${HumaniodRobot_CONTROLCAN_LIB}
-)
-
-# 打印查找结果
-message(STATUS "HumaniodRobot_include: ${HumaniodRobot_include}")
-message(STATUS "MYLIBTI5_LIB Library: ${MYLIBTI5_LIB}")
-message(STATUS "CONTROLCAN_LIB Library: ${CONTROLCAN_LIB}")
-# message(STATUS "HumaniodRobot_CONTROLCAN_LIB Library: ${HumaniodRobot_CONTROLCAN_LIB}")
+# # 打印查找结果
+# message(STATUS "HumaniodRobot_include: ${HumaniodRobot_include}")
+# message(STATUS "MYLIBTI5_LIB Library: ${MYLIBTI5_LIB}")
+# message(STATUS "CONTROLCAN_LIB Library: ${CONTROLCAN_LIB}")
+# # message(STATUS "HumaniodRobot_CONTROLCAN_LIB Library: ${HumaniodRobot_CONTROLCAN_LIB}")
 # message(STATUS "HumaniodRobot_LIBS Library: ${HumaniodRobot_LIBS}")
 
 # #######################################################
@@ -261,3 +261,7 @@ find_library(libmodbus_LIBRARY
     NAMES modbus
     PATHS /usr/local/lib
 )
+
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/ThirdPartyLibs/cmake")
+find_package(Ti5RobotCtrl REQUIRED)

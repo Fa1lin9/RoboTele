@@ -37,7 +37,7 @@ target_include_directories( ${TARGET_NAME}
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${GROUP_NAME}>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/common>
     PRIVATE
-        $<BUILD_INTERFACE:${HumaniodRobot_include}>
+        # $<BUILD_INTERFACE:${HumaniodRobot_include}>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )

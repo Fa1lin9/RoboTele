@@ -49,11 +49,9 @@ target_link_libraries( ${TARGET_NAME}
     PUBLIC
         $<BUILD_INTERFACE:Core::CanDriver>
         # $<BUILD_INTERFACE:${HumaniodRobot_LIBS}>
-        $<BUILD_INTERFACE:Ti5RobotCtrl::Ti5RobotCtrl>
+#        $<BUILD_INTERFACE:Ti5RobotCtrl::Ti5RobotCtrl>
         $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
     PRIVATE
-
-
 
 )
 

@@ -3,6 +3,7 @@
 #include <zmq.hpp>
 #include <iostream>
 #include <mutex>
+#include <atomic>
 #include <HandBase.hpp>
 
 // 打印函数信息

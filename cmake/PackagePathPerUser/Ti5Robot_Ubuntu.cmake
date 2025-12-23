@@ -82,36 +82,36 @@ endif()
 ## #######################################################
 ## #                     Find urdfdom                    #
 ## #######################################################
-find_package( urdfdom CONFIG REQUIRED )
-if(urdfdom_FOUND)
-    message(STATUS "urdfdom is FOUND with version = ${urdfdom_Version}!")
+# find_package( urdfdom CONFIG REQUIRED )
+# if(urdfdom_FOUND)
+#     message(STATUS "urdfdom is FOUND with version = ${urdfdom_Version}!")
 
-    #urdfdom_sensor;urdfdom_model_state;urdfdom_model;urdfdom_world
+#     #urdfdom_sensor;urdfdom_model_state;urdfdom_model;urdfdom_world
 
-    if( TARGET urdfdom::urdfdom_sensor )
-        message( STATUS "Target urdfdom::urdfdom_sensor is found!")
-    endif()
+#     if( TARGET urdfdom::urdfdom_sensor )
+#         message( STATUS "Target urdfdom::urdfdom_sensor is found!")
+#     endif()
 
-    if( TARGET urdfdom::urdf_parser )
-        message( STATUS "Target urdfdom::urdf_parser is found!")
-    else()
-        message( WARNING "Target urdfdom::urdf_parser is NOT found!")
-        add_library(urdf_parser INTERFACE)
-#            target_include_directories(urdf_parser INTERFACE
-#              "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-#              "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-        target_link_libraries(urdf_parser INTERFACE
-          urdfdom::urdfdom_model
-          urdfdom::urdfdom_sensor
-          urdfdom::urdfdom_world)
-        add_library(urdfdom::urdf_parser ALIAS urdf_parser)
-    endif()
-else()
-endif()
+#     if( TARGET urdfdom::urdf_parser )
+#         message( STATUS "Target urdfdom::urdf_parser is found!")
+#     else()
+#         message( WARNING "Target urdfdom::urdf_parser is NOT found!")
+#         add_library(urdf_parser INTERFACE)
+# #            target_include_directories(urdf_parser INTERFACE
+# #              "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+# #              "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+#         target_link_libraries(urdf_parser INTERFACE
+#           urdfdom::urdfdom_model
+#           urdfdom::urdfdom_sensor
+#           urdfdom::urdfdom_world)
+#         add_library(urdfdom::urdf_parser ALIAS urdf_parser)
+#     endif()
+# else()
+# endif()
 
-message(STATUS "URDFDOM_FOUND: ${URDFDOM_FOUND}")
-message(STATUS "URDFDOM_INCLUDE_DIRS: ${URDFDOM_INCLUDE_DIRS}")
-message(STATUS "URDFDOM_LIBRARIES: ${URDFDOM_LIBRARIES}")
+# message(STATUS "URDFDOM_FOUND: ${URDFDOM_FOUND}")
+# message(STATUS "URDFDOM_INCLUDE_DIRS: ${URDFDOM_INCLUDE_DIRS}")
+# message(STATUS "URDFDOM_LIBRARIES: ${URDFDOM_LIBRARIES}")
 
 # #######################################################
 # #                     Find pinocchio                  #

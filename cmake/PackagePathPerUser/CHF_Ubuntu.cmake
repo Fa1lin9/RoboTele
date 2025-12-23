@@ -5,13 +5,17 @@
 #   --  Qt 5.15.5
 #   --  Boost 1.78.0
 #   --  Eigen
-#   --  libfranka
 #   --  pinocchio
-#   --  Python3
 #   --  nlopt
+#   --  casadi
+#   --  protobuf 21.12
+#   --  libmodbus
 #   Try to find each packages with an imported target
-#   Written by djr in 2025.5
+#   Written by Fa1lin9 in 2025.12.23
 ############################################################
+
+# 
+list(APPEND CMAKE_PREFIX_PATH "/usr/local")
 
 # #######################################################
 # #                     Find Eigen                      #
@@ -40,35 +44,35 @@ endif()
 # # #######################################################
 # # #              Find pybind and python                 #
 # # #######################################################
-set(MY_CONDA_ENV "/home/fa1lin9/anaconda3/envs/tv")
-set(PYTHON_EXECUTABLE "${MY_CONDA_ENV}/bin/python")
+# set(MY_CONDA_ENV "/home/fa1lin9/anaconda3/envs/tv")
+# set(PYTHON_EXECUTABLE "${MY_CONDA_ENV}/bin/python")
 
-set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+# set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
+# find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-execute_process( COMMAND ${Python3_EXECUTABLE} -m pybind11 --cmakedir 
-            OUTPUT_VARIABLE pybind11_DIR 
-            OUTPUT_STRIP_TRAILING_WHITESPACE ) 
+# execute_process( COMMAND ${Python3_EXECUTABLE} -m pybind11 --cmakedir 
+#             OUTPUT_VARIABLE pybind11_DIR 
+#             OUTPUT_STRIP_TRAILING_WHITESPACE ) 
 
-find_package(pybind11 CONFIG REQUIRED PATHS ${pybind11_DIR})
+# find_package(pybind11 CONFIG REQUIRED PATHS ${pybind11_DIR})
 
-# find_package(pybind11 CONFIG REQUIRED
-# )
+# # find_package(pybind11 CONFIG REQUIRED
+# # )
 
-message(STATUS "---------- pybind11 ----------")
-if (pybind11_FOUND)
-    message(STATUS "Found pybind11!")
-    message(STATUS "pybind11 version: ${pybind11_VERSION}")
-    message(STATUS "pybind11 include dirs: ${pybind11_INCLUDE_DIRS}")
+# message(STATUS "---------- pybind11 ----------")
+# if (pybind11_FOUND)
+#     message(STATUS "Found pybind11!")
+#     message(STATUS "pybind11 version: ${pybind11_VERSION}")
+#     message(STATUS "pybind11 include dirs: ${pybind11_INCLUDE_DIRS}")
     
-    message(STATUS ">>> Using Conda env: ${MY_CONDA_ENV}") 
-    message(STATUS ">>> Python exec: ${Python3_EXECUTABLE}") 
-    message(STATUS ">>> Python include: ${Python3_INCLUDE_DIRS}") 
-    message(STATUS ">>> Python lib: ${Python3_LIBRARIES}")
-else()
-    message(FATAL_ERROR "pybind11 not found!")
-endif()
-message(STATUS "---------- pybind11 ----------")
+#     message(STATUS ">>> Using Conda env: ${MY_CONDA_ENV}") 
+#     message(STATUS ">>> Python exec: ${Python3_EXECUTABLE}") 
+#     message(STATUS ">>> Python include: ${Python3_INCLUDE_DIRS}") 
+#     message(STATUS ">>> Python lib: ${Python3_LIBRARIES}")
+# else()
+#     message(FATAL_ERROR "pybind11 not found!")
+# endif()
+# message(STATUS "---------- pybind11 ----------")
 
 # #######################################################
 # #                     Find Boost                      #
@@ -77,8 +81,11 @@ message(STATUS "---------- pybind11 ----------")
 set( CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE )
 
 set(Boost_Components 
-    locale date_time filesystem timer regex thread serialization system program_options)
-find_package(Boost REQUIRED COMPONENTS ${Boost_Components} )
+    locale date_time filesystem timer regex thread serialization system program_options json)
+
+find_package(Boost 1.78 REQUIRED 
+    COMPONENTS ${Boost_Components} 
+)
 
 if(Boost_FOUND)
     message( STATUS "Boost is found!")
@@ -117,7 +124,7 @@ endif()
 # #######################################################
 # in 404CAD do not have pinocchio
 
-set( coal_PATH /home/djr/ws_djr/djr_libs/hpp-fcl )
+# set( coal_PATH /home/djr/ws_djr/djr_libs/hpp-fcl )
 #    set( EIGENPY_PATH /opt/openrobots/lib/cmake/eigenpy )
 #    set( PINOCCHIO_PATH /opt/openrobots/lib/cmake/pinocchio )
 find_package( eigenpy CONFIG REQUIRED )
@@ -146,7 +153,7 @@ endif()
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-find_package( Qt5 REQUIRED COMPONENTS Core Widgets OpenGL Charts WebEngineWidgets )
+find_package( Qt5 REQUIRED COMPONENTS Core Widgets OpenGL Charts )
 #find_package(Qt5 REQUIRED COMPONENTS Widgets UiTools)
 if (Qt5_FOUND)
     message(STATUS "Qt 5 found!")
@@ -163,23 +170,39 @@ endif()
 find_package( ZeroMQ REQUIRED )
 
 
+# #######################################################
+# #                     Find libmodbus                  #
+# #######################################################
+
+# 查找头文件
+find_path(libmodbus_INCLUDE_DIR
+    NAMES modbus/modbus.h
+    PATHS /usr/local/include
+)
+
+# 查找库文件
+find_library(libmodbus_LIBRARY
+    NAMES modbus
+    PATHS /usr/local/lib
+)
+
 # # #######################################################
 # # #            Find libRemoteAPIClient                  #
 # # #######################################################
 
-set(RemoteAPIClient "/home/fa1lin9/CoppeliaSim/programming/zmqRemoteApi/clients/cpp/build" )
-find_library(RemoteAPIClient_LIB
-    NAMES RemoteAPIClient
-    PATHS ${RemoteAPIClient}
-    REQUIRED
-)
+# set(RemoteAPIClient "/home/fa1lin9/CoppeliaSim/programming/zmqRemoteApi/clients/cpp/build" )
+# find_library(RemoteAPIClient_LIB
+#     NAMES RemoteAPIClient
+#     PATHS ${RemoteAPIClient}
+#     REQUIRED
+# )
 
-# 查找头文件
-set( RemoteAPIClient_INCLUDE_DIR /home/fa1lin9/CoppeliaSim/programming/zmqRemoteApi/clients/cpp )
+# # 查找头文件
+# set( RemoteAPIClient_INCLUDE_DIR /home/fa1lin9/CoppeliaSim/programming/zmqRemoteApi/clients/cpp )
 
-# 打印查找结果
-message(STATUS "RemoteAPIClient_LIB Library: ${RemoteAPIClient_LIB}")
-message(STATUS "RemoteAPIClient_INCLUDE_DIR Include Directory: ${RemoteAPIClient_INCLUDE_DIR}")
+# # 打印查找结果
+# message(STATUS "RemoteAPIClient_LIB Library: ${RemoteAPIClient_LIB}")
+# message(STATUS "RemoteAPIClient_INCLUDE_DIR Include Directory: ${RemoteAPIClient_INCLUDE_DIR}")
 
 # # #######################################################
 # # #                     Find cppzmq                     #
@@ -190,7 +213,7 @@ message(STATUS "RemoteAPIClient_INCLUDE_DIR Include Directory: ${RemoteAPIClient
 # # #                     Find jsoncons                   #
 # # #######################################################
 
- find_package( jsoncons REQUIRED )
+#  find_package( jsoncons REQUIRED )
 
  # # #######################################################
  # # #                     Find nlopt                      #
@@ -202,57 +225,47 @@ message(STATUS "RemoteAPIClient_INCLUDE_DIR Include Directory: ${RemoteAPIClient
 endif()
 
 # # #######################################################
+# # #                     Find Fastdds                      #
+# # #######################################################
+
+find_package( fastdds REQUIRED )
+find_package( fastcdr REQUIRED )
+
+# #######################################################
+# #                     Find protobuf                     #
+# #######################################################
+
+find_package( protobuf REQUIRED )
+
+# # #######################################################
 # # #                     Find CRP_SDK                    #
 # # #######################################################
 
-set(CRP_SDK "/home/fa1lin9/ProgramEnv/CrobotpOSSDK" )
-set(CRP_SDK_LIB_PATH "/home/fa1lin9/ProgramEnv/CrobotpOSSDK/bin")
-set(CRP_SDK_HEAD_PATH "/home/fa1lin9/ProgramEnv/CrobotpOSSDK/cpp/include")
-find_library(CRP_LIBS
-    NAMES RobotService
-    PATHS ${CRP_SDK_LIB_PATH}
-    REQUIRED
-)
+# set(CRP_SDK "/home/fa1lin9/ProgramEnv/CrobotpOSSDK" )
+# set(CRP_SDK_LIB_PATH "/home/fa1lin9/ProgramEnv/CrobotpOSSDK/bin")
+# set(CRP_SDK_HEAD_PATH "/home/fa1lin9/ProgramEnv/CrobotpOSSDK/cpp/include")
+# find_library(CRP_LIBS
+#     NAMES RobotService
+#     PATHS ${CRP_SDK_LIB_PATH}
+#     REQUIRED
+# )
 
-# 查找头文件
-set( CRP_INCLUDE_DIR ${CRP_SDK_HEAD_PATH} )
+# # 查找头文件
+# set( CRP_INCLUDE_DIR ${CRP_SDK_HEAD_PATH} )
 
-# 打印查找结果
-message(STATUS "CRP_LIB Library: ${CRP_LIBS}")
-message(STATUS "CRP_HEAD Include Directory: ${CRP_INCLUDE_DIR}")
+# # 打印查找结果
+# message(STATUS "CRP_LIB Library: ${CRP_LIBS}")
+# message(STATUS "CRP_HEAD Include Directory: ${CRP_INCLUDE_DIR}")
 
 # # #######################################################
 # # #                     Find spdlog                    #
 # # #######################################################
-find_package( spdlog REQUIRED)
+# find_package( spdlog REQUIRED)
 
 # # #######################################################
-# # #            Find HumanoidDualArmSolver               #
+# # #            Find Ti5RobotCtrl               #
+# # #   Comes from the HumanoidDualArmSolver     #
 # # #######################################################
-#set(HuamniodRobot "/home/djr/djr_workspace/djr_libs/HumanoidDualArmSolver" )
-set(HuamniodRobot "/home/fa1lin9/ProgramEnv/HumanoidDualArmSolver" )
-set(HuamniodRobot_include "${HuamniodRobot}/include")
 
-find_library(MYLIBTI5_LIB
-    NAMES mylibti5_2004
-    PATHS "${HuamniodRobot}/usrlib/2004"
-    REQUIRED
-)
-
-find_library(CONTROLCAN_LIB
-    NAMES controlcan
-    PATHS "${HuamniodRobot}/usrlib/2004"
-    REQUIRED
-)
-
-set(HuamniodRobot_LIBS
-    ${MYLIBTI5_LIB}
-    ${CONTROLCAN_LIB}
-)
-
-
-# 打印查找结果
-message(STATUS "HuamniodRobot_include: ${HuamniodRobot_include}")
-message(STATUS "MYLIBTI5_LIB Library: ${MYLIBTI5_LIB}")
-message(STATUS "CONTROLCAN_LIB Library: ${CONTROLCAN_LIB}")
-message(STATUS "HuamniodRobot_LIBS Library: ${HuamniodRobot_LIBS}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/ThirdPartyLibs/cmake")
+find_package(Ti5RobotCtrl REQUIRED)

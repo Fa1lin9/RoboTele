@@ -24,7 +24,7 @@
 
 
 extern int CanNum;
-extern  int Waist_id,Right_arm_id,Left_arm_id  ;
+extern int Waist_id,Right_arm_id,Left_arm_id  ;
 
 // 查询 CAN 设备并绑定序列号与设备索引
 std::map<std::string, int> query_can_with_index();

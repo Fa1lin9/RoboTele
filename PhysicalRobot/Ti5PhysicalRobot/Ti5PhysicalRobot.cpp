@@ -229,8 +229,11 @@ void Ti5PhysicalRobot::Info(){
              << " ------------------------------------------ "
              << RESET << std::endl;
 
-    std::cout<< " Left Arm ID: " << Left_arm_id<<std::endl;
-    std::cout<< " Right Arm ID: " << Right_arm_id<<std::endl;
+    // x86_64架构下的HumanoidDualArmSolver没有这两个变量的定义
+    // aarch64的有，所以会报错
+    // 真是个草台班子啊
+//    std::cout<< " Left Arm ID: " << Left_arm_id<<std::endl;
+//    std::cout<< " Right Arm ID: " << Right_arm_id<<std::endl;
 
     // for head
     {

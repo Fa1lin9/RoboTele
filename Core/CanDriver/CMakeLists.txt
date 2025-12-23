@@ -47,10 +47,10 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC     
-        
+    $<BUILD_INTERFACE:Ti5RobotCtrl::Ti5RobotCtrl>
     PRIVATE
     # $<BUILD_INTERFACE:${CONTROLCAN_LIB}>
-    $<BUILD_INTERFACE:Ti5RobotCtrl::Ti5RobotCtrl>
+
 
 )
 

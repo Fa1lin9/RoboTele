@@ -1,6 +1,4 @@
 ############################################################
-#   Find Cutting For Welding dependant packages for user tangtang 4090 Windows
-
 #   The dependant packages include
 #   --  Qt 5.15.5
 #   --  Boost 1.78.0
@@ -41,12 +39,6 @@ include( FindPinocchio )
 # #######################################################
 
 include( FindQt )
-
-# #######################################################
-# #                     Find ZeroMQ                     #
-# #######################################################
-
-find_package( ZeroMQ REQUIRED )
 
 # #######################################################
 # #                     Find libmodbus                  #

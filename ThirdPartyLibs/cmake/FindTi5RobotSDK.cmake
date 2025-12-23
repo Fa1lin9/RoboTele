@@ -1,9 +1,9 @@
 #############################################################
-#   Find Ti5RobotCtrl
+#   Find Ti5RobotSDK
 #   Written by Fa1lin9 on 2025.12.22.
 #############################################################
 
-set(PACKAGE_NAME Ti5RobotCtrl)
+set(PACKAGE_NAME Ti5RobotSDK)
 
 get_filename_component(this_cmake_file ${CMAKE_CURRENT_LIST_DIR} ABSOLUTE)
 message(STATUS
@@ -30,50 +30,62 @@ set(PLATFORM_LIB_ROOT
 # ------------------------------------------------------------
 #   Package root
 # ------------------------------------------------------------
-set(Ti5RobotCtrl_ROOT
+set(Ti5RobotSDK_ROOT
     ${PLATFORM_LIB_ROOT}/${PACKAGE_NAME}
     CACHE PATH "Root path of ${PACKAGE_NAME}")
 
-set(Ti5RobotCtrl_INCLUDE_DIR
-    ${Ti5RobotCtrl_ROOT}/include)
+set(Ti5RobotSDK_INCLUDE_DIR
+    ${Ti5RobotSDK_ROOT}/include)
 
 # ------------------------------------------------------------
 #   Library search path 
 # ------------------------------------------------------------
-set(Ti5RobotCtrl_LIB_DIR ${Ti5RobotCtrl_ROOT}/lib)
+set(Ti5RobotSDK_LIB_DIR ${Ti5RobotSDK_ROOT}/lib)
 
 # ------------------------------------------------------------
-#   Create imported target
+#   Library Construction 
 # ------------------------------------------------------------
-add_library(Ti5RobotCtrl INTERFACE)
+if("${CURRENT_ARCH}" STREQUAL "aarch64")
+    set(MYLIBTI5_NAME "mylibti5_arm_2004")
+else()
 
-file(GLOB ALL_LIBS "${Ti5RobotCtrl_LIB_DIR}/*.so" "${Ti5RobotCtrl_LIB_DIR}/*.a")
+    set(MYLIBTI5_NAME "mylibti5_2004")
+endif()
 
-foreach(lib_path IN LISTS ALL_LIBS)
-    get_filename_component(lib_name ${lib_path} NAME_WE)
+find_library(MYLIBTI5_LIB
+    NAMES ${MYLIBTI5_NAME}
+    PATHS ${Ti5RobotSDK_LIB_DIR}
+    NO_DEFAULT_PATH
+    REQUIRED
+)
 
-    if(lib_path MATCHES "\\.a$|\\.lib$")
-        set(lib_type STATIC)
-    elseif(lib_path MATCHES "\\.so$|\\.dll$")
-        set(lib_type SHARED)
-    else()
-        message(FATAL_ERROR "Unsupported library type: ${lib_path}")
-    endif()
+find_library(CONTROLCAN_LIB
+    NAMES controlcan
+    PATHS ${Ti5RobotSDK_LIB_DIR}
+    NO_DEFAULT_PATH
+    REQUIRED
+)
 
-    add_library(${lib_name} ${lib_type} IMPORTED)
-    set_target_properties(${lib_name} PROPERTIES
-        IMPORTED_LOCATION ${lib_path}
-    )
+set(Ti5RobotSDK_LIBS
+    ${MYLIBTI5_LIB}
+    ${CONTROLCAN_LIB}
+)
 
-    target_link_libraries(Ti5RobotCtrl INTERFACE ${lib_name})
-endforeach()
+if(NOT TARGET Ti5RobotSDK)
+    add_library(Ti5RobotSDK INTERFACE)
+    
+    # include
+    target_include_directories(Ti5RobotSDK INTERFACE ${Ti5RobotSDK_INCLUDE_DIR})
+    
+    # libs
+    target_link_libraries(Ti5RobotSDK INTERFACE ${Ti5RobotSDK_LIBS})  
 
-target_include_directories(Ti5RobotCtrl INTERFACE ${Ti5RobotCtrl_INCLUDE_DIR})
+    add_library(Ti5RobotSDK::Ti5RobotSDK ALIAS Ti5RobotSDK)
+endif()
 
-add_library(Ti5RobotCtrl::Ti5RobotCtrl ALIAS Ti5RobotCtrl)
 
-message(STATUS "Ti5RobotCtrl_INCLUDE_DIR = ${Ti5RobotCtrl_INCLUDE_DIR}")
-message(STATUS "Ti5RobotCtrl libraries = ${ALL_LIBS}")
+message(STATUS "Ti5RobotSDK_INCLUDE_DIR = ${Ti5RobotSDK_INCLUDE_DIR}")
+message(STATUS "Ti5RobotSDK_LIBS = ${Ti5RobotSDK_LIBS}")
 
 
 message(STATUS

@@ -52,12 +52,10 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:Boost::headers>
         $<BUILD_INTERFACE:Boost::filesystem>
         $<BUILD_INTERFACE:Boost::program_options>
-    
-    PRIVATE
+        # $<BUILD_INTERFACE:Core::CanDriver>
         $<BUILD_INTERFACE:PhysicalRobot::Ti5PhysicalRobot>
 
-
-
+    PRIVATE
 )
 
 if(UNIX)

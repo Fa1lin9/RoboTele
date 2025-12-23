@@ -46,12 +46,13 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC 
-        $<BUILD_INTERFACE:${libmodbus_LIBRARY}>
+        $<BUILD_INTERFACE:libmodbus::libmodbus>
         $<BUILD_INTERFACE:Boost::boost>
         $<BUILD_INTERFACE:Eigen3::Eigen>
-
-    PRIVATE
         $<BUILD_INTERFACE:HandController::ROHandController>
+        
+    PRIVATE
+        
 
 )
 

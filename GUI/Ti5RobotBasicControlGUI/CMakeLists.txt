@@ -69,7 +69,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 if( Using_Qt5 )
     message( STATUS "${TARGET_NAME} links Qt5!" )
     target_link_libraries( ${TARGET_NAME}
-        PRIVATE
+        PUBLIC
             $<BUILD_INTERFACE:Qt5::Widgets>
             $<BUILD_INTERFACE:Qt5::Charts>
             
@@ -84,7 +84,7 @@ if( Using_Qt5 )
 else()
     message( STATUS "${TARGET_NAME} links Qt6!" )
     target_link_libraries( ${TARGET_NAME}
-        PRIVATE
+        PUBLIC
             $<BUILD_INTERFACE:Qt6::Widgets>
             $<BUILD_INTERFACE:Qt6::Charts>
             

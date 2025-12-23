@@ -46,11 +46,14 @@ target_include_directories( ${TARGET_NAME}
 target_link_libraries( ${TARGET_NAME}
     PUBLIC 
         
-    PRIVATE
         $<BUILD_INTERFACE:Transform::Transform>
         $<BUILD_INTERFACE:Core::DataCollector>
         $<BUILD_INTERFACE:ArmSolver::ArmSolver>
         $<BUILD_INTERFACE:Teleoperate::RobotTeleoperate>
+        $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
+        
+    PRIVATE
+        
 #        $<BUILD_INTERFACE:Core::CsvWriter>
 
 )

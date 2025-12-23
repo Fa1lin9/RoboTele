@@ -14,6 +14,7 @@ constexpr size_t dofArm = 7;
 constexpr size_t dofHead = 3;
 constexpr size_t dofWaist = 3;
 
+
 const   std::map<std::string, std::tuple<size_t,size_t>> jointsList = {
     // joint name: {can device , can id}
     {"L_SHOULDER_P",    {0, 23}},
@@ -39,6 +40,18 @@ const   std::map<std::string, std::tuple<size_t,size_t>> jointsList = {
 };
 
 int main(){
+    // Test on 2025.12.23
+    // MainDemo can't link to the libcontrolcan.so
+    // Set configeration
+    PhysicalRobot::BasicConfig config = {
+        .robotType = RobotBase::RobotType::Ti5Robot,
+    };
+
+    boost::shared_ptr<PhysicalRobot> physicalRobotPtr
+            = PhysicalRobot::GetPtr(config);
+
+    physicalRobotPtr->Connect();
+
     if(!InitCan()){
         std::cout<< " Can't initialize the Can ! " <<std::endl;
         return 0;

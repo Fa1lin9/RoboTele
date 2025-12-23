@@ -35,8 +35,7 @@ target_compile_definitions( ${TARGET_NAME} PUBLIC -DSIM_REMOTEAPICLIENT_OBJECTS 
 target_include_directories( ${TARGET_NAME}
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${GROUP_NAME}>
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/common> 
-        # $<BUILD_INTERFACE:${HumaniodRobot_include}>      
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/common>     
     PRIVATE               
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
@@ -47,10 +46,8 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC
-        $<BUILD_INTERFACE:Core::CanDriver>
-        # $<BUILD_INTERFACE:${HumaniodRobot_LIBS}>
-#        $<BUILD_INTERFACE:Ti5RobotCtrl::Ti5RobotCtrl>
         $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
+        $<BUILD_INTERFACE:Core::CanDriver>
     PRIVATE
 
 )

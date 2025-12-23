@@ -1,0 +1,34 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="21">
+            <item index="0" class="java.lang.String" itemvalue="scipy" />
+            <item index="1" class="java.lang.String" itemvalue="params_proto" />
+            <item index="2" class="java.lang.String" itemvalue="h5py" />
+            <item index="3" class="java.lang.String" itemvalue="PyYAML" />
+            <item index="4" class="java.lang.String" itemvalue="scikit_learn" />
+            <item index="5" class="java.lang.String" itemvalue="ipython" />
+            <item index="6" class="java.lang.String" itemvalue="packaging" />
+            <item index="7" class="java.lang.String" itemvalue="setuptools" />
+            <item index="8" class="java.lang.String" itemvalue="numpy" />
+            <item index="9" class="java.lang.String" itemvalue="torchvision" />
+            <item index="10" class="java.lang.String" itemvalue="pytransform3d" />
+            <item index="11" class="java.lang.String" itemvalue="pandas" />
+            <item index="12" class="java.lang.String" itemvalue="seaborn" />
+            <item index="13" class="java.lang.String" itemvalue="av" />
+            <item index="14" class="java.lang.String" itemvalue="opencv_contrib_python" />
+            <item index="15" class="java.lang.String" itemvalue="aiohttp_cors" />
+            <item index="16" class="java.lang.String" itemvalue="aiohttp" />
+            <item index="17" class="java.lang.String" itemvalue="aiortc" />
+            <item index="18" class="java.lang.String" itemvalue="vuer" />
+            <item index="19" class="java.lang.String" itemvalue="einops" />
+            <item index="20" class="java.lang.String" itemvalue="opencv_python" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

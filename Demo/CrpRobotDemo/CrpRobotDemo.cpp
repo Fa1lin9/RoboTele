@@ -8,7 +8,7 @@ int main(){
 
     // Set configeration
     PhysicalRobot::BasicConfig config = {
-        .robotType = RobotType::Type::Ti5Robot,
+        .robotType = RobotBase::RobotType::Ti5Robot,
     };
 
     boost::shared_ptr<PhysicalRobot> physicalRobotPtr

@@ -36,7 +36,6 @@ target_include_directories( ${TARGET_NAME}
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${GROUP_NAME}>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/common>
     PRIVATE
-        $<BUILD_INTERFACE:${libmodbus_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
@@ -46,12 +45,9 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC 
-
-    PRIVATE
         $<BUILD_INTERFACE:HandController::HandController>
         $<BUILD_INTERFACE:Boost::boost>
-        $<BUILD_INTERFACE:${libmodbus_LIBRARY}>
-
+    PRIVATE
 )
 
 # #   Add Macro compile defination

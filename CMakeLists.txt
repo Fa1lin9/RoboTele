@@ -9,7 +9,9 @@ project( RobotTeleoperate
 )
 
 message( STATUS "Project Version: ${PROJECT_VERSION}" )
-set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/cmake )
+set( CMAKE_MODULE_PATH 
+    ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/cmake 
+)
 
 #######################################################
 #   Project Setting
@@ -28,7 +30,6 @@ include( CMakePrintHelpers )
 #	User Configuration
 ############################################################
 include( UserConfiguration )
-include( MyInstallFuncDef )
 
 
 ############################################################

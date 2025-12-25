@@ -8,3 +8,7 @@ endif()
 if( ${USER_CrpRobot_Ubuntu} )
     include( PackagePathPerUser/Ti5Robot_Ubuntu )
 endif()
+
+if( ${USER_PK_Ubuntu} )
+    include( PackagePathPerUser/PK_Ubuntu )
+endif()

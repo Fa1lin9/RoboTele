@@ -1,9 +1,9 @@
 #############################################################
-#   Find pinocchio (wrapper)
+#   Find fastdds (wrapper)
 #   Written on 2025.12.25.
 #############################################################
 
-set(PACKAGE_NAME pinocchio)
+set(PACKAGE_NAME fastdds)
 
 get_filename_component(this_cmake_file ${CMAKE_CURRENT_LIST_DIR} ABSOLUTE)
 message(STATUS
@@ -12,7 +12,7 @@ message(STATUS
 # Prefer config-mode
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
-# First, try to find FastCDR in /usr/local
+# First, try to find FastDDS in /usr/local
 find_package(${PACKAGE_NAME} CONFIG REQUIRED PATHS /usr/local)
 
 # If not found, fall back to the default search paths

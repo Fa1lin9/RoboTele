@@ -3,7 +3,7 @@
 #   Written by Fa1lin9 on 2025.12.23.
 #############################################################
 
-set(PACKAGE_NAME Boost178)
+set(PACKAGE_NAME Boost)
 
 get_filename_component(this_cmake_file ${CMAKE_CURRENT_LIST_DIR} ABSOLUTE)
 message(STATUS
@@ -47,6 +47,8 @@ if(Boost_FOUND)
         #         IMPORTED_IMPLIB
         # )
     endforeach()
+
+    message(STATUS "${PACKAGE_NAME} version: ${${PACKAGE_NAME}_VERSION}")
 else()
     message(FATAL_ERROR "Boost is not found! Required for your project!")
 endif()

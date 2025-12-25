@@ -1,36 +1,34 @@
 #############################################################
-#   Find Eigen (wrapper for Eigen3)
-#   Written on 2025.12.23.
+#   Find Eigen3 (wrapper)
+#   Written on 2025.12.25.
 #############################################################
 
-set(PACKAGE_NAME Eigen)
+set(PACKAGE_NAME Eigen3)
 
 get_filename_component(this_cmake_file ${CMAKE_CURRENT_LIST_DIR} ABSOLUTE)
 message(STATUS
     "\n-------------------- Finding ${PACKAGE_NAME} in ${this_cmake_file} --------------------------")
 
-# Prefer config-mode packages
+# Prefer config-mode
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
-# Try to locate Eigen (Eigen3 package)
-find_package(Eigen3 REQUIRED)
+# First, try to find FastCDR in /usr/local
+find_package(${PACKAGE_NAME} CONFIG REQUIRED PATHS /usr/local)
 
-if(Eigen3_FOUND)
-    message(STATUS "Eigen3 is found!")
-    cmake_print_properties( TARGETS Eigen3::Eigen
-    PROPERTIES
-        INCLUDE_DIRECTORIES
-        INTERFACE_INCLUDE_DIRECTORIES
-        IMPORTED_LOCATION_DEBUG
-        IMPORTED_IMPLIB_DEBUG
-        IMPORTED_LOCATION_RELEASE
-        IMPORTED_IMPLIB_RELEASE
-        IMPORTED_CONFIGURATIONS
-        IMPORTED_LOCATION
-        IMPORTED_IMPLIB
-    )
+# If not found, fall back to the default search paths
+if(NOT ${PACKAGE_NAME}_FOUND)
+    message(WARNING "${PACKAGE_NAME} not found in /usr/local, looking in default paths.")
+    find_package(${PACKAGE_NAME} CONFIG REQUIRED)
+endif()
+
+if(${PACKAGE_NAME}_FOUND)
+    message(STATUS "${PACKAGE_NAME} is found!")
+    message(STATUS "${PACKAGE_NAME}_DIR is ${${PACKAGE_NAME}_DIR}")
+    message(STATUS "${PACKAGE_NAME} library path: ${${PACKAGE_NAME}_LIBRARY}")
+    message(STATUS "${PACKAGE_NAME} include path: ${${PACKAGE_NAME}_INCLUDE_DIRS}")
+    message(STATUS "${PACKAGE_NAME} version: ${${PACKAGE_NAME}_VERSION}")
 else()
-    message(FATAL_ERROR "Eigen3 is not found but is required by the project.")
+    message(FATAL_ERROR "${PACKAGE_NAME} is not found but is required by the project.")
 endif()
 
 message(STATUS

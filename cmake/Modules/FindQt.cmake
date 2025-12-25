@@ -46,6 +46,8 @@ if (Qt5_FOUND)
         endif()
     endforeach()
 
+    message(STATUS "${PACKAGE_NAME} version: ${${PACKAGE_NAME}_VERSION}")
+
 else()
     message(FATAL_ERROR "Qt5 is not found but is required by the project.")
 endif()

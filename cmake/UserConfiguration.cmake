@@ -4,13 +4,15 @@
 #######################################################
 
 #   Choose User
-option( USER_CHF_Ubuntu "Configure CHF Ubuntu system." ON )
+option( USER_CHF_Ubuntu "Configure CHF Ubuntu system." OFF )
 option( USER_Ti5Robot_Ubuntu "Configure Ti5Robot Ubuntu system." OFF )
+option( USER_PK_Ubuntu "Configure PK Ubuntu system." ON )
 
 #   Make Users as a group
 list( APPEND USER_GROUP
     USER_CHF_Ubuntu
     USER_Ti5Robot_Ubuntu
+    USER_PK_Ubuntu
 )
 
 #   Get how many users are selected

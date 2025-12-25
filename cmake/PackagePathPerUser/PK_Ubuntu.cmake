@@ -108,12 +108,13 @@ include( FindPackage )
 #   Loop through the package list and find each package
 # #############################################################
 foreach(PACKAGE_NAME IN LISTS PACKAGE_LIST)
-    # Call the FindPkgWrapper function for each package
-    FindPkgWrapper(${PACKAGE_NAME})
 
     if(PACKAGE_NAME STREQUAL "casadi")
         # If it's casadi, set the version to 3.7.0
         FindPkgWrapper(${PACKAGE_NAME} "/usr/local" "3.7.0")
+    else()
+        # Call the FindPkgWrapper function for each package
+        FindPkgWrapper(${PACKAGE_NAME})
     endif()
 
 endforeach()

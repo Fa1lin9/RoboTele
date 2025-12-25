@@ -1,9 +1,9 @@
 #############################################################
-#   Find pinocchio (wrapper)
+#   Find fastcdr (wrapper)
 #   Written on 2025.12.25.
 #############################################################
 
-set(PACKAGE_NAME pinocchio)
+set(PACKAGE_NAME fastcdr)
 
 get_filename_component(this_cmake_file ${CMAKE_CURRENT_LIST_DIR} ABSOLUTE)
 message(STATUS

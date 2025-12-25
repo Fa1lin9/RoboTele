@@ -2,7 +2,7 @@
 
 #include <Transform/Transform.hpp>
 
-// 实现坐标系从VisionPro到CrpRobot的转换
+// 实现坐标系从VisionPro到Ti5Robot的转换
 class VisionPro2Ti5RobotTransform
     : public Transform
 {

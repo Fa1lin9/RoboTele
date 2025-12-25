@@ -1,5 +1,7 @@
 #include <ArmSolver/ArmSolver.hpp>
 #include <Ti5DualArmSolver/Ti5DualArmSolver.hpp>
+//#include <G1Dof23DualArmSolver/G1Dof23DualArmSolver.hpp>
+#include <G1Dof29DualArmSolver/G1Dof29DualArmSolver.hpp>
 
 ArmSolver::ArmSolver(){
 
@@ -14,6 +16,12 @@ boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const ArmSolver::BasicConfig &con
         case ArmSolver::Type::Ti5DualArm :{
            return boost::make_shared<Ti5DualArmSolver>(config_);
         }
+//        case ArmSolver::Type::G1Dof23DualArm :{
+//           return boost::make_shared<G1Dof23DualArm>(config_);
+//        }
+        case ArmSolver::Type::G1Dof29DualArm :{
+           return boost::make_shared<G1Dof29DualArmSolver>(config_);
+        }
         default:{
             return nullptr;
         }
@@ -21,7 +29,9 @@ boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const ArmSolver::BasicConfig &con
 }
 
 const std::unordered_map<std::string, ArmSolver::Type> ArmSolver::typeMap = {
-    {"Ti5DualArm", ArmSolver::Type::Ti5DualArm}
+    {"Ti5DualArm", ArmSolver::Type::Ti5DualArm},
+    {"G1Dof23DualArm", ArmSolver::Type::G1Dof23DualArm},
+    {"G1Dof29DualArm", ArmSolver::Type::G1Dof29DualArm},
 };
 
 ArmSolver::Type ArmSolver::GetTypeFromStr(const std::string& str){

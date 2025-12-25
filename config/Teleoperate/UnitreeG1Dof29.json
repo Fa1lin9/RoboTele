@@ -1,0 +1,81 @@
+{
+    "RobotType": "Ti5Robot",
+    "XRType" : "VisionPro",
+    "Address": "tcp://127.0.0.1:5555",
+    "FPS": 25,
+
+    "IsSimulatedRobot": true,
+    "IsRealWorldRobot": false,
+    
+    "IsCheckSolution": false,
+
+    "IsFilterSolution": true,
+    "FilterWeight": [0.4, 0.3, 0.2, 0.1],
+    "_FilterWeight": [0.7, 0.2, 0.1],
+
+    "SolverConfig":{
+        "Type": "G1Dof29DualArm",
+        "BaseFrameName": ["waist_yaw_joint"],
+        "TargetFrameName": ["left_wrist_yaw_joint", "right_wrist_yaw_joint"],
+        "BaseOffset": [
+            [
+            [1, 0, 0, 0.08],
+            [0, 1, 0, 0],
+            [0, 0, 1, 1.10],
+            [0, 0 ,0, 1]
+            ]
+        ],
+        "MaxIteration": 50,
+        "RelativeTol": 1e-6,
+        "DofArm": [5, 5],
+        "ObjectiveFunc":{
+            "TranslationWeight": 50.0,
+            "RotationWeight": 0.5,
+            "RegularizationWeight": 0.02,
+            "SmoothWeight": 0.5 
+        }
+    },
+
+    "TransformConfig":{
+        "Type": "VisionPro2Ti5Robot",
+        "T_Head2Waist": [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0 ,0, 1]
+        ],
+        "T_XR2Robot": [
+            [0, 0, -1, 0],
+            [-1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0 ,0, 1]
+        ],
+        "T_Robot2LeftWrist": [
+            [0,1, 0, 0],
+            [-1, 0, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ],
+        "T_Robot2RightWrist": [
+            [0,-1, 0, 0],
+            [1, 0, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ],
+        "Offset": [0, 0, 0]
+    },
+
+    "PhysicalRobotConfig":{
+        
+    },
+
+    "_Ros2BridgeConfig": {
+        "MsgType": "JointStateWithoutStamp",
+        "TopicName": "position_control/joint_state"
+    },
+
+    "Ros2BridgeConfig": {
+        "MsgType": "JointState",
+        "TopicName": "HumanoidCtrl/humanoid_msgs/msg/JointState"
+    }
+}

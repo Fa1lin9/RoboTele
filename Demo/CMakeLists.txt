@@ -14,15 +14,15 @@ list( APPEND ${GROUP_NAME}_Components
     # PybindDemo
     # SocketDemo
 #    NLoptDemo
-    # PinocchioDemo
-    CrpRobotDemo
-    CanDriverDemo
+    PinocchioDemo
+    # CrpRobotDemo
+    # CanDriverDemo
     MainDemo
 #    FastDDSDemo
 #    JsonDemo
-    ModBusDemo
+    # ModBusDemo
     HandDemo
-    BasicSolverDemo
+    # BasicSolverDemo
 )
 
 ##########################################################################

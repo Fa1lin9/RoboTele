@@ -12,7 +12,10 @@ set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 ##########################################################################
 list( APPEND ${GROUP_NAME}_Components
     ArmSolver
+
     Ti5DualArmSolver
+    G1Dof23DualArmSolver
+    G1Dof29DualArmSolver
 )
 
 ##########################################################################

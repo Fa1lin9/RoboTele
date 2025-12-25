@@ -31,6 +31,8 @@ class ArmSolver
 public:
     enum Type{
         Ti5DualArm,
+        G1Dof23DualArm,
+        G1Dof29DualArm,
 
     };
 

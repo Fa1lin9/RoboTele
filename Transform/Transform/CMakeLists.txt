@@ -53,6 +53,7 @@ target_link_libraries( ${TARGET_NAME}
         
     PRIVATE
         $<BUILD_INTERFACE:Transform::VisionPro2Ti5RobotTransform>
+        $<BUILD_INTERFACE:Transform::VisionPro2UnitreeG1Transform>
 
 )
 

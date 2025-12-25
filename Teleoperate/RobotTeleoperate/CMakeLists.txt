@@ -60,6 +60,7 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:HandSolver::HandGestureDetector>
         $<BUILD_INTERFACE:HandController::HandController>
         $<BUILD_INTERFACE:Teleoperate::Ti5RobotTeleoperate>
+        $<BUILD_INTERFACE:Teleoperate::UnitreeG1Teleoperate>
     PRIVATE
         
 

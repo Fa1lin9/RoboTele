@@ -1,5 +1,6 @@
 #include <RobotTeleoperate/RobotTeleoperate.hpp>
 #include <Ti5RobotTeleoperate/Ti5RobotTeleoperate.hpp>
+#include <UnitreeG1Teleoperate/UnitreeG1Teleoperate.hpp>
 
 RobotTeleoperate::RobotTeleoperate(){
 
@@ -14,6 +15,9 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const RobotTeleoper
         case RobotBase::RobotType::Ti5Robot :{
            return boost::make_shared<Ti5RobotTeleoperate>(config_);
         }
+    case RobotBase::RobotType::UnitreeG1 :{
+       return boost::make_shared<UnitreeG1Teleoperate>(config_);
+    }
         default:{
             return nullptr;
         }

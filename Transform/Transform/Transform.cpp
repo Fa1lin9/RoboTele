@@ -1,5 +1,6 @@
 #include <Transform/Transform.hpp>
 #include <VisionPro2Ti5RobotTransform/VisionPro2Ti5RobotTransform.hpp>
+#include <VisionPro2UnitreeG1Transform/VisionPro2UnitreeG1Transform.hpp>
 
 Transform::Transform(){
 
@@ -14,6 +15,9 @@ boost::shared_ptr<Transform> Transform::GetPtr(const Transform::BasicConfig &con
         case Transform::Type::VisionPro2Ti5Robot :{
            return boost::make_shared<VisionPro2Ti5RobotTransform>(config_);
         }
+    case Transform::Type::VisionPro2UnitreeG1 :{
+       return boost::make_shared<VisionPro2UnitreeG1Transform>(config_);
+    }
         default:{
             return nullptr;
         }
@@ -21,7 +25,8 @@ boost::shared_ptr<Transform> Transform::GetPtr(const Transform::BasicConfig &con
 }
 
 const std::unordered_map<std::string, Transform::Type> Transform::typeMap = {
-    {"VisionPro2Ti5Robot", Transform::Type::VisionPro2Ti5Robot}
+    {"VisionPro2Ti5Robot", Transform::Type::VisionPro2Ti5Robot},
+    {"VisionPro2UnitreeG1", Transform::Type::VisionPro2UnitreeG1}
 };
 
 Transform::Type Transform::GetTypeFromStr(const std::string& str){

@@ -49,7 +49,7 @@ target_link_libraries( ${TARGET_NAME}
     PRIVATE
         $<BUILD_INTERFACE:pinocchio::pinocchio>
         $<BUILD_INTERFACE:pinocchio::pinocchio_headers>
-        $<BUILD_INTERFACE:IKSolver>
+        $<BUILD_INTERFACE:ArmSolver::ArmSolver>
 
 )
 

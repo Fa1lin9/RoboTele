@@ -12,11 +12,13 @@ namespace RobotBase{
     };
 
     enum RobotType{
-        Ti5Robot
+        Ti5Robot,
+        UnitreeG1,
     };
 
     inline const std::unordered_map<std::string, RobotBase::RobotType> RobotTypeMap = {
-        {"Ti5Robot", RobotBase::RobotType::Ti5Robot}
+        {"Ti5Robot", RobotBase::RobotType::Ti5Robot},
+        {"UnitreeG1", RobotBase::RobotType::UnitreeG1},
     };
 
     inline RobotBase::RobotType GetTypeFromStr(const std::string& str){

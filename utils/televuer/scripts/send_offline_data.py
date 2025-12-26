@@ -16,7 +16,11 @@ fps = 25
 # file_name = "20251204_152315.csv"
 
 # new data
-file_name = "20251211_102209.csv"
+# file_name = "20251226_100815.csv" # sit down
+file_name = "20251226_112653.csv" # stand up
+
+# for gumpgan
+# file_name = "20251226_110804.csv"
 
 # for hand
 # file_name = "20251213_153136.csv"

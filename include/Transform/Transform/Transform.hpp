@@ -39,13 +39,19 @@ public:
         Eigen::Matrix4d                 leftWrist2XRWorldPose;
         Eigen::Matrix4d                 rightWrist2XRWorldPose;
 
+        // Temp
+        // But now we don't need the positions of the hand
         // 双手的局部坐标系，包含25个点
         Eigen::Matrix<double,25,3>      leftHandPositions;
         Eigen::Matrix<double,25,3>      rightHandPositions;
 
         Transform::TeleMode mode;
 
-        boost::optional<Eigen::Matrix4d> headPose;
+        // For mode switching
+        boost::optional<Eigen::Matrix4d> modeHeadPose;
+
+        // For initialization
+        Eigen::Matrix4d initHeadPose;
     };
 
     Transform();

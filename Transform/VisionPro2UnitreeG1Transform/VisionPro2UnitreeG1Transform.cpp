@@ -31,8 +31,8 @@ std::vector<Eigen::Matrix4d> VisionPro2UnitreeG1Transform::Solve(
     // Mode Selection
     Eigen::Matrix4d upperBody2RobotWorldPose;
     if (config_.mode == Transform::TeleMode::HeadMode){
-        if (config_.headPose.has_value()){
-            upperBody2RobotWorldPose = config_.headPose.value();
+        if (config_.modeHeadPose.has_value()){
+            upperBody2RobotWorldPose = config_.modeHeadPose.value();
             upperBody2RobotWorldPose =
                     T_XR2Robot * upperBody2RobotWorldPose * T_XR2Robot.inverse();
 //            std::cout << "HeadPose: " << head2RobotWorldPoseLocked << std::endl;

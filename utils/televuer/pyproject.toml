@@ -16,7 +16,9 @@ dependencies = [
     "numpy<2.0.0",
     "opencv-python",
     "logging-mp",
-    "vuer[all]==0.0.60"
+    "vuer[all]==0.0.60",
+    "zmq",
+    "protobuf"
 ]
 
 [tool.setuptools]

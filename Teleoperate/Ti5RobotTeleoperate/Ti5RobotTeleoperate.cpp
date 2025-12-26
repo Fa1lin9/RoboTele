@@ -60,7 +60,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     WeightedMovingFilter filter(this->filterWeight, this->ikSolverPtr->GetDofTotal());
 
     this->startFlag = true;
-    this->saveFlag = false;
+    this->saveFlag = true;
 
     // Collector VisionPro's Data
     std::thread dataThread(&DataCollector::Run, &dataCollector);
@@ -117,6 +117,10 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
             if(!isStart){
                 continue;
             }
+            // Set initial head pose
+            msgConfig.initHeadPose = this->poseMatrix[0];
+            std::cout << "Initial Head Pose: " << std::endl;
+            std::cout << msgConfig.initHeadPose << std::endl;
             std::cout << "[Ti5RobotTeleoperate] The handGesture is OK, now start the teleoperation! "<<std::endl;
         }
 
@@ -130,6 +134,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         }
 
         // Message Config
+        // Pose Matrix
         msgConfig.head2XRWorldPose = this->poseMatrix[0];
         msgConfig.leftWrist2XRWorldPose = this->poseMatrix[1];
         msgConfig.rightWrist2XRWorldPose = this->poseMatrix[2];
@@ -140,7 +145,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
         if(modeFlag)
         {
             msgConfig.mode = Transform::TeleMode::WaistMode;
-            msgConfig.headPose = this->poseMatrix[0];
+            msgConfig.modeHeadPose = this->poseMatrix[0];
         }else{
             msgConfig.mode = Transform::TeleMode::HeadMode;
         }

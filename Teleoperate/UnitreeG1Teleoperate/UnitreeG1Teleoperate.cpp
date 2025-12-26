@@ -132,7 +132,7 @@ bool UnitreeG1Teleoperate::StartTeleoperate(bool verbose){
         if(modeFlag)
         {
             msgConfig.mode = Transform::TeleMode::WaistMode;
-            msgConfig.headPose = this->poseMatrix[0];
+            msgConfig.modeHeadPose = this->poseMatrix[0];
         }else{
             msgConfig.mode = Transform::TeleMode::HeadMode;
         }

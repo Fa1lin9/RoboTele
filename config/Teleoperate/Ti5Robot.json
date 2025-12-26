@@ -15,9 +15,18 @@
 
     "SolverConfig":{
         "Type": "Ti5DualArm",
-        "BaseFrameName": ["BASE_S"],
+        "BaseFrameName": ["WAIST_Y"],
+        "_BaseFrameName": ["BASE_S"],
         "TargetFrameName": ["L7_WRIST_R", "R7_WRIST_R"],
         "BaseOffset": [
+            [
+            [1, 0, 0, 0.08],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0.48],
+            [0, 0 ,0, 1]
+            ]
+        ],
+        "_BaseOffset": [
             [
             [1, 0, 0, 0.08],
             [0, 1, 0, 0],

@@ -30,13 +30,13 @@ G1Dof29DualArmSolver::G1Dof29DualArmSolver(const ArmSolver::BasicConfig &config_
         this->rightArmEndIndex = this->robotModel.getFrameId(config_.targetFrameName[1]);
     }
 
-//    if(config_.baseOffset.size() != 1){
-//        std::string error = " As for G1Dof29DualArmSolver,the size of the baseOffset should be 1! ";
-//        throw std::length_error(error);
-//    }else{
-//        this->baseOffset = config_.baseOffset[0];
-//        this->baseOffsetSX = this->baseOffset.cast<casadi::SX>();
-//    }
+    if(config_.baseOffset.size() != 1){
+        std::string error = " As for G1Dof29DualArmSolver,the size of the baseOffset should be 1! ";
+        throw std::length_error(error);
+    }else{
+        this->baseOffset = config_.baseOffset[0];
+        this->baseOffsetSX = this->baseOffset.cast<casadi::SX>();
+    }
 
     // Init
     // Initialize some basic parameter,like the bounds
@@ -240,7 +240,7 @@ void G1Dof29DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
     }
 
     // Initial Pose
-    this->initPose = Eigen::VectorXd::Zero(21);
+    this->initPose = Eigen::VectorXd::Zero(this->dofTotal);
 
     std::cout<<" The size of the totalBoundsLower is "<<totalLowerBound.size()<<std::endl;
     std::cout<<" The size of the totalBoundsUpper is "<<totalUpperBound.size()<<std::endl;

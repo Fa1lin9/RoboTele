@@ -15,9 +15,9 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const RobotTeleoper
         case RobotBase::RobotType::Ti5Robot :{
            return boost::make_shared<Ti5RobotTeleoperate>(config_);
         }
-    case RobotBase::RobotType::UnitreeG1 :{
-       return boost::make_shared<UnitreeG1Teleoperate>(config_);
-    }
+        case RobotBase::RobotType::UnitreeG1Dof29 :{
+           return boost::make_shared<UnitreeG1Teleoperate>(config_);
+        }
         default:{
             return nullptr;
         }
@@ -93,7 +93,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 
 
     RobotTeleoperate::BasicConfig config = {
-        .robotType = RobotBase::RobotType::Ti5Robot,
+        .robotType = robotType,
         .xrType = XRBase::GetTypeFromStr(rootObj["XRType"].as_string().c_str()),
         .address = rootObj["Address"].as_string().c_str(),
         .FPS = static_cast<int>(rootObj["FPS"].as_int64()),

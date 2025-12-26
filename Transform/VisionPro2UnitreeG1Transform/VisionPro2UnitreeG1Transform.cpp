@@ -23,7 +23,8 @@ std::vector<Eigen::Matrix4d> VisionPro2UnitreeG1Transform::Solve(
             T_XR2Robot * config_.leftWrist2XRWorldPose * T_XR2Robot.inverse();
     Eigen::Matrix4d rightWrist2RobotWorldPose =
             T_XR2Robot * config_.rightWrist2XRWorldPose * T_XR2Robot.inverse();
-
+    Eigen::Matrix4d initHead2RobotWorldPose =
+            T_XR2Robot * config_.initHeadPose * T_XR2Robot.inverse();
     // 与urdf定义的手腕坐标xyz轴重合
     leftWrist2RobotWorldPose = leftWrist2RobotWorldPose * T_Robot2LeftWrist;
     rightWrist2RobotWorldPose = rightWrist2RobotWorldPose * T_Robot2RightWrist;
@@ -49,16 +50,20 @@ std::vector<Eigen::Matrix4d> VisionPro2UnitreeG1Transform::Solve(
 //            std::cout << "HeadPose: " << head2RobotWorldPoseLocked << std::endl;
 
         } else{
-            //
-            upperBody2RobotWorldPose = Eigen::Matrix4d::Identity();
-            // X
-            upperBody2RobotWorldPose(0,3) = 0;
-            // Y
-            upperBody2RobotWorldPose(1,3) = 0;
-            // Z
-            upperBody2RobotWorldPose(2,3) = 1.1;
-            // Rotation
-            upperBody2RobotWorldPose.block<3,3>(0,0) = Eigen::Matrix3d::Identity();
+//            //
+//            upperBody2RobotWorldPose = Eigen::Matrix4d::Identity();
+//            // X
+//            upperBody2RobotWorldPose(0,3) = 0;
+//            // Y
+//            upperBody2RobotWorldPose(1,3) = 0;
+//            // Z
+//            upperBody2RobotWorldPose(2,3) = 1.1;
+//            // Rotation
+//            upperBody2RobotWorldPose.block<3,3>(0,0) = Eigen::Matrix3d::Identity();
+            // Current Version
+            Eigen::Matrix4d temp = Eigen::Matrix4d::Identity();
+            temp.block<3,1>(0,3) = initHead2RobotWorldPose.block<3,1>(0,3);
+            upperBody2RobotWorldPose = temp;
         }
 
         // 转化到头坐标系

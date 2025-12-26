@@ -30,7 +30,7 @@ private:
 
     bool saveFlag = true;
 
-    const RobotBase::RobotType robotType = RobotBase::RobotType::UnitreeG1;
+    const RobotBase::RobotType robotType = RobotBase::RobotType::UnitreeG1Dof29;
 
     // Speed Limits
     Eigen::VectorXd speedThreshold;

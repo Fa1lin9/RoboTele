@@ -24,9 +24,6 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     this->headSolver.Init(config.robotType);
     this->waistSolver.Init(config.robotType);
 
-    // qLast
-    this->qLast = Eigen::VectorXd::Zero(21);
-
     this->ikSolverPtr = ArmSolver::GetPtr(config.solverConfig);
 
     this->transformPtr = Transform::GetPtr(config.transformConfig);
@@ -36,6 +33,10 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     this->ros2Bridge.Init(config.bridgeConfig);
 
     this->handGestureDectector.Init(config.xrType);
+
+    // Set qLast
+    std::cout << "Current Robot's DofTotal: " << this->ikSolverPtr->GetDofTotal() << std::endl;
+    this->qLast = Eigen::VectorXd::Zero(this->ikSolverPtr->GetDofTotal());
 
     // Speed Limits
     double threshold = this->FPS * M_PI / 180.0;
@@ -109,6 +110,10 @@ bool UnitreeG1Teleoperate::StartTeleoperate(bool verbose){
             if(!isStart){
                 continue;
             }
+            // Set initial head pose
+            msgConfig.initHeadPose = this->poseMatrix[0];
+            std::cout << "Initial Head Pose: " << std::endl;
+            std::cout << msgConfig.initHeadPose << std::endl;
             std::cout << "[UnitreeG1Teleoperate] The handGesture is OK, now start the teleoperation! "<<std::endl;
         }
 
@@ -170,15 +175,15 @@ bool UnitreeG1Teleoperate::StartTeleoperate(bool verbose){
                 waistRPY = this->waistSolver.Solve(transformedMsg[2]);
                 std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
             }
-            // Set Value to Head
-            qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
-            qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
-            qEigen(headJointsInfo[2].index) = headRPY(0); // Row
+//            // Set Value to Head
+//            qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
+//            qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
+//            qEigen(headJointsInfo[2].index) = headRPY(0); // Row
 
-            // Set Value to Waist
-            qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
-            qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
-            qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
+//            // Set Value to Waist
+//            qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
+//            qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
+//            qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
 
             // Check solution
             if(this->isCheckSolution){

@@ -12,7 +12,8 @@ class Transform
 public:
     enum Type{
         VisionPro2Ti5Robot,
-        VisionPro2UnitreeG1
+        VisionPro2UnitreeG1,
+        VisionPro,
     };
 
     struct BasicConfig

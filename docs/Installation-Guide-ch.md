@@ -1,38 +1,41 @@
 # 安装指南
 
 ## 1. 支持的平台
-本项目仅在 Linux 系统下开发和测试。
 
-- 操作系统：
+本项目仅在 Linux 系统下开发和测试，且由于部分模块依赖于ROS2运行，因此推荐在Ubuntu 22.04下使用。
+
+- **操作系统**：
   - Ubuntu 20.04
-  - Ubuntu 22.04
-
-- CPU 架构：
+  - Ubuntu 22.04(强烈推荐)
+- **CPU 架构**：
   - x86_64
   - aarch64
-
-- 不支持：
+- **不支持**：
   - Windows ❌
   - macOS ❌
+
+---
 
 ## 2. 第三方依赖概览
 
 本项目依赖多个第三方库，包括优化、运动学、通信和可视化相关组件。
 
-| 库          | 版本   | 安装方式 |
-|------------|--------|----------|
-| Eigen       | -      | -        |
-| Boost       | 1.78.0 | 源码     |
-| Qt          | 5.x    | -        |
-| Pinocchio   | -      | -        |
-| NLopt       | -      | 源码     |
-| CasADi      | -      | 源码     |
-| Protobuf    | 21.12  | 源码     |
-| cppzmq      | -      | 源码     |
-| libmodbus   | -      | 源码     |
-| FastDDS     | -      | 源码     |
+| 库               | 版本     | 安装方式 |
+|-----------------|--------|------|
+| Eigen           | -      | -    |
+| Boost           | 1.78.0 | 源码   |
+| Qt              | 5.x    | -    |
+| Pinocchio       | 3.8.0  | 源码   |
+| NLopt           | 2.10.0 | 源码   |
+| CasADi          | 3.7.0  | 源码   |
+| Protobuf        | 21.12  | 源码   |
+| cppzmq          | 4.11.0 | 源码   |
+| libmodbus       | 3.1.11 | 源码   |
+| FastDDS         | 3.2.2  | 源码   |
+| urdfdom         | 5.0.4  | 源码   |
+| urdfdom_headers | 2.0.2  | 源码   |
 
-## 3. 第三方库作用说明
+## 3. 部分第三方库作用说明
 
 - **Eigen**  
   基本的矩阵和线性代数库，用于矩阵运算和通用数学计算。
@@ -64,38 +67,102 @@
 - **FastDDS**  
   DDS（数据分发服务）实现，用于 ROS2。本项目使用 FastDDS 实现标准 C++ 项目与 ROS2 包之间的通信。
 
+
 ## 4. 源码编译库说明
 
-### 1. CasADi
-使用 CMake 编译 CasADi 时，建议启用 IPOPT：
+### Notes
+使用git tags可以查看各个tag版本，并从中选取自己想要的
 ```bash
-cmake -DWITH_PYTHON=ON -DWITH_PYTHON3=ON -DWITH_IPOPT=ON ..
+git tags
 ```
+使用git checkout tag/vX.X.X切换到对应的版本
+```bash
+git checkout tag/vX.X.X
+```
+git clone xxx之后记得更新子模块
+```bash
+git submodule update --init --recursive
+```
+
+###
+
+### Boost
+注意需要1.78.0版本的boost
+```bash
+cd boost_1_78_0
+./bootstrap.sh
+./b2
+sudo ./b2 install
+```
+
+### FastDDS
+从官网下载版本为3.2.2的源码包，然后执行install.sh
+```bash
+sudo bash ./install.sh
+```
+
+### Protobuf
+```bash
+cd protobuf
+mkdir build && cd build
+cmake ..
+make -j$(nproc)
+sudo make install
+```
+
+### NLopt
+```bash
+cd nlopt
+mkdir build && cd build
+cmake ..
+make -j$(nproc)
+sudo make install
+```
+
+### Pinocchio
+```bash
+cd pinocchio
+mkdir build && cd build
+cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF
+make -j$(nproc)
+sudo make install
+```
+
+### CasADi
+使用 CMake 编译 CasADi 时，必须启用 IPOPT：
 可以通过 apt 安装 IPOPT：
 ```bash
 sudo apt install coinor-libipopt-dev
 ```
-建议先安装 IPOPT 再编译 CasADi。
+
+```bash
+sudo apt install coinor-libipopt-dev
+cd casadi
+mkdir build && cd build
+cmake -DWITH_PYTHON=ON -DWITH_PYTHON3=ON -DWITH_IPOPT=ON ..
+make -j$(nproc)
+sudo make install
+```
+
 更多信息请参见：
 https://github.com/casadi/casadi/wiki/InstallationLinux
 
-### 2. Protobuf
+### Protobuf
 可在以下地址获取预编译版本：
 https://github.com/protocolbuffers/protobuf/releases
-
-更多编译提示请参见 src/README.md。
-
-### 3. Fast DDS
-
-下载和安装说明请参考官方文档(Part 3.1.4. CMake installation)：
-https://fast-dds.docs.eprosima.com/en/latest/installation/sources/sources_linux.html
+```bash
+cd protobuf
+mkdir build && cd build
+cmake ..
+make -j$(nproc)
+sudo make install
+```
  
-### 4. 其他源码编译库（Boost、NLopt、libmodbus 等）
+### 其他源码编译库（cppzmq、libmodbus、urdfdom 等）
 大部分库都有官方编译文档。
 常用编译步骤如下：
 ```bash
-mkdir build
-cd build
+mkdir build && cd build
 cmake ..
 make -j4
 sudo make install

@@ -1,6 +1,7 @@
 {
     "RobotType": "Ti5Robot",
     "XRType" : "VisionPro",
+    
     "Address": "tcp://127.0.0.1:5555",
     "FPS": 25,
 
@@ -8,10 +9,12 @@
     "IsRealWorldRobot": false,
     
     "IsCheckSolution": false,
-
     "IsFilterSolution": true,
     "FilterWeight": [0.4, 0.3, 0.2, 0.1],
     "_FilterWeight": [0.7, 0.2, 0.1],
+
+    "UseHead": true,
+    "UseWaist": true,
 
     "SolverConfig":{
         "Type": "Ti5DualArm",
@@ -46,7 +49,7 @@
     },
 
     "TransformConfig":{
-        "Type": "VisionPro2Ti5Robot",
+        "Type": "VisionPro",
         "T_Head2Waist": [
             [1, 0, 0, 0],
             [0, 1, 0, 0],

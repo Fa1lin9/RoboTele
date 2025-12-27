@@ -7,6 +7,8 @@
 
 #include <MatrixUtils.hpp>
 
+#include <JsonParser/JsonParser.hpp>
+
 class Transform
 {
 public:
@@ -62,6 +64,8 @@ public:
     virtual std::vector<Eigen::Matrix4d> Solve(const Transform::MsgConfig &config_) = 0;
 
     static boost::shared_ptr<Transform> GetPtr(const Transform::BasicConfig &config_);
+
+    static boost::shared_ptr<Transform> GetPtr(const std::string& filePath);
 
     static Transform::Type GetTypeFromStr(const std::string& str);
 

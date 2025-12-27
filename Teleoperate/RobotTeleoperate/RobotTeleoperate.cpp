@@ -40,7 +40,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 //    std::cout << "Regularization kind = " << (int)solverObj["RegularizationWeight"].kind() << std::endl;
 //    std::cout << "Smooth kind = " << (int)solverObj["SmoothWeight"].kind() << std::endl;
 
-    // IKSolver
+    // ArmSolver
     ArmSolver::BasicConfig solverConfig = {
         .type = ArmSolver::GetTypeFromStr(solverObj["Type"].as_string().c_str()),
 //        .baseFrameName = {"BASE_S"},
@@ -105,6 +105,8 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .isReal = rootObj["IsRealWorldRobot"].as_bool(),
         .isCheckSolution = rootObj["IsCheckSolution"].as_bool(),
         .isFilterSolution = rootObj["IsFilterSolution"].as_bool(),
+        .useHead = rootObj["UseHead"].as_bool(),
+        .useWaist = rootObj["UseWaist"].as_bool(),
     };
     Eigen::VectorXd filterWeightEigen = JsonParser::JsonArray2EigenVectorXd(rootObj["FilterWeight"].as_array());
     config.filterWeight = std::vector<double>(filterWeightEigen.data(),

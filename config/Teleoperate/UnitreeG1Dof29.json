@@ -1,6 +1,7 @@
 {
     "RobotType": "UnitreeG1Dof29",
     "XRType" : "VisionPro",
+    
     "Address": "tcp://127.0.0.1:5555",
     "FPS": 25,
 
@@ -8,10 +9,12 @@
     "IsRealWorldRobot": false,
     
     "IsCheckSolution": false,
-
     "IsFilterSolution": true,
     "FilterWeight": [0.4, 0.3, 0.2, 0.1],
     "_FilterWeight": [0.7, 0.2, 0.1],
+
+    "UseHead": false,
+    "UseWaist": false,
 
     "SolverConfig":{
         "Type": "G1Dof29DualArm",
@@ -37,7 +40,7 @@
     },
 
     "TransformConfig":{
-        "Type": "VisionPro2UnitreeG1",
+        "Type": "VisionPro",
         "T_Head2Waist": [
             [1, 0, 0, 0],
             [0, 1, 0, 0],

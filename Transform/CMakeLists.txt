@@ -14,6 +14,7 @@ list( APPEND ${GROUP_NAME}_Components
     Transform
     VisionPro2Ti5RobotTransform
     VisionPro2UnitreeG1Transform
+    VisionProTransform
 )
 
 ##########################################################################

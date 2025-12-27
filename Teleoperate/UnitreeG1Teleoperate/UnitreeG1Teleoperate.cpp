@@ -20,15 +20,26 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     this->FPS = config.FPS;
     this->filterWeight = config.filterWeight;
 
-    // Solver
-    this->headSolver.Init(config.robotType);
-    this->waistSolver.Init(config.robotType);
+    this->useHead = config.useHead;
+    this->useWaist = config.useWaist;
 
+    // Solver
     this->ikSolverPtr = ArmSolver::GetPtr(config.solverConfig);
 
     this->transformPtr = Transform::GetPtr(config.transformConfig);
 
     this->physicalRobotPtr = PhysicalRobot::GetPtr(config.robotConfig);
+
+    // For Head and Waist Solver
+    if(this->useHead){
+        this->headSolver.Init(config.robotType);
+        this->headJointsInfo = this->headSolver.GetJointsInfo();
+    }
+
+    if(this->useWaist){
+        this->waistSolver.Init(config.robotType);
+        waistJointsInfo = this->waistSolver.GetJointsInfo();
+    }
 
     this->ros2Bridge.Init(config.bridgeConfig);
 
@@ -48,7 +59,7 @@ UnitreeG1Teleoperate::~UnitreeG1Teleoperate(){
 
 }
 
-bool UnitreeG1Teleoperate::StartTeleoperate(bool verbose){
+bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
     // Filter
     WeightedMovingFilter filter(this->filterWeight, this->ikSolverPtr->GetDofTotal());
 
@@ -62,11 +73,6 @@ bool UnitreeG1Teleoperate::StartTeleoperate(bool verbose){
     Transform::MsgConfig msgConfig;
     Eigen::VectorXd qEigen;
     boost::optional<Eigen::VectorXd> q;
-
-    Eigen::Vector3d headRPY;
-    auto headJointsInfo = this->headSolver.GetJointsInfo();
-    Eigen::Vector3d waistRPY;
-    auto waistJointsInfo = this->waistSolver.GetJointsInfo();
 
     // Flag
     bool isStart = false;
@@ -175,27 +181,26 @@ bool UnitreeG1Teleoperate::StartTeleoperate(bool verbose){
                 waistRPY = this->waistSolver.Solve(transformedMsg[2]);
                 std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
             }
-//            // Set Value to Head
-//            qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
-//            qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
-//            qEigen(headJointsInfo[2].index) = headRPY(0); // Row
+            if(this->useHead){
+                // Set Value to Head
+                qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
+                qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
+                qEigen(headJointsInfo[2].index) = headRPY(0); // Row
+            }
 
-//            // Set Value to Waist
-//            qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
-//            qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
-//            qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
+            if(this->useWaist){
+                // Set Value to Waist
+                qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
+                qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
+                qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
+            }
 
             // Check solution
             if(this->isCheckSolution){
-                Eigen::VectorXd current(14);
-                Eigen::VectorXd last(14);
-                current << qEigen.segment(4,7), qEigen.segment(14,7);
-                last << this->qLast.segment(4,7), this->qLast.segment(14,7);
-
                 if(!isFirstCheck){
                     isFirstCheck = true;
                 }else{
-                    if(!this->CheckSolutionValid(current, last)){
+                    if(!this->CheckSolutionValid(qEigen, this->qLast)){
                         qEigen = this->qLast;
                     }
                 }
@@ -236,11 +241,12 @@ bool UnitreeG1Teleoperate::StartTeleoperate(bool verbose){
             }
 
             // set the initial value of the joint
-            // For Simulated Robot
-            this->qLast = qEigen;
-
+            if(this->isReal){
             // For Real Robot
-//            qLast = physicalRobotPtr->GetJointsAngleEigen();
+//                qLast = physicalRobotPtr->GetJointsAngleEigen();
+            }else{
+                this->qLast = qEigen;
+            }
 
             std::cout << "q:\n" << std::fixed << std::setprecision(5) << qEigen << std::endl;
         }else{
@@ -273,7 +279,7 @@ bool UnitreeG1Teleoperate::StartTeleoperate(bool verbose){
     return true;
 }
 
-bool UnitreeG1Teleoperate::StopTeleoperate(){
+bool UnitreeG1Teleoperate::StopTeleop(){
     if(!this->startFlag){
         std::cout<<"Teleoperation has ended! "<<std::endl;
     }else{

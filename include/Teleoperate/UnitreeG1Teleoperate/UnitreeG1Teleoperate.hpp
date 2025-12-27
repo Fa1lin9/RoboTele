@@ -10,8 +10,8 @@ public:
     ~UnitreeG1Teleoperate();
 
     bool Init() override;
-    bool StartTeleoperate(bool verbose) override;
-    bool StopTeleoperate() override;
+    bool StartTeleop(bool verbose) override;
+    bool StopTeleop() override;
 
 private:
     bool CheckDataValid();

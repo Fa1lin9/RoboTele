@@ -20,19 +20,19 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
     this->FPS = config.FPS;
     this->filterWeight = config.filterWeight;
 
-    // Solver
-    this->headSolver.Init(config.robotType);
-    this->waistSolver.Init(config.robotType);
+    this->useHead = config.useHead;
+    this->useWaist = config.useWaist;
 
-    // qLast
-    this->qLast = Eigen::VectorXd::Zero(21);
+    // For Head and Waist Solver
+    if(this->useHead){
+        this->headSolver.Init(config.robotType);
+        this->headJointsInfo = this->headSolver.GetJointsInfo();
+    }
 
-    // Initial Pose For Real Robot
-//    this->qLast.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
-//    this->qLast.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
-
-    this->qLast.segment(4,7) << -0.72, -1.0, -1.0, -1.0, 0.83, 0, 0;
-    this->qLast.segment(14,7) << 0.72, 1.0, 1.0, 1.0, -0.83, 0, 0;
+    if(this->useWaist){
+        this->waistSolver.Init(config.robotType);
+        waistJointsInfo = this->waistSolver.GetJointsInfo();
+    }
 
     this->ikSolverPtr = ArmSolver::GetPtr(config.solverConfig);
 
@@ -44,6 +44,16 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 
     this->handGestureDectector.Init(config.xrType);
 
+    // qLast
+    this->qLast = Eigen::VectorXd::Zero(this->ikSolverPtr->GetDofTotal());
+
+    // Initial Pose For Real Robot
+//    this->qLast.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
+//    this->qLast.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
+
+    this->qLast.segment(4,7) << -0.72, -1.0, -1.0, -1.0, 0.83, 0, 0;
+    this->qLast.segment(14,7) << 0.72, 1.0, 1.0, 1.0, -0.83, 0, 0;
+
     // Speed Limits
     double threshold = this->FPS * M_PI / 180.0;
     this->speedThreshold = Eigen::VectorXd::Constant(this->ikSolverPtr->GetDofTotal(), threshold);
@@ -54,7 +64,7 @@ Ti5RobotTeleoperate::~Ti5RobotTeleoperate(){
 
 }
 
-bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
+bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
     // Filter
 //    WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, this->ikSolverPtr->GetDofTotal());
     WeightedMovingFilter filter(this->filterWeight, this->ikSolverPtr->GetDofTotal());
@@ -69,11 +79,6 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     Transform::MsgConfig msgConfig;
     Eigen::VectorXd qEigen;
     boost::optional<Eigen::VectorXd> q;
-
-    Eigen::Vector3d headRPY;
-    auto headJointsInfo = this->headSolver.GetJointsInfo();
-    Eigen::Vector3d waistRPY;
-    auto waistJointsInfo = this->waistSolver.GetJointsInfo();
 
     // Flag
     bool isStart = false;
@@ -183,27 +188,26 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
                 waistRPY = this->waistSolver.Solve(transformedMsg[2]);
                 std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
             }
-            // Set Value to Head
-            qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
-            qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
-            qEigen(headJointsInfo[2].index) = headRPY(0); // Row
+            if(this->useHead){
+                // Set Value to Head
+                qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
+                qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
+                qEigen(headJointsInfo[2].index) = headRPY(0); // Row
+            }
 
-            // Set Value to Waist
-            qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
-            qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
-            qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
+            if(this->useWaist){
+                // Set Value to Waist
+                qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
+                qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
+                qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
+            }
 
             // Check solution
             if(this->isCheckSolution){
-                Eigen::VectorXd current(14);
-                Eigen::VectorXd last(14);
-                current << qEigen.segment(4,7), qEigen.segment(14,7);
-                last << this->qLast.segment(4,7), this->qLast.segment(14,7);
-
                 if(!isFirstCheck){
                     isFirstCheck = true;
                 }else{
-                    if(!this->CheckSolutionValid(current, last)){
+                    if(!this->CheckSolutionValid(qEigen, this->qLast)){
                         qEigen = this->qLast;
                     }
                 }
@@ -281,7 +285,7 @@ bool Ti5RobotTeleoperate::StartTeleoperate(bool verbose){
     return true;
 }
 
-bool Ti5RobotTeleoperate::StopTeleoperate(){
+bool Ti5RobotTeleoperate::StopTeleop(){
     if(!this->startFlag){
         std::cout<<"Teleoperation has ended! "<<std::endl;
     }else{

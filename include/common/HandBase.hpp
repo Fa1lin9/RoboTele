@@ -6,6 +6,7 @@
 
 namespace HandBase{
     struct HandGesture{
+        // For VisionPro
         bool pinchState;
         double pinchValue;
         bool squeezeState;
@@ -17,12 +18,8 @@ namespace HandBase{
     };
 
     struct HandData{
-//        std::vector<Eigen::Vector3d> leftHandPositions;
-//        std::vector<Eigen::Vector3d> rightHandPositions;
         std::vector<Eigen::Vector3d> handPositions;
 
-//        HandGesture leftHandGesture;
-//        HandGesture rightHandGesture;
         HandGesture handGesture;
 
     };

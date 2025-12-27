@@ -1,0 +1,31 @@
+{
+    "Type": "Ti5DualArm",
+    "BaseFrameName": ["WAIST_Y"],
+    "_BaseFrameName": ["BASE_S"],
+    "TargetFrameName": ["L7_WRIST_R", "R7_WRIST_R"],
+    "BaseOffset": [
+        [
+        [1, 0, 0, 0.08],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0.48],
+        [0, 0 ,0, 1]
+        ]
+    ],
+    "_BaseOffset": [
+        [
+        [1, 0, 0, 0.08],
+        [0, 1, 0, 0],
+        [0, 0, 1, 1.10],
+        [0, 0 ,0, 1]
+        ]
+    ],
+    "MaxIteration": 50,
+    "RelativeTol": 1e-6,
+    "DofArm": [5, 5],
+    "ObjectiveFunc":{
+        "TranslationWeight": 50.0,
+        "RotationWeight": 0.5,
+        "RegularizationWeight": 0.02,
+        "SmoothWeight": 0.5 
+    }
+}

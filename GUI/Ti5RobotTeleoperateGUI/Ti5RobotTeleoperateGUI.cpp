@@ -99,7 +99,7 @@ void Ti5RobotTeleoperateGUI::on_startTeleBtn_clicked()
 
     // 2. 创建线程
     teleopThread = QThread::create([this](){
-        teleop->StartTeleoperate(false);
+        teleop->StartTeleop(false);
     });
 
     // 可选：线程结束后删除自身并清空指针
@@ -115,7 +115,7 @@ void Ti5RobotTeleoperateGUI::on_startTeleBtn_clicked()
 void Ti5RobotTeleoperateGUI::on_stopTeleBtn_clicked()
 {
     if (teleop) {
-        teleop->StopTeleoperate();
+        teleop->StopTeleop();
     }
 }
 

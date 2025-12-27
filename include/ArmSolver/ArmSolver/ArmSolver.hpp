@@ -24,6 +24,8 @@
 #include <MatrixUtils.hpp>
 #include <FunctionLogger.hpp>
 
+#include <JsonParser/JsonParser.hpp>
+
 //#include <WeightedMovingFilter/WeightedMovingFilter.hpp>
 
 class ArmSolver
@@ -91,6 +93,8 @@ public:
     virtual std::vector<std::string> GetJointNames() = 0;
 
     static boost::shared_ptr<ArmSolver> GetPtr(const ArmSolver::BasicConfig& config_);
+
+    static boost::shared_ptr<ArmSolver> GetPtr(const std::string& filePath);
 
     static ArmSolver::Type GetTypeFromStr(const std::string& str);
 

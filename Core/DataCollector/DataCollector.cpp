@@ -51,7 +51,10 @@ void DataCollector::Run() {
 
         this->hasNewData = false;
 
-        subscriber.recv(msg, zmq::recv_flags::none);
+        auto result = subscriber.recv(msg, zmq::recv_flags::none);
+        if(!result){
+            continue;
+        }
 
         {
             std::lock_guard<std::mutex> lock(mutex);

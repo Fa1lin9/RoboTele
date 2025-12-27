@@ -43,9 +43,14 @@ public:
 
         bool isSim;
         bool isReal;
+
         bool isCheckSolution;
+
         bool isFilterSolution;
         std::vector<double> filterWeight;
+
+        bool useHead;
+        bool useWaist;
     };
 
     RobotTeleoperate();
@@ -56,27 +61,36 @@ public:
     static boost::shared_ptr<RobotTeleoperate> GetPtr(const std::string& filePath);
 
     virtual bool Init() = 0;
-    virtual bool StartTeleoperate(bool verbose) = 0;
-    virtual bool StopTeleoperate() = 0;
+    virtual bool StartTeleop(bool verbose) = 0;
+    virtual bool StopTeleop() = 0;
 
 protected:
+    // Solver
     boost::shared_ptr<ArmSolver> ikSolverPtr;
 
     boost::shared_ptr<PhysicalRobot> physicalRobotPtr;
 
     boost::shared_ptr<Transform> transformPtr;
 
-    HeadSolver headSolver;
-
-    WaistSolver waistSolver;
-
     int FPS;
 
     bool isSim;
     bool isReal;
     bool isCheckSolution;
+
+    // Filter
     bool isFilterSolution;
     std::vector<double> filterWeight;
+
+    // For Head and Waist Control
+    HeadSolver headSolver;
+    WaistSolver waistSolver;
+    bool useHead;
+    bool useWaist;
+    Eigen::Vector3d headRPY;
+    Eigen::Vector3d waistRPY;
+    std::vector<RobotBase::JointInfo> headJointsInfo;
+    std::vector<RobotBase::JointInfo> waistJointsInfo;
 
     // Valuable
     std::vector<Eigen::Matrix4d> poseMatrix;

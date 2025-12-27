@@ -55,6 +55,7 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:NLopt::nlopt>
         $<BUILD_INTERFACE:casadi::casadi>
 #        $<BUILD_INTERFACE:Core::WeightedMovingFilter>
+        $<BUILD_INTERFACE:Core::JsonParser>
         
     PRIVATE
         $<BUILD_INTERFACE:ArmSolver::Ti5DualArmSolver>

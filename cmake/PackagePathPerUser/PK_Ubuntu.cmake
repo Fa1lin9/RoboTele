@@ -100,6 +100,7 @@ set(PACKAGE_LIST
     "protobuf"
     "casadi"
     "cppzmq"
+
 )
 
 include( FindPackage )

@@ -120,10 +120,11 @@ sudo make install
 ```
 
 ### Pinocchio
+注意编译pinocchio之前先编译urdfdom和urdfdom-headers，并通过CMAKE_PREFIX_PATH指定cmake优先查找库的路径
 ```bash
 cd pinocchio
 mkdir build && cd build
-cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF
+cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCMAKE_PREFIX_PATH=/usr/local
 make -j$(nproc)
 sudo make install
 ```

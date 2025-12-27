@@ -10,13 +10,33 @@ const std::string modelPath =
         std::string(SOURCE_FILE_PATH)+"/assets/urdf/update_kanuopu-robot.urdf";
 
 int main(){
+    // BaseOffset
+    Eigen::Matrix4d baseOffset;
+    baseOffset << 1, 0, 0, +0.02,
+                    0, 1, 0, 0,
+                    0, 0, 1, +1.10,
+                    0, 0 ,0, 1;
+
+    // TargetOffset
+    Eigen::Matrix4d targetOffset;
+    targetOffset << 1, 0, 0, +0.2,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0 ,0, 1;
+
     ArmSolver::BasicConfig config = {
-        .type = ArmSolver::Type::G1Dof29DualArm,
+        .type = ArmSolver::Type::G1Dof23DualArm,
         .baseFrameName = {"waist_yaw_joint"},
-        .targetFrameName = {"left_wrist_yaw_joint", "right_wrist_yaw_joint"},
-        .maxIteration = 400,
-        .relativeTol = 1e-4,
+        .targetFrameName = {"left_wrist_roll_joint", "right_wrist_roll_joint"},
+        .baseOffset = std::vector<Eigen::Matrix4d>{baseOffset},
+        .targetOffset = std::vector<Eigen::Matrix4d>{targetOffset, targetOffset},
+        .maxIteration = 50,
+        .relativeTol = 1e-6,
         .dofArm = {5, 5},
+        .wTranslation = 50.0,
+        .wRotation = 0.5,
+        .wRegularization = 0.02,
+        .wSmooth = 0.5,
     };
 
     boost::shared_ptr<ArmSolver> ikSolverPtr = ArmSolver::GetPtr(config);

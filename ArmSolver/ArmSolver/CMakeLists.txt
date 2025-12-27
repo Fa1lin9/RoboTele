@@ -59,7 +59,7 @@ target_link_libraries( ${TARGET_NAME}
         
     PRIVATE
         $<BUILD_INTERFACE:ArmSolver::Ti5DualArmSolver>
-#        $<BUILD_INTERFACE:ArmSolver::G1Dof23DualArmSolver>
+        $<BUILD_INTERFACE:ArmSolver::G1Dof23DualArmSolver>
         $<BUILD_INTERFACE:ArmSolver::G1Dof29DualArmSolver>
 )
 

@@ -36,7 +36,8 @@ public:
         std::string address;
         int FPS;
 
-        ArmSolver::BasicConfig solverConfig;
+//        ArmSolver::BasicConfig solverConfig;
+        std::string solverConfigPath;
         PhysicalRobot::BasicConfig robotConfig;
         Transform::BasicConfig transformConfig;
         Ros2Bridge::BasicConfig bridgeConfig;
@@ -66,7 +67,7 @@ public:
 
 protected:
     // Solver
-    boost::shared_ptr<ArmSolver> ikSolverPtr;
+    boost::shared_ptr<ArmSolver> armSolverPtr;
 
     boost::shared_ptr<PhysicalRobot> physicalRobotPtr;
 

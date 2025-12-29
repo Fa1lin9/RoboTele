@@ -34,7 +34,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
         waistJointsInfo = this->waistSolver.GetJointsInfo();
     }
 
-    this->ikSolverPtr = ArmSolver::GetPtr(config.solverConfig);
+    this->armSolverPtr = ArmSolver::GetPtr(config.solverConfigPath);
 
     this->transformPtr = Transform::GetPtr(config.transformConfig);
 
@@ -45,7 +45,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
     this->handGestureDectector.Init(config.xrType);
 
     // qLast
-    this->qLast = Eigen::VectorXd::Zero(this->ikSolverPtr->GetDofTotal());
+    this->qLast = Eigen::VectorXd::Zero(this->armSolverPtr->GetTotalDof());
 
     // Initial Pose For Real Robot
 //    this->qLast.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
@@ -56,7 +56,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 
     // Speed Limits
     double threshold = this->FPS * M_PI / 180.0;
-    this->speedThreshold = Eigen::VectorXd::Constant(this->ikSolverPtr->GetDofTotal(), threshold);
+    this->speedThreshold = Eigen::VectorXd::Constant(this->armSolverPtr->GetTotalDof(), threshold);
 
 }
 
@@ -67,7 +67,7 @@ Ti5RobotTeleoperate::~Ti5RobotTeleoperate(){
 bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
     // Filter
 //    WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, this->ikSolverPtr->GetDofTotal());
-    WeightedMovingFilter filter(this->filterWeight, this->ikSolverPtr->GetDofTotal());
+    WeightedMovingFilter filter(this->filterWeight, this->armSolverPtr->GetTotalDof());
 
     this->startFlag = true;
     this->saveFlag = true;
@@ -170,7 +170,7 @@ bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
         // Use ArmSolver to Solve
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
 
-        q = ikSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
+        q = armSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
                                 this->qLast,
                                 false);
 
@@ -224,7 +224,7 @@ bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
                 ti5_interfaces::msg::JointStateWithoutStamp msg;
                 std::vector<double> qVec(qEigen.data(), qEigen.data() + qEigen.size());
                 msg.position() = qVec;
-                msg.name() = this->ikSolverPtr->GetJointNames();
+                msg.name() = this->armSolverPtr->GetJointNames();
 //                for(size_t i=0;i<msg.name().size();i++){
 //                    std::cout<<"Msg Joint "<<i<<": "<<msg.name()[i]<<std::endl;
 //                }

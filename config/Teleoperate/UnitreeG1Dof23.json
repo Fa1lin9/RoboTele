@@ -1,5 +1,5 @@
 {
-    "RobotType": "Ti5Robot",
+    "RobotType": "UnitreeG1Dof23",
     "XRType" : "VisionPro",
     
     "Address": "tcp://127.0.0.1:5555",
@@ -13,11 +13,11 @@
     "FilterWeight": [0.4, 0.3, 0.2, 0.1],
     "_FilterWeight": [0.7, 0.2, 0.1],
 
-    "UseHead": true,
-    "UseWaist": true,
+    "UseHead": false,
+    "UseWaist": false,
 
-    "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/Ti5DualArm.json",
-
+    "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/G1Dof23DualArm.json",
+    
     "TransformConfig":{
         "Type": "VisionPro",
         "T_Head2Waist": [
@@ -33,15 +33,15 @@
             [0, 0 ,0, 1]
         ],
         "T_Robot2LeftWrist": [
-            [0,1, 0, 0],
-            [-1, 0, 0, 0],
-            [0, 0, 1, 0],
+            [1, 0, 0, 0],
+            [0, 0, -1, 0],
+            [0, 1, 0, 0],
             [0, 0, 0, 1]
         ],
         "T_Robot2RightWrist": [
-            [0,-1, 0, 0],
             [1, 0, 0, 0],
             [0, 0, 1, 0],
+            [0, -1, 0, 0],
             [0, 0, 0, 1]
         ],
         "Offset": [0, 0, 0]

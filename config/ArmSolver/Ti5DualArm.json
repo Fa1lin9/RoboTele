@@ -1,8 +1,32 @@
 {
-    "Type": "Ti5DualArm",
+    "Type": "GenericDualArm",
+    "RobotType": "Ti5Robot",
+
+    "ModelPath": "/home/pangk/chf_ws/project/RobotTeleoperate/assets/urdf/Ti5Robot/Ti5Robot.urdf",
+
     "BaseFrameName": ["WAIST_Y"],
     "_BaseFrameName": ["BASE_S"],
     "TargetFrameName": ["L7_WRIST_R", "R7_WRIST_R"],
+
+    "LeftArmJointNames": [
+        "R1_SHOULDER_P",
+        "R2_SHOULDER_R",
+        "R3_SHOULDER_Y",
+        "R4_ELBOW_Y",
+        "R5_WRIST_P",
+        "R6_WRIST_Y",
+        "R7_WRIST_R"
+    ],
+    "RightArmJointNames": [
+        "L1_SHOULDER_P",
+        "L2_SHOULDER_R",
+        "L3_SHOULDER_Y",
+        "L4_ELBOW_Y",
+        "L5_WRIST_P",
+        "L6_WRIST_Y",
+        "L7_WRIST_R"
+    ],
+
     "BaseOffset": [
         [
         [1, 0, 0, 0.08],
@@ -19,9 +43,25 @@
         [0, 0 ,0, 1]
         ]
     ],
+    "TargetOffset":[
+        [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ],
+        [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ]
+    ],
+
     "MaxIteration": 50,
     "RelativeTol": 1e-6,
-    "DofArm": [5, 5],
+    "ArmActiveDof": [5, 5],
+
     "ObjectiveFunc":{
         "TranslationWeight": 50.0,
         "RotationWeight": 0.5,

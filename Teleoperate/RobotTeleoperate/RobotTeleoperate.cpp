@@ -18,6 +18,9 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const RobotTeleoper
         case RobotBase::RobotType::UnitreeG1Dof29 :{
            return boost::make_shared<UnitreeG1Teleoperate>(config_);
         }
+        case RobotBase::RobotType::UnitreeG1Dof23 :{
+           return boost::make_shared<UnitreeG1Teleoperate>(config_);
+        }
         default:{
             return nullptr;
         }
@@ -28,7 +31,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
     JsonParser jsonParser(filePath);
     json::object rootObj = jsonParser.GetJsonObject();
 
-    json::object solverObj = rootObj["SolverConfig"].as_object();
+//    json::object solverObj = rootObj["SolverConfig"].as_object();
     json::object transformObj = rootObj["TransformConfig"].as_object();
     json::object physicalRObotObj = rootObj["PhysicalRobotConfig"].as_object();
     json::object ros2BridgeObj = rootObj["Ros2BridgeConfig"].as_object();
@@ -41,34 +44,41 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 //    std::cout << "Smooth kind = " << (int)solverObj["SmoothWeight"].kind() << std::endl;
 
     // ArmSolver
-    ArmSolver::BasicConfig solverConfig = {
-        .type = ArmSolver::GetTypeFromStr(solverObj["Type"].as_string().c_str()),
-//        .baseFrameName = {"BASE_S"},
-        .baseFrameName = JsonParser::JsonArray2StdVecStr(solverObj["BaseFrameName"].as_array()),
-//        .targetFrameName = {"L_WRIST_R", "R_WRIST_R"},
-        .targetFrameName = JsonParser::JsonArray2StdVecStr(solverObj["TargetFrameName"].as_array()),
-//        .baseOffset = {JsonParser::JsonArray2EigenMatrixXd(solverObj["BaseOffset"].as_array()[0].as_array())},
-        // for nlopt
-//        .maxIteration = 400,
-//        .relativeTol = 1e-2,
-        // for ipopt
-        .maxIteration = static_cast<int>(solverObj["MaxIteration"].as_int64()),
-        .relativeTol = solverObj["RelativeTol"].as_double(),
-        .dofArm = JsonParser::JsonArray2StdVecInt(solverObj["DofArm"].as_array()),
-        .wTranslation = solverObj["ObjectiveFunc"].as_object()["TranslationWeight"].as_double(),
-        .wRotation = solverObj["ObjectiveFunc"].as_object()["RotationWeight"].as_double(),
-        .wRegularization = solverObj["ObjectiveFunc"].as_object()["RegularizationWeight"].as_double(),
-        .wSmooth = solverObj["ObjectiveFunc"].as_object()["SmoothWeight"].as_double(),
-    };
-    // In the future, the variable BaseOffset maybe not just 1
-    // So I choose to set BaseOffset to 3-D array
-    std::vector<Eigen::Matrix4d> baseOffset;
-    for(size_t i=0;i<solverObj["BaseOffset"].as_array().size();i++){
-        auto element = JsonParser::JsonArray2EigenMatrixXd(solverObj["BaseOffset"].as_array()[i].as_array());
-        baseOffset.push_back(element);
-    }
-    solverConfig.baseOffset = baseOffset;
+//    ArmSolver::BasicConfig solverConfig = {
+//        .type = ArmSolver::GetTypeFromStr(solverObj["Type"].as_string().c_str()),
+////        .baseFrameName = {"BASE_S"},
+//        .baseFrameName = JsonParser::JsonArray2StdVecStr(solverObj["BaseFrameName"].as_array()),
+////        .targetFrameName = {"L_WRIST_R", "R_WRIST_R"},
+//        .targetFrameName = JsonParser::JsonArray2StdVecStr(solverObj["TargetFrameName"].as_array()),
+////        .baseOffset = {JsonParser::JsonArray2EigenMatrixXd(solverObj["BaseOffset"].as_array()[0].as_array())},
+//        // for nlopt
+////        .maxIteration = 400,
+////        .relativeTol = 1e-2,
+//        // for ipopt
+//        .maxIteration = static_cast<int>(solverObj["MaxIteration"].as_int64()),
+//        .relativeTol = solverObj["RelativeTol"].as_double(),
+//        .armActiveDof = JsonParser::JsonArray2StdVecInt(solverObj["ArmActiveDof"].as_array()),
+//        .wTranslation = solverObj["ObjectiveFunc"].as_object()["TranslationWeight"].as_double(),
+//        .wRotation = solverObj["ObjectiveFunc"].as_object()["RotationWeight"].as_double(),
+//        .wRegularization = solverObj["ObjectiveFunc"].as_object()["RegularizationWeight"].as_double(),
+//        .wSmooth = solverObj["ObjectiveFunc"].as_object()["SmoothWeight"].as_double(),
+//    };
+//    // In the future, the variable BaseOffset maybe not just 1
+//    // So I choose to set BaseOffset to 3-D array
+//    std::vector<Eigen::Matrix4d> baseOffset;
+//    for(size_t i=0;i<solverObj["BaseOffset"].as_array().size();i++){
+//        auto element = JsonParser::JsonArray2EigenMatrixXd(solverObj["BaseOffset"].as_array()[i].as_array());
+//        baseOffset.push_back(element);
+//    }
+//    solverConfig.baseOffset = baseOffset;
 
+//    // For targetOffset
+//    std::vector<Eigen::Matrix4d> targetOffset;
+//    for(size_t i=0;i<solverObj["TargetOffset"].as_array().size();i++){
+//        auto element = JsonParser::JsonArray2EigenMatrixXd(solverObj["TargetOffset"].as_array()[i].as_array());
+//        targetOffset.push_back(element);
+//    }
+//    solverConfig.targetOffset = targetOffset;
 
     // Transform
     Transform::BasicConfig transformConfig = {
@@ -97,7 +107,8 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .xrType = XRBase::GetTypeFromStr(rootObj["XRType"].as_string().c_str()),
         .address = rootObj["Address"].as_string().c_str(),
         .FPS = static_cast<int>(rootObj["FPS"].as_int64()),
-        .solverConfig = solverConfig,
+//        .solverConfig = solverConfig,
+        .solverConfigPath = rootObj["SolverConfigPath"].as_string().c_str(),
         .robotConfig = physicalRobotConfig,
         .transformConfig = transformConfig,
         .bridgeConfig = bridgeConfig,

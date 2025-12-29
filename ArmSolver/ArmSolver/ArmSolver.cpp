@@ -2,6 +2,7 @@
 #include <Ti5DualArmSolver/Ti5DualArmSolver.hpp>
 #include <G1Dof23DualArmSolver/G1Dof23DualArmSolver.hpp>
 #include <G1Dof29DualArmSolver/G1Dof29DualArmSolver.hpp>
+#include <GenericDualArmSolver/GenericDualArmSolver.hpp>
 
 ArmSolver::ArmSolver(){
 
@@ -22,6 +23,9 @@ boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const ArmSolver::BasicConfig &con
         case ArmSolver::Type::G1Dof29DualArm :{
            return boost::make_shared<G1Dof29DualArmSolver>(config_);
         }
+        case ArmSolver::Type::GenericDualArm :{
+           return boost::make_shared<GenericDualArmSolver>(config_);
+        }
         default:{
             return nullptr;
         }
@@ -34,12 +38,20 @@ boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const std::string& filePath){
 
     // ArmSolver
     ArmSolver::BasicConfig config = {
+        .modelPath = rootObj["ModelPath"].as_string().c_str(),
+
         .type = ArmSolver::GetTypeFromStr(rootObj["Type"].as_string().c_str()),
+        .robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str()),
+
         .baseFrameName = JsonParser::JsonArray2StdVecStr(rootObj["BaseFrameName"].as_array()),
         .targetFrameName = JsonParser::JsonArray2StdVecStr(rootObj["TargetFrameName"].as_array()),
+
+        .leftArmJointNames = JsonParser::JsonArray2StdVecStr(rootObj["LeftArmJointNames"].as_array()),
+        .rightArmJointNames = JsonParser::JsonArray2StdVecStr(rootObj["RightArmJointNames"].as_array()),
+
         .maxIteration = static_cast<int>(rootObj["MaxIteration"].as_int64()),
         .relativeTol = rootObj["RelativeTol"].as_double(),
-        .dofArm = JsonParser::JsonArray2StdVecInt(rootObj["DofArm"].as_array()),
+        .armActiveDof = JsonParser::JsonArray2StdVecInt(rootObj["ArmActiveDof"].as_array()),
         .wTranslation = rootObj["ObjectiveFunc"].as_object()["TranslationWeight"].as_double(),
         .wRotation = rootObj["ObjectiveFunc"].as_object()["RotationWeight"].as_double(),
         .wRegularization = rootObj["ObjectiveFunc"].as_object()["RegularizationWeight"].as_double(),
@@ -57,8 +69,8 @@ boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const std::string& filePath){
 
     // For TargetOffset
     std::vector<Eigen::Matrix4d> targetOffset;
-    for(size_t i=0;i<rootObj["targetOffset"].as_array().size();i++){
-        auto element = JsonParser::JsonArray2EigenMatrixXd(rootObj["targetOffset"].as_array()[i].as_array());
+    for(size_t i=0;i<rootObj["TargetOffset"].as_array().size();i++){
+        auto element = JsonParser::JsonArray2EigenMatrixXd(rootObj["TargetOffset"].as_array()[i].as_array());
         targetOffset.push_back(element);
     }
     config.targetOffset = targetOffset;
@@ -70,6 +82,7 @@ const std::unordered_map<std::string, ArmSolver::Type> ArmSolver::typeMap = {
     {"Ti5DualArm", ArmSolver::Type::Ti5DualArm},
     {"G1Dof23DualArm", ArmSolver::Type::G1Dof23DualArm},
     {"G1Dof29DualArm", ArmSolver::Type::G1Dof29DualArm},
+    {"GenericDualArm", ArmSolver::Type::GenericDualArm},
 };
 
 ArmSolver::Type ArmSolver::GetTypeFromStr(const std::string& str){

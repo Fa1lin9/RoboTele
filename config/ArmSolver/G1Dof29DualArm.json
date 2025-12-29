@@ -1,7 +1,31 @@
 {
-    "Type": "G1Dof29DualArm",
+    "Type": "GenericDualArm",
+    "RobotType": "UnitreeG1Dof29",
+
+    "ModelPath": "/home/pangk/chf_ws/project/RobotTeleoperate/assets/urdf/UnitreeG1/g1_body29_hand14.urdf",
+
     "BaseFrameName": ["waist_yaw_joint"],
     "TargetFrameName": ["left_wrist_yaw_joint", "right_wrist_yaw_joint"],
+
+    "LeftArmJointNames" : [
+        "left_shoulder_pitch_joint",
+        "left_shoulder_roll_joint",
+        "left_shoulder_yaw_joint",
+        "left_elbow_joint",
+        "left_wrist_roll_joint",
+        "left_wrist_pitch_joint",
+        "left_wrist_yaw_joint"
+    ],
+    "RightArmJointNames" : [
+        "right_shoulder_pitch_joint",
+        "right_shoulder_roll_joint",
+        "right_shoulder_yaw_joint",
+        "right_elbow_joint",
+        "right_wrist_roll_joint",
+        "right_wrist_pitch_joint",
+        "right_wrist_yaw_joint"
+    ],
+
     "BaseOffset": [
         [
         [1, 0, 0, 0.08],
@@ -10,9 +34,25 @@
         [0, 0 ,0, 1]
         ]
     ],
+    "TargetOffset":[
+        [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ],
+        [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ]
+    ],
+
     "MaxIteration": 50,
     "RelativeTol": 1e-6,
-    "DofArm": [5, 5],
+    "ArmActiveDof": [5, 5],
+
     "ObjectiveFunc":{
         "TranslationWeight": 50.0,
         "RotationWeight": 0.5,

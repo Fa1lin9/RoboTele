@@ -67,7 +67,7 @@ public:
 
     std::vector<pinocchio::SE3> Forward(const Eigen::VectorXd& q) override;
 
-    size_t GetDofTotal() override;
+    size_t GetTotalDof() override;
 
     std::vector<std::string> GetJointNames() override;
 
@@ -78,44 +78,22 @@ private:
     // the degree of freedom of Unitree G1
     // 7 * 2 + 6 * 2 + 3 + 7 * 2 = 14 + 12 + 3 + 14 = 43
     // No dof of head
-    const size_t dofTotal = 43;
+    const size_t totalDof = 43;
 
     std::vector<std::string> jointNames;
 
-    const size_t dofArm = 7;
+    const size_t armDof = 7;
 
-    const size_t dofHand = 7;
+    const size_t handDof = 7;
 
-    const size_t dofWaist = 3;
+    const size_t waistDof = 3;
 
-    const size_t dofLeg = 6;
+    const size_t legDof = 6;
 
     // Initialization
     void InitRobot(const ArmSolver::BasicConfig &config_);
 
     void InitOptim(const ArmSolver::BasicConfig &config_);
-
-    template<int Rows, int Cols>
-    casadi::SX Eigen2SX(const Eigen::Matrix<casadi::SX, Rows, Cols>& mat) const {
-        casadi::SX result = casadi::SX::zeros(Rows, Cols);
-        for(int i=0;i<Rows;i++){
-            for(int j=0;j<Cols;j++){
-                result(i,j) = mat(i,j);
-            }
-        }
-        return result;
-    }
-
-    Eigen::Matrix<casadi::SX, Eigen::Dynamic, Eigen::Dynamic> SX2Eigen(const casadi::SX& mat) const {
-        int rows = mat.size1();
-        int cols = mat.size2();
-        Eigen::Matrix<casadi::SX, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols; ++j)
-                result(i, j) = mat(i,j);
-        return result;
-    }
-
 
     // the urdf file path of the Unitree G1
     const std::string modelPath =

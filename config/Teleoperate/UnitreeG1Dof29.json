@@ -16,28 +16,7 @@
     "UseHead": false,
     "UseWaist": false,
 
-    "SolverConfig":{
-        "Type": "G1Dof29DualArm",
-        "BaseFrameName": ["waist_yaw_joint"],
-        "TargetFrameName": ["left_wrist_yaw_joint", "right_wrist_yaw_joint"],
-        "BaseOffset": [
-            [
-            [1, 0, 0, 0.08],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0.44],
-            [0, 0 ,0, 1]
-            ]
-        ],
-        "MaxIteration": 50,
-        "RelativeTol": 1e-6,
-        "DofArm": [5, 5],
-        "ObjectiveFunc":{
-            "TranslationWeight": 50.0,
-            "RotationWeight": 0.5,
-            "RegularizationWeight": 0.02,
-            "SmoothWeight": 0.5 
-        }
-    },
+    "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/G1Dof29DualArm.json",
 
     "TransformConfig":{
         "Type": "VisionPro",

@@ -24,7 +24,7 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     this->useWaist = config.useWaist;
 
     // Solver
-    this->ikSolverPtr = ArmSolver::GetPtr(config.solverConfig);
+    this->armSolverPtr = ArmSolver::GetPtr(config.solverConfigPath);
 
     this->transformPtr = Transform::GetPtr(config.transformConfig);
 
@@ -46,12 +46,12 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     this->handGestureDectector.Init(config.xrType);
 
     // Set qLast
-    std::cout << "Current Robot's DofTotal: " << this->ikSolverPtr->GetDofTotal() << std::endl;
-    this->qLast = Eigen::VectorXd::Zero(this->ikSolverPtr->GetDofTotal());
+    std::cout << "Current Robot's DofTotal: " << this->armSolverPtr->GetTotalDof() << std::endl;
+    this->qLast = Eigen::VectorXd::Zero(this->armSolverPtr->GetTotalDof());
 
     // Speed Limits
     double threshold = this->FPS * M_PI / 180.0;
-    this->speedThreshold = Eigen::VectorXd::Constant(this->ikSolverPtr->GetDofTotal(), threshold);
+    this->speedThreshold = Eigen::VectorXd::Constant(this->armSolverPtr->GetTotalDof(), threshold);
 
 }
 
@@ -61,7 +61,7 @@ UnitreeG1Teleoperate::~UnitreeG1Teleoperate(){
 
 bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
     // Filter
-    WeightedMovingFilter filter(this->filterWeight, this->ikSolverPtr->GetDofTotal());
+    WeightedMovingFilter filter(this->filterWeight, this->armSolverPtr->GetTotalDof());
 
     this->startFlag = true;
     this->saveFlag = false;
@@ -163,7 +163,7 @@ bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
         // Use ArmSolver to Solve
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
 
-        q = ikSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
+        q = armSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
                                 this->qLast,
                                 false);
 
@@ -217,7 +217,7 @@ bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
                 ti5_interfaces::msg::JointStateWithoutStamp msg;
                 std::vector<double> qVec(qEigen.data(), qEigen.data() + qEigen.size());
                 msg.position() = qVec;
-                msg.name() = this->ikSolverPtr->GetJointNames();
+                msg.name() = this->armSolverPtr->GetJointNames();
 //                for(size_t i=0;i<msg.name().size();i++){
 //                    std::cout<<"Msg Joint "<<i<<": "<<msg.name()[i]<<std::endl;
 //                }

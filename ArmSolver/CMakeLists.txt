@@ -16,6 +16,7 @@ list( APPEND ${GROUP_NAME}_Components
     Ti5DualArmSolver
     G1Dof23DualArmSolver
     G1Dof29DualArmSolver
+    GenericDualArmSolver
 )
 
 ##########################################################################

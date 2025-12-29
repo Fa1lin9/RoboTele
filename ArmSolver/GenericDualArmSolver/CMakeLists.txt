@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 3.20 )
 #############################################################
 #	Set project name, files, dependancies
 #############################################################
-set( TARGET_NAME "ArmSolver" )
+set( TARGET_NAME "GenericDualArmSolver" )
 message( STATUS "\n-------------  ${GROUP_NAME} - ${TARGET_NAME}  -------------" )
 
 
@@ -46,22 +46,11 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC     
-        $<BUILD_INTERFACE:Eigen3::Eigen>
-        $<BUILD_INTERFACE:Boost::headers>
-        $<BUILD_INTERFACE:Boost::filesystem>
-        $<BUILD_INTERFACE:Boost::program_options>
-        $<BUILD_INTERFACE:pinocchio::pinocchio>
-        $<BUILD_INTERFACE:pinocchio::pinocchio_headers>
-        $<BUILD_INTERFACE:NLopt::nlopt>
-        $<BUILD_INTERFACE:casadi::casadi>
-#        $<BUILD_INTERFACE:Core::WeightedMovingFilter>
-        $<BUILD_INTERFACE:Core::JsonParser>
+        $<BUILD_INTERFACE:ArmSolver::ArmSolver>
         
     PRIVATE
-        $<BUILD_INTERFACE:ArmSolver::Ti5DualArmSolver>
-        $<BUILD_INTERFACE:ArmSolver::G1Dof23DualArmSolver>
-        $<BUILD_INTERFACE:ArmSolver::G1Dof29DualArmSolver>
-        $<BUILD_INTERFACE:ArmSolver::GenericDualArmSolver>
+
+
 )
 
 # #   Add Macro compile defination

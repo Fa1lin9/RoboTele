@@ -58,8 +58,8 @@ G1Dof29DualArmSolver::~G1Dof29DualArmSolver()
 
 }
 
-size_t G1Dof29DualArmSolver::GetDofTotal(){
-    return this->dofTotal;
+size_t G1Dof29DualArmSolver::GetTotalDof(){
+    return this->totalDof;
 }
 
 std::vector<std::string> G1Dof29DualArmSolver::GetJointNames(){
@@ -192,7 +192,7 @@ void G1Dof29DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
     }
 
     double min,max;
-    for(size_t i = 0;i<this->dofArm;i++){
+    for(size_t i = 0;i<this->armDof;i++){
         // left arm
         min = this->robotModel.lowerPositionLimit(this->leftArmID[0] + i - 1);
         max = this->robotModel.upperPositionLimit(this->leftArmID[0] + i - 1);
@@ -207,10 +207,10 @@ void G1Dof29DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
     }
 
     // For bound
-    this->totalLowerBound.resize(this->dofTotal);
-    this->totalUpperBound.resize(this->dofTotal);
+    this->totalLowerBound.resize(this->totalDof);
+    this->totalUpperBound.resize(this->totalDof);
 
-    for(size_t i=0;i<this->dofArm;i++){
+    for(size_t i=0;i<this->armDof;i++){
         // For Left Arm
         this->totalLowerBound[this->leftArmID[i] - 1] = this->leftArmLowerBound[i];
         this->totalUpperBound[this->leftArmID[i] - 1] = this->leftArmUpperBound[i];
@@ -223,16 +223,16 @@ void G1Dof29DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
 
     // according to the config , set limitation to the joint
     // Left Arm
-    std::cout<<"The current DOF of the left arm is "<<config_.dofArm[0]<<std::endl;
-    for(size_t i=0;i<this->dofArm - config_.dofArm[0];i++){
+    std::cout<<"The current DOF of the left arm is "<<config_.armActiveDof[0]<<std::endl;
+    for(size_t i=0;i<this->armDof - config_.armActiveDof[0];i++){
         size_t temp = this->leftArmID.back() - 1 - i;
         this->totalLowerBound[temp] = 0;
         this->totalUpperBound[temp] = 0;
         std::cout<<"Set limitation to left arm joint"<<temp<<std::endl;
     }
     // Right Arm
-    std::cout<<"The current DOF of the right arm is "<<config_.dofArm[1]<<std::endl;
-    for(size_t i=0;i<this->dofArm - config_.dofArm[1];i++){
+    std::cout<<"The current DOF of the right arm is "<<config_.armActiveDof[1]<<std::endl;
+    for(size_t i=0;i<this->armDof - config_.armActiveDof[1];i++){
         size_t temp = this->rightArmID.back() - 1 - i;
         this->totalLowerBound[temp] = 0;
         this->totalUpperBound[temp] = 0;
@@ -240,7 +240,7 @@ void G1Dof29DualArmSolver::InitRobot(const ArmSolver::BasicConfig &config_){
     }
 
     // Initial Pose
-    this->initPose = Eigen::VectorXd::Zero(this->dofTotal);
+    this->initPose = Eigen::VectorXd::Zero(this->totalDof);
 
     std::cout<<" The size of the totalBoundsLower is "<<totalLowerBound.size()<<std::endl;
     std::cout<<" The size of the totalBoundsUpper is "<<totalUpperBound.size()<<std::endl;
@@ -253,9 +253,9 @@ void G1Dof29DualArmSolver::InitOptim(const ArmSolver::BasicConfig &config_){
     // Creating symbolic variables
     casadi::SX targetPoseLeft_ = casadi::SX::sym("targetPoseLeft_",4,4);
     casadi::SX targetPoseRight_ = casadi::SX::sym("targetPoseRight_",4,4);
-    casadi::SX qVar_ = casadi::SX::sym("qVar_",this->dofTotal);
+    casadi::SX qVar_ = casadi::SX::sym("qVar_",this->totalDof);
     pinocchio::DataTpl<casadi::SX>::ConfigVectorType q =
-            pinocchio::DataTpl<casadi::SX>::ConfigVectorType::Zero(this->dofTotal);
+            pinocchio::DataTpl<casadi::SX>::ConfigVectorType::Zero(this->totalDof);
     for(int i =0;i<q.size();i++){
         q(i) = qVar_(i);
     }
@@ -272,9 +272,9 @@ void G1Dof29DualArmSolver::InitOptim(const ArmSolver::BasicConfig &config_){
     Eigen::Matrix<casadi::SX,4,4> leftArmPose = basePose.inverse() * leftArmEndPose;
     Eigen::Matrix<casadi::SX,4,4> rightArmPose = basePose.inverse() * rightArmEndPose;
 
-    casadi::SX basePoseSX = Eigen2SX(basePose);
-    casadi::SX leftArmEndPoseSX = Eigen2SX(leftArmEndPose);
-    casadi::SX rightArmEndPoseSX = Eigen2SX(rightArmEndPose);
+    casadi::SX basePoseSX = ArmSolver::Eigen2SX(basePose);
+    casadi::SX leftArmEndPoseSX = ArmSolver::Eigen2SX(leftArmEndPose);
+    casadi::SX rightArmEndPoseSX = ArmSolver::Eigen2SX(rightArmEndPose);
 
     casadi::SX basePoseInvSX = casadi::SX::inv(basePoseSX);
     casadi::SX leftArmPoseSX = casadi::SX::mtimes(basePoseInvSX, leftArmEndPoseSX);
@@ -299,17 +299,17 @@ void G1Dof29DualArmSolver::InitOptim(const ArmSolver::BasicConfig &config_){
     // rotation error
 //    std::cout<<" rotation Error "<<std::endl;
     Eigen::Matrix<casadi::SX,3,3> leftArmError
-            = leftArmPose.block<3,3>(0,0) * SX2Eigen(targetPoseLeft_).block<3,3>(0,0).transpose();
+            = leftArmPose.block<3,3>(0,0) * ArmSolver::SX2Eigen(targetPoseLeft_).block<3,3>(0,0).transpose();
     Eigen::Matrix<casadi::SX,3,3> rightArmError
-            = rightArmPose.block<3,3>(0,0) * SX2Eigen(targetPoseRight_).block<3,3>(0,0).transpose();
+            = rightArmPose.block<3,3>(0,0) * ArmSolver::SX2Eigen(targetPoseRight_).block<3,3>(0,0).transpose();
 
     Eigen::Matrix<casadi::SX,3,1> leftRotaError  = pinocchio::log3(leftArmError).cast<casadi::SX>();
     Eigen::Matrix<casadi::SX,3,1> rightRotaError = pinocchio::log3(rightArmError).cast<casadi::SX>();
 
     casadi::SX rotaError =
             casadi::SX::sumsqr(casadi::SX::vertcat({
-                Eigen2SX(leftRotaError),
-                Eigen2SX(rightRotaError)
+                ArmSolver::Eigen2SX(leftRotaError),
+                ArmSolver::Eigen2SX(rightRotaError)
             }));
 
     this->rotationalError =
@@ -318,8 +318,8 @@ void G1Dof29DualArmSolver::InitOptim(const ArmSolver::BasicConfig &config_){
                              {rotaError});
 
 //    casadi::Opti opti;
-    this->qVar = this->opti.variable(this->dofTotal, 1);
-    this->qLast = this->opti.parameter(this->dofTotal, 1);
+    this->qVar = this->opti.variable(this->totalDof, 1);
+    this->qLast = this->opti.parameter(this->totalDof, 1);
     this->targetPoseLeft = this->opti.parameter(4, 4);
     this->targetPoseRight = this->opti.parameter(4, 4);
 

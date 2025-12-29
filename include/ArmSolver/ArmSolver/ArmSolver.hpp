@@ -35,7 +35,7 @@ public:
         Ti5DualArm,
         G1Dof23DualArm,
         G1Dof29DualArm,
-
+        GenericDualArm,
     };
 
     struct BasicConfig
@@ -43,6 +43,7 @@ public:
         std::string modelPath;
 
         ArmSolver::Type type;
+        RobotBase::RobotType robotType;
 
         std::vector<std::string> baseFrameName;
         std::vector<std::string> targetFrameName;
@@ -50,9 +51,14 @@ public:
         std::vector<Eigen::Matrix4d> baseOffset;
         std::vector<Eigen::Matrix4d> targetOffset;
 
+        std::vector<std::string> leftArmJointNames;
+        std::vector<std::string> rightArmJointNames;
+
+        Eigen::VectorXd initPose;
+
         int maxIteration;
         double relativeTol;
-        std::vector<int> dofArm;
+        std::vector<int> armActiveDof;
 
         double wTranslation;
         double wRotation;
@@ -77,7 +83,6 @@ public:
     ~ArmSolver();
 
     // Solver the IK
-    //考虑到目标位姿包含双臂末端，同时考虑到泛化性，所以用std::vector
     virtual boost::optional<Eigen::VectorXd> Solve(
                     const std::vector<Eigen::Matrix4d>& targetPose,
                     const Eigen::VectorXd& qInit,
@@ -88,7 +93,7 @@ public:
     // Output some information of the current solver
     virtual void Info() = 0;
 
-    virtual size_t GetDofTotal() = 0;
+    virtual size_t GetTotalDof() = 0;
 
     virtual std::vector<std::string> GetJointNames() = 0;
 
@@ -97,6 +102,28 @@ public:
     static boost::shared_ptr<ArmSolver> GetPtr(const std::string& filePath);
 
     static ArmSolver::Type GetTypeFromStr(const std::string& str);
+
+    template<int Rows, int Cols>
+    casadi::SX Eigen2SX(const Eigen::Matrix<casadi::SX, Rows, Cols>& mat) const {
+        casadi::SX result = casadi::SX::zeros(Rows, Cols);
+        for(int i=0;i<Rows;i++){
+            for(int j=0;j<Cols;j++){
+                result(i,j) = mat(i,j);
+            }
+        }
+        return result;
+    }
+
+    Eigen::Matrix<casadi::SX, Eigen::Dynamic, Eigen::Dynamic> SX2Eigen(const casadi::SX& mat) const {
+        int rows = mat.size1();
+        int cols = mat.size2();
+        Eigen::Matrix<casadi::SX, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                result(i, j) = mat(i,j);
+        return result;
+    }
+
 
 
 private:

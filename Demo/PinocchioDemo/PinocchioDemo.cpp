@@ -32,7 +32,7 @@ int main(){
         .targetOffset = std::vector<Eigen::Matrix4d>{targetOffset, targetOffset},
         .maxIteration = 50,
         .relativeTol = 1e-6,
-        .dofArm = {5, 5},
+        .armActiveDof = {5, 5},
         .wTranslation = 50.0,
         .wRotation = 0.5,
         .wRegularization = 0.02,

@@ -53,7 +53,7 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:Boost::filesystem>
         $<BUILD_INTERFACE:Boost::program_options>
         # $<BUILD_INTERFACE:Core::CanDriver>
-        $<BUILD_INTERFACE:RobotHardware::Ti5PhysicalRobot>
+        $<BUILD_INTERFACE:RobotHardware::Ti5RobotHardware>
 
     PRIVATE
 )

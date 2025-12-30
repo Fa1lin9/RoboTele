@@ -1,5 +1,5 @@
-#include <Ti5PhysicalRobot/Ti5PhysicalRobot.hpp>
-Ti5PhysicalRobot::Ti5PhysicalRobot(const RobotHardware::BasicConfig &config_){
+#include <Ti5RobotHardware/Ti5RobotHardware.hpp>
+Ti5RobotHardware::Ti5RobotHardware(const RobotHardware::BasicConfig &config_){
 //    l_solver.gap=0.5;
 //    r_solver.gap=0.5;
 //    l_controller.max_vel=0.6;
@@ -7,11 +7,11 @@ Ti5PhysicalRobot::Ti5PhysicalRobot(const RobotHardware::BasicConfig &config_){
 
 }
 
-Ti5PhysicalRobot::~Ti5PhysicalRobot(){
+Ti5RobotHardware::~Ti5RobotHardware(){
 
 }
 
-bool Ti5PhysicalRobot::Connect(){
+bool Ti5RobotHardware::Connect(){
     // 如果是在成功连接之后调用的话
     // 就直接通过Flag来判断
     // 避免再次重复连接的操作
@@ -67,7 +67,7 @@ bool Ti5PhysicalRobot::Connect(){
     return this->connectFlag;
 }
 
-bool Ti5PhysicalRobot::Disconnect(){
+bool Ti5RobotHardware::Disconnect(){
     bool exitFlag = Exit();
     if(exitFlag){
           std::cout << RED
@@ -79,7 +79,7 @@ bool Ti5PhysicalRobot::Disconnect(){
     return this->connectFlag;
 }
 
-bool Ti5PhysicalRobot::isConnect(){
+bool Ti5RobotHardware::isConnect(){
     if(this->connectFlag){
         std::cout<< RED << typeid(*this).name() << " is connected ! " << RESET << std::endl;
     } else {
@@ -88,7 +88,7 @@ bool Ti5PhysicalRobot::isConnect(){
     return this->connectFlag;
 }
 
-bool Ti5PhysicalRobot::EmergencyStop(){
+bool Ti5RobotHardware::EmergencyStop(){
     brake(LEFT_ARM,0,0);
     brake(RIGHT_ARM,1,0);
     std:cout << RED
@@ -97,13 +97,13 @@ bool Ti5PhysicalRobot::EmergencyStop(){
     return true;
 }
 
-bool Ti5PhysicalRobot::BackToZero(){
+bool Ti5RobotHardware::BackToZero(){
     if(!this->isConnect()){ return false; }
 
     return true;
 }
 
-bool Ti5PhysicalRobot::BackToInitPose(const RobotHardware::RobotCmd& config_){
+bool Ti5RobotHardware::BackToInitPose(const RobotHardware::RobotCmd& config_){
     if(!this->isConnect()){ return false; }
 
     // for left arm
@@ -130,7 +130,7 @@ bool Ti5PhysicalRobot::BackToInitPose(const RobotHardware::RobotCmd& config_){
 
 }
 
-bool Ti5PhysicalRobot::BackToZero(const RobotHardware::RobotCmd &config_){
+bool Ti5RobotHardware::BackToZero(const RobotHardware::RobotCmd &config_){
     if(!this->isConnect()){ return false; }
 
     // for left arm
@@ -179,7 +179,7 @@ bool Ti5PhysicalRobot::BackToZero(const RobotHardware::RobotCmd &config_){
     return true;
 }
 
-std::vector<double> Ti5PhysicalRobot::GetJointsAngle(){
+std::vector<double> Ti5RobotHardware::GetJointsAngle(){
 //    LOG_FUNCTION;
     if(!this->isConnect()){ return {}; }
 
@@ -210,7 +210,7 @@ std::vector<double> Ti5PhysicalRobot::GetJointsAngle(){
     return jointsAngle;
 }
 
-Eigen::VectorXd Ti5PhysicalRobot::GetJointsAngleEigen(){
+Eigen::VectorXd Ti5RobotHardware::GetJointsAngleEigen(){
 //    LOG_FUNCTION;
     if(!this->isConnect()){ return {}; }
 
@@ -221,7 +221,7 @@ Eigen::VectorXd Ti5PhysicalRobot::GetJointsAngleEigen(){
     return jointsAngleEigen;
 }
 
-void Ti5PhysicalRobot::Info(){
+void Ti5RobotHardware::Info(){
     LOG_FUNCTION;
     ArmSide armSide;
 
@@ -288,7 +288,7 @@ void Ti5PhysicalRobot::Info(){
 
 }
 
-void Ti5PhysicalRobot::GetJointsStatus(){
+void Ti5RobotHardware::GetJointsStatus(){
     if(!this->isConnect()){ return; }
     int32_t dataList[this->armDof];
 
@@ -305,7 +305,7 @@ void Ti5PhysicalRobot::GetJointsStatus(){
     }
 }
 
-bool Ti5PhysicalRobot::MoveJ(const std::vector<double> &jointsAngle_){
+bool Ti5RobotHardware::MoveJ(const std::vector<double> &jointsAngle_){
 //    std::cout << RED
 //              << " Sorry,please use MoveJ(const PhysicalRobot::CrpRobotConfig& config_) to control the CrpRobot ! "
 //              << RESET
@@ -322,13 +322,13 @@ bool Ti5PhysicalRobot::MoveJ(const std::vector<double> &jointsAngle_){
     return true;
 }
 
-bool Ti5PhysicalRobot::MoveL(){
+bool Ti5RobotHardware::MoveL(){
 
     return true;
 }
 
 // Angle Unit: rad
-bool Ti5PhysicalRobot::MoveJ(const RobotHardware::RobotCmd &config_){
+bool Ti5RobotHardware::MoveJ(const RobotHardware::RobotCmd &config_){
     if(!this->isConnect()){ return false; }
 
     // for left arm
@@ -377,7 +377,7 @@ bool Ti5PhysicalRobot::MoveJ(const RobotHardware::RobotCmd &config_){
     return true;
 }
 
-bool Ti5PhysicalRobot::Init(){
+bool Ti5RobotHardware::Init(){
     LOG_FUNCTION;
     if(this->isConnect()){
         this->Initialize(true);
@@ -388,7 +388,7 @@ bool Ti5PhysicalRobot::Init(){
     }
 }
 
-bool Ti5PhysicalRobot::Initialize(bool verbose){
+bool Ti5RobotHardware::Initialize(bool verbose){
     double maxVelocity = 800;
     double maxAcceleration = 5;
     double currentVelocity;
@@ -432,7 +432,7 @@ bool Ti5PhysicalRobot::Initialize(bool verbose){
     return true;
 }
 
-bool Ti5PhysicalRobot::SendRecvJoints(const std::vector<double>& jointsValue,
+bool Ti5RobotHardware::SendRecvJoints(const std::vector<double>& jointsValue,
                     size_t dof,
                     size_t canDevice,
                     const std::vector<size_t>& canID,

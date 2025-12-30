@@ -12,7 +12,7 @@ set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 ##########################################################################
 list( APPEND ${GROUP_NAME}_Components
     RobotHardware
-    Ti5PhysicalRobot
+    Ti5RobotHardware
 )
 
 ##########################################################################

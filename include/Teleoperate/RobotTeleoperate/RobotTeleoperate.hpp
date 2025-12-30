@@ -38,7 +38,7 @@ public:
 
 //        ArmSolver::BasicConfig solverConfig;
         std::string solverConfigPath;
-        RobotHardware::BasicConfig robotConfig;
+        RobotHardware::BasicConfig hardwareConfig;
 //        Transform::BasicConfig transformConfig;
         std::string transformConfigPath;
         Ros2Bridge::BasicConfig bridgeConfig;
@@ -70,7 +70,7 @@ protected:
     // Solver
     boost::shared_ptr<ArmSolver> armSolverPtr;
 
-    boost::shared_ptr<RobotHardware> physicalRobotPtr;
+    boost::shared_ptr<RobotHardware> hardwarePtr;
 
     boost::shared_ptr<Transform> transformPtr;
 

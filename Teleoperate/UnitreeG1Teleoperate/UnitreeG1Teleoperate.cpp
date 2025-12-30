@@ -28,7 +28,7 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
 
     this->transformPtr = Transform::GetPtr(config.transformConfigPath);
 
-    this->physicalRobotPtr = RobotHardware::GetPtr(config.robotConfig);
+    this->hardwarePtr = RobotHardware::GetPtr(config.hardwareConfig);
 
     // For Head and Waist Solver
     if(this->useHead){

@@ -33,7 +33,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 
 //    json::object solverObj = rootObj["SolverConfig"].as_object();
 //    json::object transformObj = rootObj["TransformConfig"].as_object();
-    json::object physicalRObotObj = rootObj["PhysicalRobotConfig"].as_object();
+    json::object hardwareObj = rootObj["HardwareConfig"].as_object();
     json::object ros2BridgeObj = rootObj["Ros2BridgeConfig"].as_object();
 
     RobotBase::RobotType robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
@@ -91,7 +91,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 //    };
 
     // RobotHardware
-    RobotHardware::BasicConfig physicalRobotConfig = {
+    RobotHardware::BasicConfig hardwareConfig = {
         .robotType = robotType,
     };
 
@@ -109,7 +109,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .FPS = static_cast<int>(rootObj["FPS"].as_int64()),
 //        .solverConfig = solverConfig,
         .solverConfigPath = rootObj["SolverConfigPath"].as_string().c_str(),
-        .robotConfig = physicalRobotConfig,
+        .hardwareConfig = hardwareConfig,
 //        .transformConfig = transformConfig,
         .transformConfigPath = rootObj["TransformConfigPath"].as_string().c_str(),
         .bridgeConfig = bridgeConfig,

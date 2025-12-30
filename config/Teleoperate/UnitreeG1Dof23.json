@@ -20,7 +20,7 @@
     
     "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2UnitreeG1.json",
 
-    "PhysicalRobotConfig":{
+    "HardwareConfig":{
         
     },
 

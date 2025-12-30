@@ -1,5 +1,5 @@
 #include <RobotHardware/RobotHardware.hpp>
-#include <Ti5PhysicalRobot/Ti5PhysicalRobot.hpp>
+#include <Ti5RobotHardware/Ti5RobotHardware.hpp>
 
 RobotHardware::RobotHardware(){
 
@@ -59,13 +59,13 @@ void RobotHardware::GetJointsStatus() {
 boost::shared_ptr<RobotHardware> RobotHardware::GetPtr(const RobotHardware::BasicConfig &config){
     switch (config.robotType) {
         case RobotBase::RobotType::Ti5Robot :{
-           return boost::make_shared<Ti5PhysicalRobot>(config);
+           return boost::make_shared<Ti5RobotHardware>(config);
         }
         case RobotBase::RobotType::UnitreeG1Dof23 :{
-           return boost::make_shared<Ti5PhysicalRobot>(config);
+           return boost::make_shared<Ti5RobotHardware>(config);
         }
         case RobotBase::RobotType::UnitreeG1Dof29 :{
-           return boost::make_shared<Ti5PhysicalRobot>(config);
+           return boost::make_shared<Ti5RobotHardware>(config);
         }
         default:{
             return nullptr;

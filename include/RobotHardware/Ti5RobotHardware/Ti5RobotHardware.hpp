@@ -41,13 +41,13 @@ enum ArmType{
     RightArm,
 };
 
-class Ti5PhysicalRobot
+class Ti5RobotHardware
         :public RobotHardware
 {
 public:
-    Ti5PhysicalRobot(const RobotHardware::BasicConfig &config_);
+    Ti5RobotHardware(const RobotHardware::BasicConfig &config_);
 
-    ~Ti5PhysicalRobot();
+    ~Ti5RobotHardware();
     /* ---------------- Basic Information ---------------- */
 
     // Left(device0): 23, 24, 25, 26, 27, 28, 29

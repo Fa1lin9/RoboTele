@@ -1,5 +1,7 @@
 #include <RobotHardware/RobotHardware.hpp>
 #include <Ti5RobotHardware/Ti5RobotHardware.hpp>
+#include <G1Dof23Hardware/G1Dof23Hardware.hpp>
+#include <G1Dof29Hardware/G1Dof29Hardware.hpp>
 
 RobotHardware::RobotHardware(){
 
@@ -62,10 +64,10 @@ boost::shared_ptr<RobotHardware> RobotHardware::GetPtr(const RobotHardware::Basi
            return boost::make_shared<Ti5RobotHardware>(config);
         }
         case RobotBase::RobotType::UnitreeG1Dof23 :{
-           return boost::make_shared<Ti5RobotHardware>(config);
+           return boost::make_shared<G1Dof23Hardware>(config);
         }
         case RobotBase::RobotType::UnitreeG1Dof29 :{
-           return boost::make_shared<Ti5RobotHardware>(config);
+           return boost::make_shared<G1Dof29Hardware>(config);
         }
         default:{
             return nullptr;

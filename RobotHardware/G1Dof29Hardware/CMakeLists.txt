@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 3.20 )
 #############################################################
 #	Set project name, files, dependancies
 #############################################################
-set( TARGET_NAME "RobotHardware" )
+set( TARGET_NAME "G1Dof29Hardware" )
 message( STATUS "\n-------------  ${GROUP_NAME} - ${TARGET_NAME}  -------------" )
 
 
@@ -35,8 +35,8 @@ target_compile_definitions( ${TARGET_NAME} PUBLIC -DSIM_REMOTEAPICLIENT_OBJECTS 
 target_include_directories( ${TARGET_NAME}
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${GROUP_NAME}>
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/common>
-    PRIVATE        
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/common>     
+    PRIVATE               
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
@@ -45,19 +45,11 @@ target_include_directories( ${TARGET_NAME}
 
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
-    PUBLIC 
-        $<BUILD_INTERFACE:Boost::timer>
-        $<BUILD_INTERFACE:Boost::thread>
-        $<BUILD_INTERFACE:Eigen3::Eigen>
-        $<BUILD_INTERFACE:Boost::headers>
-        $<BUILD_INTERFACE:Boost::filesystem>
-        $<BUILD_INTERFACE:Boost::program_options>
-        # $<BUILD_INTERFACE:Core::CanDriver>
-        $<BUILD_INTERFACE:RobotHardware::Ti5RobotHardware>
-        $<BUILD_INTERFACE:RobotHardware::G1Dof23Hardware>
-        $<BUILD_INTERFACE:RobotHardware::G1Dof29Hardware>
-
+    PUBLIC
+        $<BUILD_INTERFACE:RobotHardware::RobotHardware>
+        $<BUILD_INTERFACE:Core::CanDriver>
     PRIVATE
+
 )
 
 if(UNIX)

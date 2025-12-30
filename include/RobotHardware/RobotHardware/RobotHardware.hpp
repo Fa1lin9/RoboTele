@@ -92,6 +92,12 @@ public:
 
     static boost::shared_ptr<RobotHardware> GetPtr(const RobotHardware::BasicConfig &config_);
 
-private:
+protected:
 
+    // For Dof
+    size_t headDof;
+    size_t armDof;
+    size_t waistDof;
+    size_t legDof;
+    size_t totalDof;
 };

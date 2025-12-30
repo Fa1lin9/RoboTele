@@ -26,7 +26,7 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     // Solver
     this->armSolverPtr = ArmSolver::GetPtr(config.solverConfigPath);
 
-    this->transformPtr = Transform::GetPtr(config.transformConfig);
+    this->transformPtr = Transform::GetPtr(config.transformConfigPath);
 
     this->physicalRobotPtr = PhysicalRobot::GetPtr(config.robotConfig);
 

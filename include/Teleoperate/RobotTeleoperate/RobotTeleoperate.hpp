@@ -39,7 +39,8 @@ public:
 //        ArmSolver::BasicConfig solverConfig;
         std::string solverConfigPath;
         PhysicalRobot::BasicConfig robotConfig;
-        Transform::BasicConfig transformConfig;
+//        Transform::BasicConfig transformConfig;
+        std::string transformConfigPath;
         Ros2Bridge::BasicConfig bridgeConfig;
 
         bool isSim;

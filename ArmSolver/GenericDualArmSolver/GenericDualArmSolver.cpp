@@ -211,12 +211,12 @@ void GenericDualArmSolver::InitRobot()
     }
     std::cout << "Left Arm JointIndex:\n";
     for (size_t i = 0; i < this->leftArmJointIndex.size(); ++i) {
-        std::cout << "q[" << i << "] = " << this->leftArmJointIndex[i] << "\n";
+        std::cout << "Joint[" << i << "] = " << this->leftArmJointIndex[i] << "\n";
     }
 
     std::cout << "\nRight Arm JointIndex:\n";
     for (size_t i = 0; i < this->rightArmJointIndex.size(); ++i) {
-        std::cout << "q[" << i << "] = " << this->rightArmJointIndex[i] << "\n";
+        std::cout << "Joint[" << i << "] = " << this->rightArmJointIndex[i] << "\n";
     }
 
     // Bound Loading
@@ -247,12 +247,12 @@ void GenericDualArmSolver::InitRobot()
     }
     std::cout << "\nTotal Lower Bounds:\n";
     for (size_t i = 0; i < this->totalLowerBound.size(); ++i) {
-        std::cout << "q[" << i << "] = " << this->totalLowerBound[i] << "\n";
+        std::cout << "Total Lower Bounds[" << i << "] = " << this->totalLowerBound[i] << "\n";
     }
 
     std::cout << "\nTotal Upper Bounds:\n";
     for (size_t i = 0; i < this->totalUpperBound.size(); ++i) {
-        std::cout << "q[" << i << "] = " << this->totalUpperBound[i] << "\n";
+        std::cout << "Total Upper Bounds[" << i << "] = " << this->totalUpperBound[i] << "\n";
     }
 
     assert(armActiveDof.size() == 2);
@@ -277,6 +277,8 @@ void GenericDualArmSolver::InitRobot()
     }
 
     // Initial Pose
+    // TODO
+    // I am unsure that if we need to provide the initial pose
     this->initPose = Eigen::VectorXd::Zero(this->totalDof);
 
     std::cout<<" The size of the totalBoundsLower is "<<totalLowerBound.size()<<std::endl;

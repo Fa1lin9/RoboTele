@@ -18,34 +18,7 @@
 
     "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/G1Dof23DualArm.json",
     
-    "TransformConfig":{
-        "Type": "VisionPro",
-        "T_Head2Waist": [
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0 ,0, 1]
-        ],
-        "T_XR2Robot": [
-            [0, 0, -1, 0],
-            [-1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0 ,0, 1]
-        ],
-        "T_Robot2LeftWrist": [
-            [1, 0, 0, 0],
-            [0, 0, -1, 0],
-            [0, 1, 0, 0],
-            [0, 0, 0, 1]
-        ],
-        "T_Robot2RightWrist": [
-            [1, 0, 0, 0],
-            [0, 0, 1, 0],
-            [0, -1, 0, 0],
-            [0, 0, 0, 1]
-        ],
-        "Offset": [0, 0, 0]
-    },
+    "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2UnitreeG1.json",
 
     "PhysicalRobotConfig":{
         

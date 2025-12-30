@@ -1,5 +1,5 @@
 #pragma once
-#include <PhysicalRobot/PhysicalRobot.hpp>
+#include <RobotHardware/RobotHardware.hpp>
 #include <CanDriver/CanDriver.h>
 
 #include <stdio.h>
@@ -42,10 +42,10 @@ enum ArmType{
 };
 
 class Ti5PhysicalRobot
-        :public PhysicalRobot
+        :public RobotHardware
 {
 public:
-    Ti5PhysicalRobot(const PhysicalRobot::BasicConfig &config_);
+    Ti5PhysicalRobot(const RobotHardware::BasicConfig &config_);
 
     ~Ti5PhysicalRobot();
     /* ---------------- Basic Information ---------------- */
@@ -89,9 +89,9 @@ public:
 
     bool BackToZero() override;
 
-    bool BackToInitPose(const PhysicalRobot::Ti5RobotConfig& config_) override;
+    bool BackToInitPose(const RobotHardware::RobotCmd& config_) override;
 
-    bool BackToZero(const PhysicalRobot::Ti5RobotConfig& config_) override;
+    bool BackToZero(const RobotHardware::RobotCmd& config_) override;
 
 
     void Info() override;
@@ -106,7 +106,7 @@ public:
 
     bool MoveL() override;
 
-    bool MoveJ(const PhysicalRobot::Ti5RobotConfig& config_) override;
+    bool MoveJ(const RobotHardware::RobotCmd& config_) override;
 
     bool Init() override;
 
@@ -123,9 +123,9 @@ private:
     bool connectFlag = false;
 
     // degree of freedom
-    const size_t dofWaist = 3;
-    const size_t dofHead = 3;
-    const size_t dofArm = 7;
+    const size_t waistDof = 3;
+    const size_t headDof = 3;
+    const size_t armDof = 7;
 
     // Can Device
     size_t leftArmCanDevice = 0;

@@ -77,7 +77,7 @@ if( Using_Qt5 )
             $<BUILD_INTERFACE:Boost::timer>
             $<BUILD_INTERFACE:Boost::filesystem>
             $<BUILD_INTERFACE:Boost::thread>
-            $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
+            $<BUILD_INTERFACE:RobotHardware::RobotHardware>
             
             
     )

@@ -3,7 +3,7 @@
 #include <source_path.h>
 
 #include <ArmSolver/ArmSolver.hpp>
-#include <PhysicalRobot/PhysicalRobot.hpp>
+#include <RobotHardware/RobotHardware.hpp>
 #include <Transform/Transform.hpp>
 #include <CsvWriter/CsvWriter.hpp>
 #include <WeightedMovingFilter/WeightedMovingFilter.hpp>
@@ -38,7 +38,7 @@ public:
 
 //        ArmSolver::BasicConfig solverConfig;
         std::string solverConfigPath;
-        PhysicalRobot::BasicConfig robotConfig;
+        RobotHardware::BasicConfig robotConfig;
 //        Transform::BasicConfig transformConfig;
         std::string transformConfigPath;
         Ros2Bridge::BasicConfig bridgeConfig;
@@ -70,7 +70,7 @@ protected:
     // Solver
     boost::shared_ptr<ArmSolver> armSolverPtr;
 
-    boost::shared_ptr<PhysicalRobot> physicalRobotPtr;
+    boost::shared_ptr<RobotHardware> physicalRobotPtr;
 
     boost::shared_ptr<Transform> transformPtr;
 

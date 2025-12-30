@@ -78,9 +78,9 @@ if( BuildPackages_Teleoperate )
     add_subdirectory( Teleoperate )
 endif()
 
-option( BuildPackages_PhysicalRobot "Whether generate Core package?" ON )
-if( BuildPackages_PhysicalRobot )
-    add_subdirectory( PhysicalRobot )
+option( BuildPackages_RobotHardware "Whether generate Core package?" ON )
+if( BuildPackages_RobotHardware )
+    add_subdirectory( RobotHardware )
 endif()
 
 option( BuildPackages_SimRobot "Whether generate Core package?" ON )

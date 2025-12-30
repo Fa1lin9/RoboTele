@@ -12,6 +12,8 @@ namespace RobotBase{
     };
 
     enum RobotType{
+        GenericRobot,
+
         Ti5Robot,
         UnitreeG1Dof29,
         UnitreeG1Dof23,

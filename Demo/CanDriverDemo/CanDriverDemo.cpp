@@ -3,7 +3,7 @@
 #include <CanDriver/CanDriver.h>
 #include <boost/shared_ptr.hpp>
 #include <unordered_map>
-#include <PhysicalRobot/PhysicalRobot.hpp>
+#include <RobotHardware/RobotHardware.hpp>
 #include <map>
 #include <iomanip>
 #include <math.h>
@@ -43,12 +43,12 @@ int main(){
     // Test on 2025.12.23
     // MainDemo can't link to the libcontrolcan.so
     // Set configeration
-    PhysicalRobot::BasicConfig config = {
+    RobotHardware::BasicConfig config = {
         .robotType = RobotBase::RobotType::Ti5Robot,
     };
 
-    boost::shared_ptr<PhysicalRobot> physicalRobotPtr
-            = PhysicalRobot::GetPtr(config);
+    boost::shared_ptr<RobotHardware> RobotHardware
+            = RobotHardware::GetPtr(config);
 
     physicalRobotPtr->Connect();
 

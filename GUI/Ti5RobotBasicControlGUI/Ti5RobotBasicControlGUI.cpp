@@ -7,10 +7,10 @@ Ti5RobotBasicControlGUI::Ti5RobotBasicControlGUI(QWidget *parent)
 {
     ui->setupUi(this);
     // Initialize the robot
-    PhysicalRobot::BasicConfig config = {
+    RobotHardware::BasicConfig config = {
         .robotType = RobotBase::RobotType::Ti5Robot,
     };
-    this->physicalRobotPtr = PhysicalRobot::GetPtr(config);
+    this->physicalRobotPtr = RobotHardware::GetPtr(config);
 }
 
 Ti5RobotBasicControlGUI::~Ti5RobotBasicControlGUI()
@@ -31,23 +31,23 @@ void Ti5RobotBasicControlGUI::CheckConnection(){
 }
 
 void Ti5RobotBasicControlGUI::UpdateConfig(){
-    this->ti5RobotConfig.useLeftArm = ui->leftArmCheckBox->isChecked();
-    this->ti5RobotConfig.useRightArm = ui->rightArmCheckBox->isChecked();
-    this->ti5RobotConfig.useHead = ui->headCheckBox->isChecked();
-    this->ti5RobotConfig.useWaist = ui->waistCheckBox->isChecked();
+    this->ti5RobotConfig.isLeftArmEnabled = ui->leftArmCheckBox->isChecked();
+    this->ti5RobotConfig.isRightArmEnabled = ui->rightArmCheckBox->isChecked();
+    this->ti5RobotConfig.isHeadEnabled = ui->headCheckBox->isChecked();
+    this->ti5RobotConfig.isWaistEnabled = ui->waistCheckBox->isChecked();
 
     std::vector<std::string> enabledParts;
 
-    if(this->ti5RobotConfig.useLeftArm){
+    if(this->ti5RobotConfig.isLeftArmEnabled){
         enabledParts.push_back("Left Arm");
     }
-    if(this->ti5RobotConfig.useRightArm){
+    if(this->ti5RobotConfig.isRightArmEnabled){
         enabledParts.push_back("Right Arm");
     }
-    if(this->ti5RobotConfig.useHead){
+    if(this->ti5RobotConfig.isHeadEnabled){
         enabledParts.push_back("Head");
     }
-    if(this->ti5RobotConfig.useWaist){
+    if(this->ti5RobotConfig.isWaistEnabled){
         enabledParts.push_back("Waist");
     }
 
@@ -210,8 +210,8 @@ void Ti5RobotBasicControlGUI::on_moveJPushButton_clicked()
 
     }
 
-    this->ti5RobotConfig.leftArmJointsValue = leftArmTarget;
-    this->ti5RobotConfig.rightArmJointsValue = rightArmTarget;
+    this->ti5RobotConfig.qLeftArm = leftArmTarget;
+    this->ti5RobotConfig.qRightArm = rightArmTarget;
     this->NormalizeAngle();
     this->physicalRobotPtr->MoveJ(this->ti5RobotConfig);
 
@@ -276,10 +276,10 @@ void Ti5RobotBasicControlGUI::NormalizeAngle(){
 //                = ConvertRadians2Degrees(this->ti5RobotConfig.rightArmJointsValue);
     // turn to radian
     }else{
-        this->ti5RobotConfig.leftArmJointsValue
-                = ConvertDegrees2Radians(this->ti5RobotConfig.leftArmJointsValue);
-        this->ti5RobotConfig.rightArmJointsValue
-                = ConvertDegrees2Radians(this->ti5RobotConfig.rightArmJointsValue);
+        this->ti5RobotConfig.qLeftArm
+                = ConvertDegrees2Radians(this->ti5RobotConfig.qLeftArm);
+        this->ti5RobotConfig.qRightArm
+                = ConvertDegrees2Radians(this->ti5RobotConfig.qRightArm);
     }
 }
 

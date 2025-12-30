@@ -49,8 +49,8 @@ int main(){
 ////    transformConfig.T_Robot2RightWrist = Eigen::Matrix4d::Identity();
 //    transformConfig.offset << 0, 0, 0;
 
-//    // PhysicalRobot
-//    PhysicalRobot::BasicConfig robotConfig = {
+//    // RobotHardware
+//    RobotHardware::BasicConfig robotConfig = {
 //        .robotType = RobotBase::RobotType::Ti5Robot,
 //    };
 

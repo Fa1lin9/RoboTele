@@ -50,7 +50,7 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:Core::DataCollector>
         $<BUILD_INTERFACE:ArmSolver::ArmSolver>
         $<BUILD_INTERFACE:Teleoperate::RobotTeleoperate>
-        $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
+        $<BUILD_INTERFACE:RobotHardware::RobotHardware>
         
     PRIVATE
         

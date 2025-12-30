@@ -3,7 +3,7 @@
 #define TI5ROBOTBASICCONTROLGUI_H
 
 #include <QMainWindow>
-#include <PhysicalRobot/PhysicalRobot.hpp>
+#include <RobotHardware/RobotHardware.hpp>
 #include <math.h>
 
 QT_BEGIN_NAMESPACE
@@ -64,9 +64,9 @@ private slots:
 private:
     Ui::Ti5RobotBasicControlGUI *ui;
 
-    boost::shared_ptr<PhysicalRobot> physicalRobotPtr;
+    boost::shared_ptr<RobotHardware> physicalRobotPtr;
 
-    PhysicalRobot::Ti5RobotConfig ti5RobotConfig;
+    RobotHardware::RobotCmd ti5RobotConfig;
 
     std::vector<double> ConvertDegrees2Radians(const std::vector<double>& degrees);
 

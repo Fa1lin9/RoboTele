@@ -1,18 +1,18 @@
 #include <iostream>
 
-#include <PhysicalRobot/PhysicalRobot.hpp>
+#include <RobotHardware/RobotHardware.hpp>
 #include <boost/shared_ptr.hpp>
 #include <math.h>
 
 int main(){
 
     // Set configeration
-    PhysicalRobot::BasicConfig config = {
+    RobotHardware::BasicConfig config = {
         .robotType = RobotBase::RobotType::Ti5Robot,
     };
 
-    boost::shared_ptr<PhysicalRobot> physicalRobotPtr
-            = PhysicalRobot::GetPtr(config);
+    boost::shared_ptr<RobotHardware> physicalRobotPtr
+            = RobotHardware::GetPtr(config);
 
     physicalRobotPtr->Connect();
 

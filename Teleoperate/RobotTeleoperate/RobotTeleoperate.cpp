@@ -90,8 +90,8 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 //        .type = Transform::GetTypeFromStr(transformObj["Type"].as_string().c_str()),
 //    };
 
-    // PhysicalRobot
-    PhysicalRobot::BasicConfig physicalRobotConfig = {
+    // RobotHardware
+    RobotHardware::BasicConfig physicalRobotConfig = {
         .robotType = robotType,
     };
 

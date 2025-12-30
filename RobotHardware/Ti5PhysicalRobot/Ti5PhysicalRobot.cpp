@@ -1,5 +1,5 @@
 #include <Ti5PhysicalRobot/Ti5PhysicalRobot.hpp>
-Ti5PhysicalRobot::Ti5PhysicalRobot(const PhysicalRobot::BasicConfig &config_){
+Ti5PhysicalRobot::Ti5PhysicalRobot(const RobotHardware::BasicConfig &config_){
 //    l_solver.gap=0.5;
 //    r_solver.gap=0.5;
 //    l_controller.max_vel=0.6;
@@ -103,13 +103,13 @@ bool Ti5PhysicalRobot::BackToZero(){
     return true;
 }
 
-bool Ti5PhysicalRobot::BackToInitPose(const PhysicalRobot::Ti5RobotConfig& config_){
+bool Ti5PhysicalRobot::BackToInitPose(const RobotHardware::RobotCmd& config_){
     if(!this->isConnect()){ return false; }
 
     // for left arm
-    if(config_.useLeftArm){
+    if(config_.isLeftArmEnabled){
         this->SendRecvJoints(std::vector<double>{-0.72, -1.0, 0.57, -1.0, 0.83, 0, 0},
-                             this->dofArm,
+                             this->armDof,
                              this->leftArmCanDevice,
                              this->leftArmCanID,
                              "Left Arm"
@@ -117,9 +117,9 @@ bool Ti5PhysicalRobot::BackToInitPose(const PhysicalRobot::Ti5RobotConfig& confi
     }
 
     // for right arm
-    if(config_.useRightArm){
+    if(config_.isRightArmEnabled){
         this->SendRecvJoints(std::vector<double>{0.72, 1.0, -0.57, 1.0, -0.83, 0, 0},
-                             this->dofArm,
+                             this->armDof,
                              this->rightArmCanDevice,
                              this->rightArmCanID,
                              "Right Arm"
@@ -130,13 +130,13 @@ bool Ti5PhysicalRobot::BackToInitPose(const PhysicalRobot::Ti5RobotConfig& confi
 
 }
 
-bool Ti5PhysicalRobot::BackToZero(const PhysicalRobot::Ti5RobotConfig &config_){
+bool Ti5PhysicalRobot::BackToZero(const RobotHardware::RobotCmd &config_){
     if(!this->isConnect()){ return false; }
 
     // for left arm
-    if(config_.useLeftArm){
+    if(config_.isLeftArmEnabled){
         this->SendRecvJoints(std::vector<double>{ 0 , 0 , 0 , 0 , 0 , 0 , 0 },
-                             this->dofArm,
+                             this->armDof,
                              this->leftArmCanDevice,
                              this->leftArmCanID,
                              "Left Arm"
@@ -144,9 +144,9 @@ bool Ti5PhysicalRobot::BackToZero(const PhysicalRobot::Ti5RobotConfig &config_){
     }
 
     // for right arm
-    if(config_.useRightArm){
+    if(config_.isRightArmEnabled){
         this->SendRecvJoints(std::vector<double>{ 0 , 0 , 0 , 0 , 0 , 0 , 0 },
-                             this->dofArm,
+                             this->armDof,
                              this->rightArmCanDevice,
                              this->rightArmCanID,
                              "Right Arm"
@@ -193,7 +193,7 @@ std::vector<double> Ti5PhysicalRobot::GetJointsAngle(){
     jointsAngle.insert(jointsAngle.end(),3,0);
 
     // left arm
-    for(size_t i=0;i<this->dofArm;i++){
+    for(size_t i=0;i<this->armDof;i++){
         CanDriver::RecvPosition(this->leftArmCanDevice,this->leftArmCanID[i],&position);
         jointsAngle.push_back(position);
     }
@@ -202,7 +202,7 @@ std::vector<double> Ti5PhysicalRobot::GetJointsAngle(){
     jointsAngle.insert(jointsAngle.end(),3,0);
 
     // right arm
-    for(size_t i=0;i<this->dofArm;i++){
+    for(size_t i=0;i<this->armDof;i++){
         CanDriver::RecvPosition(this->rightArmCanDevice,this->rightArmCanID[i],&position);
         jointsAngle.push_back(position);
     }
@@ -240,7 +240,7 @@ void Ti5PhysicalRobot::Info(){
         std::cout<< GREEN
                  << " Head's canDevice and canIndex : "
                  << RESET << std::endl;
-        for(size_t i = 0;i < this->dofHead ;i++){
+        for(size_t i = 0;i < this->headDof ;i++){
             std::cout << GREEN
                       << " canDevice: " << size_t(0)
                       << " canIndex " << this->headCanID[i]
@@ -257,7 +257,7 @@ void Ti5PhysicalRobot::Info(){
         std::cout<< YELLOW
                  << " Left arm's canDevice and canIndex : "
                  << RESET << std::endl;
-        for(size_t i = 0;i < this->dofArm ;i++){
+        for(size_t i = 0;i < this->armDof ;i++){
             std::cout << YELLOW
                       << " canDevice: " << size_t(0)
                       << " canIndex " << this->leftArmCanID[i]
@@ -274,7 +274,7 @@ void Ti5PhysicalRobot::Info(){
         std::cout<< BLUE
                  << " Right arm's canDevice and canIndex : "
                  << RESET << std::endl;
-        for(size_t i = 0;i < this->dofArm ;i++){
+        for(size_t i = 0;i < this->armDof ;i++){
             std::cout << BLUE
                       << " canDevice: " << size_t(0)
                       << " canIndex " << this->rightArmCanID[i]
@@ -290,17 +290,17 @@ void Ti5PhysicalRobot::Info(){
 
 void Ti5PhysicalRobot::GetJointsStatus(){
     if(!this->isConnect()){ return; }
-    int32_t dataList[this->dofArm];
+    int32_t dataList[this->armDof];
 
     get_mechanicalarm_status(ArmSide::LEFT_ARM,0,0,dataList);
 
-    for(size_t i = 0;i < this->dofArm;i++){
+    for(size_t i = 0;i < this->armDof;i++){
         std::cout<<" Left Arm Joint " <<i <<" Status: "<<dataList[i]<<std::endl;
     }
 
     get_mechanicalarm_status(ArmSide::RIGHT_ARM,1,0,dataList);
 
-    for(size_t i = 0;i < this->dofArm;i++){
+    for(size_t i = 0;i < this->armDof;i++){
         std::cout<<" Right Arm Joint " <<i <<" Status: "<<dataList[i]<<std::endl;
     }
 }
@@ -311,9 +311,9 @@ bool Ti5PhysicalRobot::MoveJ(const std::vector<double> &jointsAngle_){
 //              << RESET
 //              << std::endl;
     if(!this->isConnect()){ return false; }
-    float jointsAngle[this->dofArm];
+    float jointsAngle[this->armDof];
 
-    for(size_t i=0;i<this->dofArm;i++){
+    for(size_t i=0;i<this->armDof;i++){
         jointsAngle[i]=jointsAngle_[i];
     }
 
@@ -328,13 +328,13 @@ bool Ti5PhysicalRobot::MoveL(){
 }
 
 // Angle Unit: rad
-bool Ti5PhysicalRobot::MoveJ(const PhysicalRobot::Ti5RobotConfig &config_){
+bool Ti5PhysicalRobot::MoveJ(const RobotHardware::RobotCmd &config_){
     if(!this->isConnect()){ return false; }
 
     // for left arm
-    if(config_.useLeftArm){
-        this->SendRecvJoints(config_.leftArmJointsValue,
-                             this->dofArm,
+    if(config_.isLeftArmEnabled){
+        this->SendRecvJoints(config_.qLeftArm,
+                             this->armDof,
                              this->leftArmCanDevice,
                              this->leftArmCanID,
                              "Left Arm"
@@ -342,9 +342,9 @@ bool Ti5PhysicalRobot::MoveJ(const PhysicalRobot::Ti5RobotConfig &config_){
     }
 
     // for right arm
-    if(config_.useRightArm){
-        this->SendRecvJoints(config_.rightArmJointsValue,
-                             this->dofArm,
+    if(config_.isRightArmEnabled){
+        this->SendRecvJoints(config_.qRightArm,
+                             this->armDof,
                              this->rightArmCanDevice,
                              this->rightArmCanID,
                              "Right Arm"
@@ -352,9 +352,9 @@ bool Ti5PhysicalRobot::MoveJ(const PhysicalRobot::Ti5RobotConfig &config_){
     }
 
     // for head
-    if(config_.useHead){
-        this->SendRecvJoints(config_.headJointsValue,
-                             this->dofHead,
+    if(config_.isHeadEnabled){
+        this->SendRecvJoints(config_.qHead,
+                             this->headDof,
                              this->headCanDevice,
                              this->headCanID,
                              "Head"
@@ -362,9 +362,9 @@ bool Ti5PhysicalRobot::MoveJ(const PhysicalRobot::Ti5RobotConfig &config_){
     }
 
     // for waist
-    if(config_.useWaist){
-        this->SendRecvJoints(config_.waistJointsValue,
-                             this->dofWaist,
+    if(config_.isWaistEnabled){
+        this->SendRecvJoints(config_.qWaist,
+                             this->waistDof,
                              this->waistCanDevice,
                              this->waistCanID,
                              "Waist"
@@ -395,7 +395,7 @@ bool Ti5PhysicalRobot::Initialize(bool verbose){
     double currentAcceleration;
 
     std::cout<< " ----- Config and get max velocity and acceleration ----- " <<std::endl;
-    for(size_t i=0;i<this->dofArm;i++){
+    for(size_t i=0;i<this->armDof;i++){
         // left arm
         CanDriver::ConfigMaxVelocity(this->leftArmCanDevice, this->leftArmCanID[i], maxVelocity);
         CanDriver::RecvMaxVelocity(this->leftArmCanDevice, this->leftArmCanID[i], &currentVelocity);

@@ -38,7 +38,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 
     this->transformPtr = Transform::GetPtr(config.transformConfigPath);
 
-    this->physicalRobotPtr = PhysicalRobot::GetPtr(config.robotConfig);
+    this->physicalRobotPtr = RobotHardware::GetPtr(config.robotConfig);
 
     this->ros2Bridge.Init(config.bridgeConfig);
 

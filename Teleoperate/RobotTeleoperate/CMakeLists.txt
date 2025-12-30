@@ -51,7 +51,7 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:Core::CsvWriter>
         $<BUILD_INTERFACE:Core::WeightedMovingFilter>
         $<BUILD_INTERFACE:ArmSolver::ArmSolver>
-        $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
+        $<BUILD_INTERFACE:RobotHardware::RobotHardware>
         $<BUILD_INTERFACE:FastDDSInterface::Ros2Bridge>
         $<BUILD_INTERFACE:Core::JsonParser>
         $<BUILD_INTERFACE:BasicSolver::HeadSolver>

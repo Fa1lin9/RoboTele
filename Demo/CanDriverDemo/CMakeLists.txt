@@ -45,7 +45,7 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC 
-        $<BUILD_INTERFACE:PhysicalRobot::PhysicalRobot>
+        $<BUILD_INTERFACE:RobotHardware::RobotHardware>
     PRIVATE
         
 )

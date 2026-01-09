@@ -21,23 +21,22 @@ public:
     G1Dof23Hardware(const RobotHardware::BasicConfig &config_);
     ~G1Dof23Hardware();
 
-    bool MoveJ(const RobotHardware::RobotCmd& robotCmd) override;
+    bool SendCmd(const RobotHardware::HumanoidCmd& robotCmd) override;
 
-    bool BackToInitPose(const RobotHardware::RobotCmd& robotCmd) override;
+    bool BackToInitPose(const RobotHardware::HumanoidCmd& robotCmd) override;
 
-    bool BackToZero(const RobotHardware::RobotCmd& robotCmd) override;
+    bool BackToZero(const RobotHardware::HumanoidCmd& robotCmd) override;
 
     bool Init() override;
 
 private:
+    bool Initialize();
 
     void LoadConfig(const RobotHardware::BasicConfig &config_);
 
     bool CheckConfig(const RobotHardware::BasicConfig &config_);
 
-//    void LoadJointIndex();
-
-    bool CheckCmd(const RobotHardware::RobotCmd& robotCmd);
+    bool CheckCmd(const RobotHardware::HumanoidCmd& robotCmd);
 
     void SetJointPosition(const std::vector<size_t>& jointIndex,
                           const std::vector<double>& q);
@@ -45,6 +44,13 @@ private:
     void InitMsg();
 
     void MainLoop();
+
+    void StateCallback(const void* msg);
+
+    void FinishWork();
+
+    std::vector<double> ClipJointAngles(const std::vector<double>& q,
+                                        const float& velocityLimit);
 
     // Unitree Variable
     unitree::robot::ChannelPublisherPtr<unitree_hg::msg::dds_::LowCmd_>
@@ -71,8 +77,22 @@ private:
     float dq = 0.f;
     float tauFeedforward = 0.f;
 
-    float armVelocityLimit = 20.f;
+    float velocityLimit = 20.f;
     float dt = 1.0 / 250.0;
+
+    // Dof
+    size_t armDof = RobotBase::UnitreeG1::Dof23::armDof;
+    size_t headDof = RobotBase::UnitreeG1::Dof23::headDof;
+    size_t legDof = RobotBase::UnitreeG1::Dof23::legDof;
+    size_t waistDof = RobotBase::UnitreeG1::Dof23::waistDof;
+    size_t totalDof = RobotBase::UnitreeG1::Dof23::totalDof;
+
+    // thread
+    std::thread mainThread;
+
+    // DataBuffer
+    RobotBase::DataBuffer<RobotHardware::HumanoidState> stateBuffer;
+    RobotBase::DataBuffer<RobotHardware::HumanoidCmd> cmdBuffer;
 
     // JointIndex
     std::vector<size_t> leftArmJointIndex = {

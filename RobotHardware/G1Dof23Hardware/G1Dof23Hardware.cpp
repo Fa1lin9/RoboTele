@@ -11,76 +11,82 @@ G1Dof23Hardware::G1Dof23Hardware(const RobotHardware::BasicConfig &config_){
     std::cout<<this->config.description<<std::endl;
 
 //    this->LoadJointIndex();
-    this->Init();
+    this->Initialize();
 
+    // Start MainLoop
+    this->mainThread = std::thread(&G1Dof23Hardware::MainLoop, this);
 }
 
 G1Dof23Hardware::~G1Dof23Hardware(){
-
+    if(this->mainThread.joinable()){
+        this->mainThread.join();
+    }
 }
 
 /* ---------------- Motion Control ---------------- */
 
-bool G1Dof23Hardware::MoveJ(const RobotHardware::RobotCmd& robotCmd)
+bool G1Dof23Hardware::SendCmd(const RobotHardware::HumanoidCmd& cmd)
 {
     if(!this->initFlag){
-        throw std::invalid_argument("[G1Dof23Hardware::MoveJ] Plz initialize first! ");
+        throw std::invalid_argument("[G1Dof23Hardware::SendCmd] Plz initialize first! ");
     }
 
-    if(!this->CheckCmd(robotCmd)){
-        throw std::invalid_argument("[G1Dof23Hardware::MoveJ] Invalid input robotCmd! ");
+    if(!this->CheckCmd(cmd)){
+        throw std::invalid_argument("[G1Dof23Hardware::SendCmd] Invalid input robotCmd! ");
     }
 
-    if(robotCmd.isHeadEnabled){
-        throw std::invalid_argument("[G1Dof23Hardware::MoveJ] Sry, the UnitreeG1 doesn't have headDof! ");
+    if(cmd.isHeadEnabled){
+        throw std::invalid_argument("[G1Dof23Hardware::SendCmd] Sry, the UnitreeG1 doesn't have headDof! ");
     }
 
     std::unique_lock lock(this->mutex);
 
-    if(robotCmd.isLeftArmEnabled){
-        this->SetJointPosition(this->leftArmJointIndex,
-                               robotCmd.qLeftArm);
+    if(cmd.isLeftArmEnabled){
+        this->SetJointPosition(this->leftArmJointIndex, cmd.qTargetLeftArm);
     }
 
-    if(robotCmd.isRightArmEnabled){
-        this->SetJointPosition(this->rightArmJointIndex,
-                               robotCmd.qRightArm);
+    if(cmd.isRightArmEnabled){
+        this->SetJointPosition(this->rightArmJointIndex, cmd.qTargetRightArm);
     }
 
-    if(robotCmd.isWaistEnabled){
-        this->SetJointPosition(this->waistJointIndex,
-                               robotCmd.qWaist);
+    if(cmd.isWaistEnabled){
+        this->SetJointPosition(this->waistJointIndex, cmd.qTargetWaist);
     }
 
-    if(robotCmd.isLeftLegEnabled){
-        this->SetJointPosition(this->leftLegJointIndex,
-                               robotCmd.qLeftLeg);
+    if(cmd.isLeftLegEnabled){
+        this->SetJointPosition(this->leftLegJointIndex, cmd.qTargetLeftLeg);
     }
 
-    if(robotCmd.isRightLegEnabled){
-        this->SetJointPosition(this->rightLegJointIndex,
-                               robotCmd.qRightLeg);
+    if(cmd.isRightLegEnabled){
+        this->SetJointPosition(this->rightLegJointIndex, cmd.qTargetRightLeg);
     }
+
+//    this->cmdBuffer.SetData(cmd);
 
     return true;
 }
 
-bool G1Dof23Hardware::BackToInitPose(const RobotHardware::RobotCmd& robotCmd)
+bool G1Dof23Hardware::BackToInitPose(const RobotHardware::HumanoidCmd& robotCmd)
 {
     return this->BackToZero(robotCmd);
 }
 
-bool G1Dof23Hardware::BackToZero(const RobotHardware::RobotCmd& robotCmd)
+bool G1Dof23Hardware::BackToZero(const RobotHardware::HumanoidCmd& robotCmd)
 {
-    RobotHardware::RobotCmd zeroCmd = robotCmd;
+    RobotHardware::HumanoidCmd zeroCmd = robotCmd;
 
-    if(robotCmd.isLeftArmEnabled)  zeroCmd.qLeftArm  = std::vector<double>(robotCmd.qLeftArm.size(), 0.0);
-    if(robotCmd.isRightArmEnabled) zeroCmd.qRightArm = std::vector<double>(robotCmd.qRightArm.size(), 0.0);
-    if(robotCmd.isWaistEnabled)    zeroCmd.qWaist    = std::vector<double>(robotCmd.qWaist.size(), 0.0);
-    if(robotCmd.isLeftLegEnabled)  zeroCmd.qLeftLeg  = std::vector<double>(robotCmd.qLeftLeg.size(), 0.0);
-    if(robotCmd.isRightLegEnabled) zeroCmd.qRightLeg = std::vector<double>(robotCmd.qRightLeg.size(), 0.0);
+    if(robotCmd.isLeftArmEnabled)  zeroCmd.qTargetLeftArm  =
+            std::vector<double>(this->armDof, 0.0);
+    if(robotCmd.isRightArmEnabled) zeroCmd.qTargetRightArm =
+            std::vector<double>(this->armDof, 0.0);
+    if(robotCmd.isWaistEnabled)    zeroCmd.qTargetWaist    =
+            std::vector<double>(this->waistDof, 0.0);
+    if(robotCmd.isLeftLegEnabled)  zeroCmd.qTargetLeftLeg  =
+            std::vector<double>(this->legDof, 0.0);
+    if(robotCmd.isRightLegEnabled) zeroCmd.qTargetRightLeg =
+            std::vector<double>(this->legDof, 0.0);
 
-    return this->MoveJ(zeroCmd);
+    return this->SendCmd(zeroCmd);
 }
 
 void G1Dof23Hardware::LoadConfig(const RobotHardware::BasicConfig &config_){
@@ -141,12 +147,18 @@ bool G1Dof23Hardware::CheckConfig(const RobotHardware::BasicConfig &config_){
 }
 
 bool G1Dof23Hardware::Init(){
+    this->Initialize();
+    return true;
+}
+
+bool G1Dof23Hardware::Initialize()
+{
     LOG_FUNCTION;
     if(this->initFlag){
-        std::cout<<"[G1Dof23Hardware::Init] Have already initialzed! "<<std::endl;
+        std::cout<<"[G1Dof23Hardware::Initialize] Have already initialzed! "<<std::endl;
         return true;
     }else{
-        std::cout<<"[G1Dof23Hardware::Init] Start to initialize! "<<std::endl;
+        std::cout<<"[G1Dof23Hardware::Initialize] Start to initialize! "<<std::endl;
     }
 
     unitree::robot::ChannelFactory::Instance()->Init(0, this->config.networkInterface);
@@ -161,10 +173,8 @@ bool G1Dof23Hardware::Init(){
     this->stateSubscriber.reset(
         new unitree::robot::ChannelSubscriber<unitree_hg::msg::dds_::LowState_>(
             RobotBase::UnitreeG1::kTopicState));
-    this->stateSubscriber->InitChannel([&](const void *msg) {
-          auto s = ( const unitree_hg::msg::dds_::LowState_* )msg;
-          memcpy( &this->stateMsg, s, sizeof( unitree_hg::msg::dds_::LowState_ ) );
-    }, 1);
+    this->stateSubscriber->InitChannel(
+                std::bind(&G1Dof23Hardware::StateCallback, this, std::placeholders::_1), 1);
 
     // TODO: InitMsg
     this->InitMsg();
@@ -173,54 +183,11 @@ bool G1Dof23Hardware::Init(){
     return true;
 }
 
-//void G1Dof23Hardware::LoadJointIndex(){
-
-//    this->leftArmJointIndex = {
-//        RobotBase::UnitreeG1::JointIndex::kLeftShoulderPitch,
-//        RobotBase::UnitreeG1::JointIndex::kLeftShoulderRoll,
-//        RobotBase::UnitreeG1::JointIndex::kLeftShoulderYaw,
-//        RobotBase::UnitreeG1::JointIndex::kLeftElbowPitch,
-//        RobotBase::UnitreeG1::JointIndex::kLeftElbowRoll,
-//    };
-
-//    this->rightArmJointIndex = {
-//        RobotBase::UnitreeG1::JointIndex::kRightShoulderPitch,
-//        RobotBase::UnitreeG1::JointIndex::kRightShoulderRoll,
-//        RobotBase::UnitreeG1::JointIndex::kRightShoulderYaw,
-//        RobotBase::UnitreeG1::JointIndex::kRightElbowPitch,
-//        RobotBase::UnitreeG1::JointIndex::kRightElbowRoll,
-//    };
-
-//    this->waistJointIndex = {
-//        RobotBase::UnitreeG1::JointIndex::kWaistYaw,
-//        RobotBase::UnitreeG1::JointIndex::kWaistRoll,
-//        RobotBase::UnitreeG1::JointIndex::kWaistPitch,
-//    };
-
-//    this->leftLegJointIndex = {
-//        RobotBase::UnitreeG1::JointIndex::kLeftHipPitch,
-//        RobotBase::UnitreeG1::JointIndex::kLeftHipRoll,
-//        RobotBase::UnitreeG1::JointIndex::kLeftHipYaw,
-//        RobotBase::UnitreeG1::JointIndex::kLeftKnee,
-//        RobotBase::UnitreeG1::JointIndex::kLeftAnkle,
-//        RobotBase::UnitreeG1::JointIndex::kLeftAnkleRoll,
-//    };
-
-//    this->rightLegJointIndex = {
-//        RobotBase::UnitreeG1::JointIndex::kRightHipPitch,
-//        RobotBase::UnitreeG1::JointIndex::kRightHipRoll,
-//        RobotBase::UnitreeG1::JointIndex::kRightHipYaw,
-//        RobotBase::UnitreeG1::JointIndex::kRightKnee,
-//        RobotBase::UnitreeG1::JointIndex::kRightAnkle,
-//        RobotBase::UnitreeG1::JointIndex::kRightAnkleRoll,
-//    };
-//}
-
-bool G1Dof23Hardware::CheckCmd(const RobotCmd &robotCmd)
+bool G1Dof23Hardware::CheckCmd(const HumanoidCmd &robotCmd)
 {
     // Left Arm
     if (robotCmd.isLeftArmEnabled) {
-        if (robotCmd.qLeftArm.size() != RobotBase::UnitreeG1::Dof23::armDof) {
+        if (robotCmd.qTargetLeftArm.size() != RobotBase::UnitreeG1::Dof23::armDof) {
             std::string error =
                 "The size of qLeftArm is not equal to RobotBase::UnitreeG1::Dof23::armDof!";
             throw std::invalid_argument(error);
@@ -230,7 +197,7 @@ bool G1Dof23Hardware::CheckCmd(const RobotCmd &robotCmd)
 
     // Right Arm
     if (robotCmd.isRightArmEnabled) {
-        if (robotCmd.qRightArm.size() != RobotBase::UnitreeG1::Dof23::armDof) {
+        if (robotCmd.qTargetRightArm.size() != RobotBase::UnitreeG1::Dof23::armDof) {
             std::string error =
                 "The size of qRightArm is not equal to RobotBase::UnitreeG1::Dof23::armDof!";
             throw std::invalid_argument(error);
@@ -240,7 +207,7 @@ bool G1Dof23Hardware::CheckCmd(const RobotCmd &robotCmd)
 
     // Head
     if (robotCmd.isHeadEnabled) {
-        if (robotCmd.qHead.size() != RobotBase::UnitreeG1::Dof23::headDof) {
+        if (robotCmd.qTargetHead.size() != RobotBase::UnitreeG1::Dof23::headDof) {
             std::string error =
                 "The size of qHead is not equal to RobotBase::UnitreeG1::Dof23::headDof!";
             throw std::invalid_argument(error);
@@ -250,7 +217,7 @@ bool G1Dof23Hardware::CheckCmd(const RobotCmd &robotCmd)
 
     // Waist
     if (robotCmd.isWaistEnabled) {
-        if (robotCmd.qWaist.size() != RobotBase::UnitreeG1::Dof23::waistDof) {
+        if (robotCmd.qTargetWaist.size() != RobotBase::UnitreeG1::Dof23::waistDof) {
             std::string error =
                 "The size of qWaist is not equal to RobotBase::UnitreeG1::Dof23::waistDof!";
             throw std::invalid_argument(error);
@@ -260,7 +227,7 @@ bool G1Dof23Hardware::CheckCmd(const RobotCmd &robotCmd)
 
     // Left Leg
     if (robotCmd.isLeftLegEnabled) {
-        if (robotCmd.qLeftLeg.size() != RobotBase::UnitreeG1::Dof23::legDof) {
+        if (robotCmd.qTargetLeftLeg.size() != RobotBase::UnitreeG1::Dof23::legDof) {
             std::string error =
                 "The size of qLeftLeg is not equal to RobotBase::UnitreeG1::Dof23::legDof!";
             throw std::invalid_argument(error);
@@ -270,7 +237,7 @@ bool G1Dof23Hardware::CheckCmd(const RobotCmd &robotCmd)
 
     // Right Leg
     if (robotCmd.isRightLegEnabled) {
-        if (robotCmd.qRightLeg.size() != RobotBase::UnitreeG1::Dof23::legDof) {
+        if (robotCmd.qTargetRightLeg.size() != RobotBase::UnitreeG1::Dof23::legDof) {
             std::string error =
                 "The size of qRightLeg is not equal to RobotBase::UnitreeG1::Dof23::legDof!";
             throw std::invalid_argument(error);
@@ -281,23 +248,19 @@ bool G1Dof23Hardware::CheckCmd(const RobotCmd &robotCmd)
 }
 
 void G1Dof23Hardware::SetJointPosition(const std::vector<size_t>& jointIndex,
-                                       const std::vector<double>& q)
+                                       const std::vector<double>& qTarget)
 {
-    if(jointIndex.size() != q.size())
+    if(jointIndex.size() != qTarget.size())
         throw std::invalid_argument("[G1Dof23Hardware::SetJointPosition] jointIndex size != q size");
 
-//    std::unique_lock lock(this->mutex);
     for(size_t i=0; i<jointIndex.size(); ++i){
         size_t idx = jointIndex[i];
         if(idx >= this->cmdMsg.motor_cmd().size())
             throw std::out_of_range("[G1Dof23Hardware::SetJointPosition] jointIndex out of range");
 
         auto& motor = this->cmdMsg.motor_cmd().at(idx);
-        motor.mode() = 1;
-        motor.q() = q[i];
+        motor.q() = qTarget[i];
         motor.dq() = this->dq;
-//        motor.kd() = this->kd;
-//        motor.kp() = this->kp;
         motor.tau() = this->tauFeedforward;
 
     }
@@ -380,7 +343,6 @@ void G1Dof23Hardware::InitMsg()
 
 void G1Dof23Hardware::MainLoop()
 {
-
     while(true){
         auto start = std::chrono::high_resolution_clock::now();
 
@@ -401,9 +363,46 @@ void G1Dof23Hardware::MainLoop()
         int sleepTime = framePeriod - duration.count();
 
         if(sleepTime > 0){
+            std::cout << " Time Sleep: " << sleepTime << " ms" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
         }
     }
+}
+
+void G1Dof23Hardware::StateCallback(const void *msg)
+{
+    unitree_hg::msg::dds_::LowState_ lowState =
+        *(const unitree_hg::msg::dds_::LowState_ *)msg;
+    RobotHardware::HumanoidState state;
+
+    for(size_t i=0;i<this->leftArmJointIndex.size();i++){
+        state.qLeftArm.push_back(lowState.motor_state().at(this->leftArmJointIndex[i]).q());
+    }
+
+    for(size_t i=0;i<this->rightArmJointIndex.size();i++){
+        state.qRightArm.push_back(lowState.motor_state().at(this->rightArmJointIndex[i]).q());
+    }
+
+    for(size_t i=0;i<this->waistJointIndex.size();i++){
+        state.qWaist.push_back(lowState.motor_state().at(this->waistJointIndex[i]).q());
+    }
+
+    for(size_t i=0;i<this->leftLegJointIndex.size();i++){
+        state.qLeftLeg.push_back(lowState.motor_state().at(this->leftLegJointIndex[i]).q());
+    }
+
+    for(size_t i=0;i<this->rightLegJointIndex.size();i++){
+        state.qRightLeg.push_back(lowState.motor_state().at(this->rightLegJointIndex[i]).q());
+    }
+
+    this->stateBuffer.SetData(state);
+
+}
+
+void G1Dof23Hardware::FinishWork()
+{
+
+
 }
 
 

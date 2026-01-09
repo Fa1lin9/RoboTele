@@ -89,9 +89,9 @@ public:
 
     bool BackToZero() override;
 
-    bool BackToInitPose(const RobotHardware::RobotCmd& config_) override;
+    bool BackToInitPose(const RobotHardware::HumanoidCmd& config_) override;
 
-    bool BackToZero(const RobotHardware::RobotCmd& config_) override;
+    bool BackToZero(const RobotHardware::HumanoidCmd& config_) override;
 
     void Info() override;
 
@@ -105,7 +105,7 @@ public:
 
     bool MoveL() override;
 
-    bool MoveJ(const RobotHardware::RobotCmd& config_) override;
+    bool MoveJ(const RobotHardware::HumanoidCmd& config_) override;
 
     bool Init() override;
 

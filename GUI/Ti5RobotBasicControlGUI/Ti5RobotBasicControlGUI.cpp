@@ -210,8 +210,8 @@ void Ti5RobotBasicControlGUI::on_moveJPushButton_clicked()
 
     }
 
-    this->ti5RobotConfig.qLeftArm = leftArmTarget;
-    this->ti5RobotConfig.qRightArm = rightArmTarget;
+    this->ti5RobotConfig.qTargetLeftArm = leftArmTarget;
+    this->ti5RobotConfig.qTargetRightArm = rightArmTarget;
     this->NormalizeAngle();
     this->physicalRobotPtr->MoveJ(this->ti5RobotConfig);
 
@@ -276,10 +276,10 @@ void Ti5RobotBasicControlGUI::NormalizeAngle(){
 //                = ConvertRadians2Degrees(this->ti5RobotConfig.rightArmJointsValue);
     // turn to radian
     }else{
-        this->ti5RobotConfig.qLeftArm
-                = ConvertDegrees2Radians(this->ti5RobotConfig.qLeftArm);
-        this->ti5RobotConfig.qRightArm
-                = ConvertDegrees2Radians(this->ti5RobotConfig.qRightArm);
+        this->ti5RobotConfig.qTargetLeftArm
+                = ConvertDegrees2Radians(this->ti5RobotConfig.qTargetLeftArm);
+        this->ti5RobotConfig.qTargetRightArm
+                = ConvertDegrees2Radians(this->ti5RobotConfig.qTargetRightArm);
     }
 }
 

@@ -31,22 +31,32 @@ public:
 
     };
 
-    struct RobotCmd
+    struct HumanoidState{
+        // q
+        std::vector<double> qHead;
+        std::vector<double> qLeftArm;
+        std::vector<double> qRightArm;
+        std::vector<double> qWaist;
+        std::vector<double> qLeftLeg;
+        std::vector<double> qRightLeg;
+    };
+
+    struct HumanoidCmd
     {
+        bool isHeadEnabled = false;
         bool isLeftArmEnabled = false;
         bool isRightArmEnabled = false;
-        bool isHeadEnabled = false;
         bool isWaistEnabled = false;
         bool isLeftLegEnabled = false;
         bool isRightLegEnabled = false;
 
         // q
-        std::vector<double> qLeftArm;
-        std::vector<double> qRightArm;
-        std::vector<double> qHead;
-        std::vector<double> qWaist;
-        std::vector<double> qLeftLeg;
-        std::vector<double> qRightLeg;
+        std::vector<double> qTargetHead;
+        std::vector<double> qTargetLeftArm;
+        std::vector<double> qTargetRightArm;
+        std::vector<double> qTargetWaist;
+        std::vector<double> qTargetLeftLeg;
+        std::vector<double> qTargetRightLeg;
     };
 
     RobotHardware();
@@ -85,12 +95,15 @@ public:
 
     /* ---------------- xxxxxxxxxxxxxxx ---------------- */
 
-    virtual bool MoveJ(const RobotHardware::RobotCmd& config_) = 0;
+    virtual bool MoveJ(const RobotHardware::HumanoidCmd& cmd);
 
-    virtual bool BackToInitPose(const RobotHardware::RobotCmd& config_) = 0;
+    virtual bool BackToInitPose(const RobotHardware::HumanoidCmd& cmd) = 0;
 
-    virtual bool BackToZero(const RobotHardware::RobotCmd& config_) = 0;
+    virtual bool BackToZero(const RobotHardware::HumanoidCmd& cmd) = 0;
 
+    virtual RobotHardware::HumanoidState GetState();
+
+    virtual bool SendCmd(const RobotHardware::HumanoidCmd& cmd);
 
     /* ---------------- Static Method ---------------- */
 

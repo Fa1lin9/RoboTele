@@ -14,17 +14,17 @@ RobotHardware::~RobotHardware(){
 /* ---------------- Connection ---------------- */
 
 bool RobotHardware::Connect() {
-    std::cout << "[PhysicalRobot] Calling Connect()." << std::endl;
+    std::cout << "[RobotHardware] Calling Connect()." << std::endl;
     return true;
 }
 
 bool RobotHardware::Disconnect() {
-    std::cout << "[PhysicalRobot] Calling Disconnect()." << std::endl;
+    std::cout << "[RobotHardware] Calling Disconnect()." << std::endl;
     return true;
 }
 
 bool RobotHardware::isConnect() {
-    std::cout << "[PhysicalRobot] Calling isConnect()." << std::endl;
+    std::cout << "[RobotHardware] Calling isConnect()." << std::endl;
     return true;
 }
 
@@ -32,48 +32,66 @@ bool RobotHardware::isConnect() {
 /* ---------------- Basic Action ---------------- */
 
 bool RobotHardware::Init() {
-    std::cout << "[PhysicalRobot] Calling Init()." << std::endl;
+    std::cout << "[RobotHardware] Calling Init()." << std::endl;
     return true;
 }
 
 bool RobotHardware::EmergencyStop() {
-    std::cout << "[PhysicalRobot] Calling EmergencyStop()." << std::endl;
+    std::cout << "[RobotHardware] Calling EmergencyStop()." << std::endl;
     return true;
 }
 
 bool RobotHardware::BackToZero() {
-    std::cout << "[PhysicalRobot] Calling BackToZero()." << std::endl;
+    std::cout << "[RobotHardware] Calling BackToZero()." << std::endl;
     return true;
 }
 
 bool RobotHardware::MoveJ(const std::vector<double> &jointsAngle_) {
-    std::cout << "[PhysicalRobot] Calling MoveJ()." << std::endl;
+    std::cout << "[RobotHardware] Calling MoveJ()." << std::endl;
     return true;
 }
 
 bool RobotHardware::MoveL() {
-    std::cout << "[PhysicalRobot] Calling MoveL()." << std::endl;
+    std::cout << "[RobotHardware] Calling MoveL()." << std::endl;
     return true;
 }
 
 /* ---------------- Get Information ---------------- */
 
 std::vector<double> RobotHardware::GetJointsAngle() {
-    std::cout << "[PhysicalRobot] Calling GetJointsAngle()." << std::endl;
+    std::cout << "[RobotHardware] Calling GetJointsAngle()." << std::endl;
     return std::vector<double>();
 }
 
 Eigen::VectorXd RobotHardware::GetJointsAngleEigen() {
-    std::cout << "[PhysicalRobot] Calling GetJointsAngleEigen()." << std::endl;
+    std::cout << "[RobotHardware] Calling GetJointsAngleEigen()." << std::endl;
     return Eigen::VectorXd();
 }
 
 void RobotHardware::Info() {
-    std::cout << "[PhysicalRobot] Calling Info()." << std::endl;
+    std::cout << "[RobotHardware] Calling Info()." << std::endl;
 }
 
 void RobotHardware::GetJointsStatus() {
-    std::cout << "[PhysicalRobot] Calling GetJointsStatus()." << std::endl;
+    std::cout << "[RobotHardware] Calling GetJointsStatus()." << std::endl;
+}
+
+bool RobotHardware::MoveJ(const HumanoidCmd &cmd)
+{
+    std::cout << "[RobotHardware] Calling MoveJ()." << std::endl;
+    return true;
+}
+
+RobotHardware::HumanoidState RobotHardware::GetState()
+{
+    std::cout << "[RobotHardware] Calling GetState()." << std::endl;
+    return HumanoidState();
+}
+
+bool RobotHardware::SendCmd(const HumanoidCmd &cmd)
+{
+    std::cout << "[RobotHardware] Calling SendCmd()." << std::endl;
+    return true;
 }
 
 boost::shared_ptr<RobotHardware> RobotHardware::GetPtr(const RobotHardware::BasicConfig &config){

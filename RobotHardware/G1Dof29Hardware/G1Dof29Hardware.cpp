@@ -8,23 +8,6 @@ G1Dof29Hardware::~G1Dof29Hardware(){
 
 }
 
-/* ---------------- Connection ---------------- */
-
-bool G1Dof29Hardware::Connect()
-{
-
-}
-
-bool G1Dof29Hardware::Disconnect()
-{
-
-}
-
-bool G1Dof29Hardware::isConnect()
-{
-
-}
-
 /* ---------------- Motion Control ---------------- */
 
 bool G1Dof29Hardware::MoveJ(const RobotHardware::RobotCmd& config)

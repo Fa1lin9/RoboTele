@@ -93,7 +93,6 @@ public:
 
     bool BackToZero(const RobotHardware::RobotCmd& config_) override;
 
-
     void Info() override;
 
     void GetJointsStatus() override;
@@ -119,6 +118,8 @@ private:
                         size_t canDevice,
                         const std::vector<size_t>& canID,
                         const std::string& partName);
+
+    void LoadConfig(const RobotHardware::BasicConfig &config);
 
     bool connectFlag = false;
 

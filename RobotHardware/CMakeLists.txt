@@ -14,7 +14,7 @@ list( APPEND ${GROUP_NAME}_Components
     RobotHardware
     Ti5RobotHardware
     G1Dof23Hardware
-    G1Dof29Hardware
+#    G1Dof29Hardware
 )
 
 ##########################################################################

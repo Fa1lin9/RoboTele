@@ -1,13 +1,23 @@
 #include <Ti5RobotHardware/Ti5RobotHardware.hpp>
-Ti5RobotHardware::Ti5RobotHardware(const RobotHardware::BasicConfig &config_){
+Ti5RobotHardware::Ti5RobotHardware(const RobotHardware::BasicConfig &config){
 //    l_solver.gap=0.5;
 //    r_solver.gap=0.5;
 //    l_controller.max_vel=0.6;
 //    r_controller.max_vel=0.6;
-
+//    this->LoadConfig(config);
 }
 
 Ti5RobotHardware::~Ti5RobotHardware(){
+
+}
+
+void Ti5RobotHardware::LoadConfig(const RobotHardware::BasicConfig &config){
+    // For Dof
+//    this->headDof = config.headDof;
+//    this->waistDof = config.waistDof;
+//    this->armDof = config.armDof;
+//    this->legDof = config.legDof;
+//    this->totalDof = config.totalDof;
 
 }
 

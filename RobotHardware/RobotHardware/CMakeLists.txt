@@ -53,10 +53,13 @@ target_link_libraries( ${TARGET_NAME}
         $<BUILD_INTERFACE:Boost::filesystem>
         $<BUILD_INTERFACE:Boost::program_options>
         # $<BUILD_INTERFACE:Core::CanDriver>
+        $<BUILD_INTERFACE:Core::JsonParser>
+
         $<BUILD_INTERFACE:RobotHardware::Ti5RobotHardware>
         $<BUILD_INTERFACE:RobotHardware::G1Dof23Hardware>
-        $<BUILD_INTERFACE:RobotHardware::G1Dof29Hardware>
+#        $<BUILD_INTERFACE:RobotHardware::G1Dof29Hardware>
 
+        $<BUILD_INTERFACE:unitree_sdk2>
     PRIVATE
 )
 

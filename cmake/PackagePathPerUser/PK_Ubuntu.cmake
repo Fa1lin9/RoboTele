@@ -100,7 +100,7 @@ set(PACKAGE_LIST
     "protobuf"
     "casadi"
     "cppzmq"
-
+    "unitree_sdk2"
 )
 
 include( FindPackage )

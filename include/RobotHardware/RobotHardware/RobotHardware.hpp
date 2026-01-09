@@ -8,12 +8,16 @@
 
 #include <RobotBase.hpp>
 
+#include <JsonParser/JsonParser.hpp>
+
 class RobotHardware
 {
 public:
     struct BasicConfig
     {
         std::string IP;
+        std::string networkInterface;
+
         RobotBase::RobotType robotType;
 
         std::string description;
@@ -50,11 +54,11 @@ public:
 
     /* ---------------- Connection ---------------- */
 
-    virtual bool Connect() = 0;
+    virtual bool Connect();
 
-    virtual bool Disconnect() = 0;
+    virtual bool Disconnect();
 
-    virtual bool isConnect() = 0;
+    virtual bool isConnect();
 
     /* ---------------- Basic Action ---------------- */
 
@@ -92,12 +96,10 @@ public:
 
     static boost::shared_ptr<RobotHardware> GetPtr(const RobotHardware::BasicConfig &config_);
 
+    static boost::shared_ptr<RobotHardware> GetPtr(const std::string& filePath);
+
+
 protected:
 
-    // For Dof
-    size_t headDof;
-    size_t armDof;
-    size_t waistDof;
-    size_t legDof;
-    size_t totalDof;
+    RobotHardware::BasicConfig config;
 };

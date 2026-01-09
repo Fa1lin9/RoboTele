@@ -1,7 +1,7 @@
 #include <RobotHardware/RobotHardware.hpp>
 #include <Ti5RobotHardware/Ti5RobotHardware.hpp>
 #include <G1Dof23Hardware/G1Dof23Hardware.hpp>
-#include <G1Dof29Hardware/G1Dof29Hardware.hpp>
+//#include <G1Dof29Hardware/G1Dof29Hardware.hpp>
 
 RobotHardware::RobotHardware(){
 
@@ -10,6 +10,24 @@ RobotHardware::RobotHardware(){
 RobotHardware::~RobotHardware(){
 
 }
+
+/* ---------------- Connection ---------------- */
+
+bool RobotHardware::Connect() {
+    std::cout << "[PhysicalRobot] Calling Connect()." << std::endl;
+    return true;
+}
+
+bool RobotHardware::Disconnect() {
+    std::cout << "[PhysicalRobot] Calling Disconnect()." << std::endl;
+    return true;
+}
+
+bool RobotHardware::isConnect() {
+    std::cout << "[PhysicalRobot] Calling isConnect()." << std::endl;
+    return true;
+}
+
 
 /* ---------------- Basic Action ---------------- */
 
@@ -66,11 +84,31 @@ boost::shared_ptr<RobotHardware> RobotHardware::GetPtr(const RobotHardware::Basi
         case RobotBase::RobotType::UnitreeG1Dof23 :{
            return boost::make_shared<G1Dof23Hardware>(config);
         }
-        case RobotBase::RobotType::UnitreeG1Dof29 :{
-           return boost::make_shared<G1Dof29Hardware>(config);
-        }
+//        case RobotBase::RobotType::UnitreeG1Dof29 :{
+//           return boost::make_shared<G1Dof29Hardware>(config);
+//        }
         default:{
             return nullptr;
         }
     }
+}
+
+boost::shared_ptr<RobotHardware> RobotHardware::GetPtr(const std::string& filePath){
+    JsonParser jsonParser(filePath);
+    json::object rootObj = jsonParser.GetJsonObject();
+
+    // RobotHardware
+    RobotHardware::BasicConfig config = {
+        .IP = rootObj["IP"].as_string().c_str(),
+        .networkInterface = rootObj["NetworkInterface"].as_string().c_str(),
+        .robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str()),
+        .description = rootObj["Description"].as_string().c_str(),
+        .headDof = static_cast<size_t>(rootObj["HeadDof"].as_int64()),
+        .armDof = static_cast<size_t>(rootObj["ArmDof"].as_int64()),
+        .waistDof = static_cast<size_t>(rootObj["WaistDof"].as_int64()),
+        .legDof = static_cast<size_t>(rootObj["LegDof"].as_int64()),
+        .totalDof = static_cast<size_t>(rootObj["TotalDof"].as_int64()),
+    };
+
+    return RobotHardware::GetPtr(config);
 }

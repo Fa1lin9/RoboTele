@@ -80,6 +80,8 @@ int main(){
     float max_joint_velocity = 0.5f;
 
     while(true){
+//        std::cout << "-----------------------------------" << std::endl;
+//        sleep(1);
         RobotHardware::HumanoidCmd cmd = {
             .isHeadEnabled = false,
             .isLeftArmEnabled = true,
@@ -90,7 +92,9 @@ int main(){
             .qTargetLeftArm = std::vector<double>{0, 0, 0, 0, 0},
             .qTargetRightArm = std::vector<double>{0, 0, 0, 0, 0},
         };
-
+        auto state = hardware->GetState();
         hardware->SendCmd(cmd);
+
+        sleep(1);
     }
 }

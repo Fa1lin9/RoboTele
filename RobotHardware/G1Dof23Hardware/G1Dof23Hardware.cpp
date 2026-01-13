@@ -7,7 +7,7 @@ G1Dof23Hardware::G1Dof23Hardware(const RobotHardware::BasicConfig &config_){
 
     this->LoadConfig(config_);
 
-    std::cout<<"The Description of the "<<RobotBase::GetStrFromType(this->config.robotType)<<std::endl;
+    std::cout<<"The Description of the "<<RobotBase::GetStrFromType(this->config.robotType)<<":"<<std::endl;
     std::cout<<this->config.description<<std::endl;
 
 //    this->LoadJointIndex();
@@ -18,6 +18,7 @@ G1Dof23Hardware::G1Dof23Hardware(const RobotHardware::BasicConfig &config_){
 }
 
 G1Dof23Hardware::~G1Dof23Hardware(){
+    this->runningMainLoop = false;
     if(this->mainThread.joinable()){
         this->mainThread.join();
     }
@@ -39,7 +40,7 @@ bool G1Dof23Hardware::SendCmd(const RobotHardware::HumanoidCmd& cmd)
         throw std::invalid_argument("[G1Dof23Hardware::SendCmd] Sry, the UnitreeG1 doesn't have headDof! ");
     }
 
-    std::unique_lock lock(this->mutex);
+    std::unique_lock lock(this->cmdMutex);
 
     if(cmd.isLeftArmEnabled){
         this->SetJointPosition(this->leftArmJointIndex, cmd.qTargetLeftArm);
@@ -64,6 +65,43 @@ bool G1Dof23Hardware::SendCmd(const RobotHardware::HumanoidCmd& cmd)
 //    this->cmdBuffer.SetData(cmd);
 
     return true;
+}
+
+RobotHardware::HumanoidState G1Dof23Hardware::GetState()
+{
+//    std::unique_lock lock(stateMutex);
+    auto statePtr = this->stateBuffer.GetData();
+
+    if(!statePtr){
+        std::cerr << "[G1Dof23Hardware::GetState] stateBuffer returned null! " << std::endl;
+
+        return RobotHardware::HumanoidState();
+    } else {
+        auto state = *statePtr;
+        std::cout << "[G1Dof23Hardware::GetState] Get the state of the robot! " << std::endl;
+        std::cout << " Current qLeftArm: " << std::endl;
+        for(size_t i=0;i<this->armDof;i++){
+            std::cout << state.qLeftArm[i] << std::endl;
+        }
+        std::cout << " Current qRightArm: " << std::endl;
+        for(size_t i=0;i<this->armDof;i++){
+            std::cout << state.qRightArm[i] << std::endl;
+        }
+    //    std::cout << " Current qWaist: " << std::endl;
+    //    for(size_t i=0;i<this->waistDof;i++){
+    //        std::cout << state.qWaist[i] << std::endl;
+    //    }
+    //    std::cout << " Current qLeftLeg: " << std::endl;
+    //    for(size_t i=0;i<this->legDof;i++){
+    //        std::cout << state.qLeftLeg[i] << std::endl;
+    //    }
+    //    std::cout << " Current qRightLeg: " << std::endl;
+    //    for(size_t i=0;i<this->legDof;i++){
+    //        std::cout << state.qRightLeg[i] << std::endl;
+    //    }
+
+        return state;
+    }
 }
 
 bool G1Dof23Hardware::BackToInitPose(const RobotHardware::HumanoidCmd& robotCmd)
@@ -166,17 +204,19 @@ bool G1Dof23Hardware::Initialize()
     // Publisher
     this->cmdPublisher.reset(
         new unitree::robot::ChannelPublisher<unitree_hg::msg::dds_::LowCmd_>(
-            RobotBase::UnitreeG1::kTopicArmSDK));
+            RobotBase::UnitreeG1::kTopicCmd));
     this->cmdPublisher->InitChannel();
 
     // Subscriber
-    this->stateSubscriber.reset(
+    stateSubscriber.reset(
         new unitree::robot::ChannelSubscriber<unitree_hg::msg::dds_::LowState_>(
             RobotBase::UnitreeG1::kTopicState));
-    this->stateSubscriber->InitChannel(
+    stateSubscriber->InitChannel(
                 std::bind(&G1Dof23Hardware::StateCallback, this, std::placeholders::_1), 1);
+    // Must sleep some time to wait the subscriber have the state
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-    // TODO: InitMsg
+    // InitMsg
     this->InitMsg();
 
     this->initFlag = true;
@@ -268,7 +308,7 @@ void G1Dof23Hardware::SetJointPosition(const std::vector<size_t>& jointIndex,
 
 void G1Dof23Hardware::InitMsg()
 {
-    std::unique_lock lock(this->mutex);
+    std::unique_lock lock(this->cmdMutex);
     // We need to set the q of joint NotUsedJoint to 1
     this->cmdMsg.motor_cmd().at(RobotBase::UnitreeG1::JointIndex::kNotUsedJoint).q() = 1;
 
@@ -287,7 +327,7 @@ void G1Dof23Hardware::InitMsg()
 
         // For Wrist
         if(this->leftArmJointIndex[i] >= RobotBase::UnitreeG1::JointIndex::kLeftWristRoll &&
-           this->leftArmJointIndex[i] << RobotBase::UnitreeG1::JointIndex::kLeftWristYaw){
+           this->leftArmJointIndex[i] <= RobotBase::UnitreeG1::JointIndex::kLeftWristYaw){
             this->cmdMsg.motor_cmd().at(this->leftArmJointIndex[i]).kp() = this->kpWrist;
             this->cmdMsg.motor_cmd().at(this->leftArmJointIndex[i]).kd() = this->kdWrist;
         } else {
@@ -301,7 +341,7 @@ void G1Dof23Hardware::InitMsg()
 
         // For Wrist
         if(this->rightArmJointIndex[i] >= RobotBase::UnitreeG1::JointIndex::kRightWristRoll &&
-           this->rightArmJointIndex[i] << RobotBase::UnitreeG1::JointIndex::kRightWristYaw){
+           this->rightArmJointIndex[i] <= RobotBase::UnitreeG1::JointIndex::kRightWristYaw){
             this->cmdMsg.motor_cmd().at(this->rightArmJointIndex[i]).kp() = this->kpWrist;
             this->cmdMsg.motor_cmd().at(this->rightArmJointIndex[i]).kd() = this->kdWrist;
         } else {
@@ -343,11 +383,11 @@ void G1Dof23Hardware::InitMsg()
 
 void G1Dof23Hardware::MainLoop()
 {
-    while(true){
+    while(this->runningMainLoop){
         auto start = std::chrono::high_resolution_clock::now();
 
         {
-            std::unique_lock lock(this->mutex);
+            std::unique_lock lock(this->cmdMutex);
 
             // Send Msg
             this->cmdMsg.crc() = RobotBase::UnitreeG1::Crc32Core((uint32_t *)&this->cmdMsg,
@@ -357,13 +397,13 @@ void G1Dof23Hardware::MainLoop()
 
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        std::cout << " Main Loop 耗时: " << duration.count() << " ms" << std::endl;
+//        std::cout << " Main Loop 耗时: " << duration.count() << " ms" << std::endl;
 
         int framePeriod = this->dt * 1000;
         int sleepTime = framePeriod - duration.count();
 
         if(sleepTime > 0){
-            std::cout << " Time Sleep: " << sleepTime << " ms" << std::endl;
+//            std::cout << " Time Sleep: " << sleepTime << " ms" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
         }
     }
@@ -371,9 +411,18 @@ void G1Dof23Hardware::MainLoop()
 
 void G1Dof23Hardware::StateCallback(const void *msg)
 {
+//    std::unique_lock lock(stateMutex);
     unitree_hg::msg::dds_::LowState_ lowState =
         *(const unitree_hg::msg::dds_::LowState_ *)msg;
     RobotHardware::HumanoidState state;
+
+
+    if (lowState.crc() !=
+        RobotBase::UnitreeG1::Crc32Core((uint32_t *)&lowState,
+                  (sizeof(unitree_hg::msg::dds_::LowState_) >> 2) - 1)) {
+      std::cout << "[G1Dof23Hardware::StateCallback] lowState CRC Error" << std::endl;
+      return;
+    }
 
     for(size_t i=0;i<this->leftArmJointIndex.size();i++){
         state.qLeftArm.push_back(lowState.motor_state().at(this->leftArmJointIndex[i]).q());
@@ -395,8 +444,29 @@ void G1Dof23Hardware::StateCallback(const void *msg)
         state.qRightLeg.push_back(lowState.motor_state().at(this->rightLegJointIndex[i]).q());
     }
 
-    this->stateBuffer.SetData(state);
+//    std::cout << "------------------------------------------------" << std::endl;
+//    std::cout << " Current qLeftArm: " << std::endl;
+//    for(size_t i=0;i<this->armDof;i++){
+//        std::cout << state.qLeftArm[i] << std::endl;
+//    }
+//    std::cout << " Current qRightArm: " << std::endl;
+//    for(size_t i=0;i<this->armDof;i++){
+//        std::cout << state.qRightArm[i] << std::endl;
+//    }
+//    std::cout << " Current qWaist: " << std::endl;
+//    for(size_t i=0;i<this->waistDof;i++){
+//        std::cout << state.qWaist[i] << std::endl;
+//    }
+//    std::cout << " Current qLeftLeg: " << std::endl;
+//    for(size_t i=0;i<this->legDof;i++){
+//        std::cout << state.qLeftLeg[i] << std::endl;
+//    }
+//    std::cout << " Current qRightLeg: " << std::endl;
+//    for(size_t i=0;i<this->legDof;i++){
+//        std::cout << state.qRightLeg[i] << std::endl;
+//    }
 
+    this->stateBuffer.SetData(state);
 }
 
 void G1Dof23Hardware::FinishWork()

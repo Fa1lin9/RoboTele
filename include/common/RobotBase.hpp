@@ -66,7 +66,7 @@ namespace RobotBase{
             const size_t handDof = 7;
         }
 
-        static const std::string kTopicArmSDK = "rt/lowcmd";
+        static const std::string kTopicCmd = "rt/lowcmd";
         static const std::string kTopicState = "rt/lowstate";
 
         enum JointIndex {

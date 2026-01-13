@@ -23,6 +23,8 @@ public:
 
     bool SendCmd(const RobotHardware::HumanoidCmd& robotCmd) override;
 
+    RobotHardware::HumanoidState GetState() override;
+
     bool BackToInitPose(const RobotHardware::HumanoidCmd& robotCmd) override;
 
     bool BackToZero(const RobotHardware::HumanoidCmd& robotCmd) override;
@@ -61,9 +63,11 @@ private:
         stateSubscriber;
     unitree_hg::msg::dds_::LowState_ stateMsg;
 
-    std::shared_mutex mutex;
+    std::shared_mutex cmdMutex;
+    std::shared_mutex stateMutex;
 
     bool initFlag = false;
+    std::atomic<bool> runningMainLoop{true};
 
     float kpHigh = 300.f;
     float kpLow = 80.f;
@@ -93,6 +97,10 @@ private:
     // DataBuffer
     RobotBase::DataBuffer<RobotHardware::HumanoidState> stateBuffer;
     RobotBase::DataBuffer<RobotHardware::HumanoidCmd> cmdBuffer;
+
+    // Struct
+    RobotHardware::HumanoidCmd cmd;
+    RobotHardware::HumanoidState state;
 
     // JointIndex
     std::vector<size_t> leftArmJointIndex = {

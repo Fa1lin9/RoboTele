@@ -3,7 +3,9 @@
 #include <RobotHardware/RobotHardware.hpp>
 #include <boost/shared_ptr.hpp>
 #include <math.h>
+#include <thread>
 
+#include <source_path.h>
 int main(){
 
 //    // Set configeration
@@ -66,35 +68,41 @@ int main(){
         .totalDof = 23,
     };
 
-    auto hardware = RobotHardware::GetPtr(config);
+//    auto hardware = RobotHardware::GetPtr(config);
 
-    std::array<float, 13> init_pos{0, 0, 0, 0, 0,
-                                   0, 0, 0, 0, 0,
-                                   0, 0, 0};
-
-    std::array<float, 13> target_pos = {0.f, M_PI_2,  0.f, M_PI_2, 0.f,
-                                       0.f, -M_PI_2, 0.f, M_PI_2, 0.f,
-                                       0.f, 0.f, 0.f};
-
-    float control_dt = 0.02f;
-    float max_joint_velocity = 0.5f;
+    std::string configPath =
+            static_cast<std::string>(SOURCE_FILE_PATH) + "/config/RobotHardware/UnitreeG1Dof23.json";
+    auto hardware = RobotHardware::GetPtr(configPath);
 
     while(true){
-//        std::cout << "-----------------------------------" << std::endl;
-//        sleep(1);
+        auto start = std::chrono::high_resolution_clock::now();
+        std::cout << "-----------------------------------" << std::endl;
         RobotHardware::HumanoidCmd cmd = {
-            .isHeadEnabled = false,
-            .isLeftArmEnabled = true,
-            .isRightArmEnabled = true,
-            .isWaistEnabled = false,
-            .isLeftLegEnabled = false,
-            .isRightLegEnabled = false,
-            .qTargetLeftArm = std::vector<double>{0, 0, 0, 0, 0},
-            .qTargetRightArm = std::vector<double>{0, 0, 0, 0, 0},
+            .enableHead = false,
+            .enableLeftArm = true,
+            .enableRightArm = true,
+            .enableWaist = false,
+            .enableLeftLeg = false,
+            .enableRightLeg = false,
+            .qTargetLeftArm = std::vector<double>{0., 0, 0, 0.5, 0},
+            .qTargetRightArm = std::vector<double>{0., 0, 0, 0.5, 0},
         };
-        auto state = hardware->GetState();
+        auto state = hardware->GetState(true);
         hardware->SendCmd(cmd);
 
-        sleep(1);
+        auto temp = hardware->GetJointsAngleEigen();
+
+        // Sleep
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        std::cout << " Main Loop 耗时: " << duration.count() << " ms" << std::endl;
+
+        double FPS = 25.0;
+        int framePeriod = static_cast<int>(1000.0 / FPS);
+        int sleepTime = framePeriod - duration.count();
+
+        if(sleepTime > 0){
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
+        }
     }
 }

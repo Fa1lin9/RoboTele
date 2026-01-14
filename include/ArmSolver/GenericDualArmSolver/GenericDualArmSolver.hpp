@@ -24,6 +24,18 @@ public:
 
     std::vector<std::string> GetJointNames() override;
 
+    std::vector<std::string> GetLeftArmJointNames() override;
+
+    std::vector<std::string> GetRightArmJointNames() override;
+
+    std::vector<size_t> GetLeftArmJointIndex() override;
+
+    std::vector<size_t> GetRightArmJointIndex() override;
+
+    std::vector<size_t> GetLeftArmQIndex() override;
+
+    std::vector<size_t> GetRightArmQIndex() override;
+
     void Info() override;
 
 private:
@@ -62,8 +74,12 @@ private:
 
     std::vector<std::string> leftArmJointNames;
     std::vector<std::string> rightArmJointNames;
+
     std::vector<size_t> leftArmJointIndex;
     std::vector<size_t> rightArmJointIndex;
+
+    std::vector<size_t> leftArmQIndex;
+    std::vector<size_t> rightArmQIndex;
 
     // Bound
     std::vector<double> leftArmLowerBound;

@@ -20,16 +20,16 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
     this->FPS = config.FPS;
     this->filterWeight = config.filterWeight;
 
-    this->useHead = config.useHead;
-    this->useWaist = config.useWaist;
+    this->enableHead = config.enableHead;
+    this->enableWaist = config.enableWaist;
 
     // For Head and Waist Solver
-    if(this->useHead){
+    if(this->enableHead){
         this->headSolver.Init(config.robotType);
         this->headJointsInfo = this->headSolver.GetJointsInfo();
     }
 
-    if(this->useWaist){
+    if(this->enableWaist){
         this->waistSolver.Init(config.robotType);
         waistJointsInfo = this->waistSolver.GetJointsInfo();
     }
@@ -38,7 +38,9 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 
     this->transformPtr = Transform::GetPtr(config.transformConfigPath);
 
-    this->hardwarePtr = RobotHardware::GetPtr(config.hardwareConfig);
+    if(this->isReal){
+        this->hardwarePtr = RobotHardware::GetPtr(config.hardwareConfigPath);
+    }
 
     this->ros2Bridge.Init(config.bridgeConfig);
 
@@ -51,8 +53,8 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 //    this->qLast.segment(4,7) << -0.72, -1.0, 0.57, -1.0, 0.83, 0, 0;
 //    this->qLast.segment(14,7) << 0.72, 1.0, -0.57, 1.0, -0.83, 0, 0;
 
-    this->qLast.segment(4,7) << -0.72, -1.0, -1.0, -1.0, 0.83, 0, 0;
-    this->qLast.segment(14,7) << 0.72, 1.0, 1.0, 1.0, -0.83, 0, 0;
+//    this->qLast.segment(4,7) << -0.72, -1.0, -1.0, -1.0, 0.83, 0, 0;
+//    this->qLast.segment(14,7) << 0.72, 1.0, 1.0, 1.0, -0.83, 0, 0;
 
     // Speed Limits
     double threshold = this->FPS * M_PI / 180.0;
@@ -188,14 +190,14 @@ bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
                 waistRPY = this->waistSolver.Solve(transformedMsg[2]);
                 std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
             }
-            if(this->useHead){
+            if(this->enableHead){
                 // Set Value to Head
                 qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
                 qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
                 qEigen(headJointsInfo[2].index) = headRPY(0); // Row
             }
 
-            if(this->useWaist){
+            if(this->enableWaist){
                 // Set Value to Waist
                 qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
                 qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw

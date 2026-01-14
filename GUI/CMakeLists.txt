@@ -12,8 +12,8 @@ set( msg_head "[Package ${GROUP_NAME} CMakeLists.txt] :" )
 ##########################################################################
 list( APPEND ${GROUP_NAME}_Components
     SimpleGUI # Just for test
-    Ti5RobotBasicControlGUI
-    Ti5RobotTeleoperateGUI
+#    Ti5RobotBasicControlGUI
+#    Ti5RobotTeleoperateGUI
 
 )
 

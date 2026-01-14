@@ -1,0 +1,71 @@
+{
+    "Type": "GenericDualArm",
+    "RobotType": "CrpRobot",
+
+    "ModelPath": "/home/pangk/chf_ws/project/RobotTeleoperate/assets/urdf/CrpRobot/CrpRobot.urdf",
+
+    "BaseFrameName": ["JT_waist_yaw"],
+    "TargetFrameName": ["JT_leftwrist_roll", "JT_rightwrist_roll"],
+
+    "LeftArmJointNames": [
+        "JT_leftshd_pitch",
+        "JT_leftshd_roll",
+        "JT_leftshd_yaw",
+        "JT_leftelbow_pitch",
+        "JT_leftwrist_pitch",
+        "JT_leftwrist_yaw",
+        "JT_leftwrist_roll"
+    ],
+
+    "RightArmJointNames": [
+        "JT_rightshd_pitch",
+        "JT_rightshd_roll",
+        "JT_rightshd_yaw",
+        "JT_rightelbow_pitch",
+        "JT_rightwrist_pitch",
+        "JT_rightwrist_yaw",
+        "JT_rightwrist_roll"
+    ],
+
+    "BaseOffset": [
+        [
+        [1, 0, 0, 0.15],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0.58],
+        [0, 0 ,0, 1]
+        ]
+    ],
+    "_BaseOffset": [
+        [
+        [1, 0, 0, 0.08],
+        [0, 1, 0, 0],
+        [0, 0, 1, 1.10],
+        [0, 0 ,0, 1]
+        ]
+    ],
+    "TargetOffset":[
+        [
+        [1, 0, 0, 0.1],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ],
+        [
+        [1, 0, 0, 0.1],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ]
+    ],
+
+    "MaxIteration": 50,
+    "RelativeTol": 1e-6,
+    "ArmActiveDof": [5, 5],
+
+    "ObjectiveFunc":{
+        "TranslationWeight": 50.0,
+        "RotationWeight": 0.5,
+        "RegularizationWeight": 0.02,
+        "SmoothWeight": 0.5 
+    }
+}

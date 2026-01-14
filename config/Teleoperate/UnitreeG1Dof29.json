@@ -13,16 +13,18 @@
     "FilterWeight": [0.4, 0.3, 0.2, 0.1],
     "_FilterWeight": [0.7, 0.2, 0.1],
 
-    "UseHead": false,
-    "UseWaist": false,
+    "EnableHead": false,
+    "EnableWaist": false,
+    "EnableLeftArm": true,
+    "EnableRightArm": true,
+    "EnableLeftLeg": false,
+    "EnableRightLeg": false,
 
     "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/G1Dof29DualArm.json",
 
     "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2UnitreeG1.json",
 
-    "HardwareConfig":{
-        
-    },
+    "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/UnitreeG1Dof29.json",
 
     "_Ros2BridgeConfig": {
         "MsgType": "JointStateWithoutStamp",

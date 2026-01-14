@@ -9,6 +9,8 @@ public:
 //    UnitreeG1Teleoperate(const std::string &fileName);
     ~UnitreeG1Teleoperate();
 
+    void InitPtr(const RobotTeleoperate::BasicConfig &config);
+
     bool Init() override;
     bool StartTeleop(bool verbose) override;
     bool StopTeleop() override;
@@ -30,7 +32,7 @@ private:
 
     bool saveFlag = true;
 
-    const RobotBase::RobotType robotType = RobotBase::RobotType::UnitreeG1Dof29;
+    const RobotBase::RobotType robotType = RobotBase::RobotType::UnitreeG1Dof23;
 
     // Speed Limits
     Eigen::VectorXd speedThreshold;

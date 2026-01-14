@@ -82,7 +82,7 @@ public:
     ArmSolver();
     ~ArmSolver();
 
-    // Solver the IK
+    // Solve the IK
     virtual boost::optional<Eigen::VectorXd> Solve(
                     const std::vector<Eigen::Matrix4d>& targetPose,
                     const Eigen::VectorXd& qInit,
@@ -96,6 +96,18 @@ public:
     virtual size_t GetTotalDof() = 0;
 
     virtual std::vector<std::string> GetJointNames() = 0;
+
+    virtual std::vector<std::string> GetLeftArmJointNames();
+
+    virtual std::vector<std::string> GetRightArmJointNames();
+
+    virtual std::vector<size_t> GetLeftArmJointIndex();
+
+    virtual std::vector<size_t> GetRightArmJointIndex();
+
+    virtual std::vector<size_t> GetLeftArmQIndex();
+
+    virtual std::vector<size_t> GetRightArmQIndex();
 
     static boost::shared_ptr<ArmSolver> GetPtr(const ArmSolver::BasicConfig& config_);
 

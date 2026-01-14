@@ -1,0 +1,38 @@
+{
+    "RobotType": "CrpRobot",
+    "XRType" : "VisionPro",
+    
+    "Address": "tcp://127.0.0.1:5555",
+    "FPS": 25,
+
+    "IsSimulatedRobot": true,
+    "IsRealWorldRobot": false,
+    
+    "IsCheckSolution": false,
+    "IsFilterSolution": true,
+    "FilterWeight": [0.4, 0.3, 0.2, 0.1],
+    "_FilterWeight": [0.7, 0.2, 0.1],
+    
+    "EnableHead": false,
+    "EnableWaist": false,
+    "EnableLeftArm": true,
+    "EnableRightArm": true,
+    "EnableLeftLeg": false,
+    "EnableRightLeg": false,
+
+    "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/CrpDualArm.json",
+    
+    "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2CrpRobot.json",
+
+    "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/UnitreeG1Dof23.json",
+
+    "_Ros2BridgeConfig": {
+        "MsgType": "JointStateWithoutStamp",
+        "TopicName": "position_control/joint_state"
+    },
+
+    "Ros2BridgeConfig": {
+        "MsgType": "JointState",
+        "TopicName": "HumanoidCtrl/humanoid_msgs/msg/JointState"
+    }
+}

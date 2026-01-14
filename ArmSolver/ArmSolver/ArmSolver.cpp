@@ -12,6 +12,43 @@ ArmSolver::~ArmSolver(){
 
 }
 
+std::vector<std::string> ArmSolver::GetLeftArmJointNames()
+{
+    std::cout << "[ArmSolver::GetLeftArmJointNames] Empty virtual function called. No implementation provided." << std::endl;
+    return {};
+}
+
+std::vector<std::string> ArmSolver::GetRightArmJointNames()
+{
+    std::cout << "[ArmSolver::GetRightArmJointNames] Empty virtual function called. No implementation provided." << std::endl;
+    return {};
+}
+
+std::vector<size_t> ArmSolver::GetLeftArmJointIndex()
+{
+    std::cout << "[ArmSolver::GetLeftArmJointIndex] Empty virtual function called. No implementation provided." << std::endl;
+    return {};
+}
+
+std::vector<size_t> ArmSolver::GetRightArmJointIndex()
+{
+    std::cout << "[ArmSolver::GetRightArmJointIndex] Empty virtual function called. No implementation provided." << std::endl;
+    return {};
+}
+
+std::vector<size_t> ArmSolver::GetLeftArmQIndex()
+{
+    std::cout << "[ArmSolver::GetLeftArmQIndex] Empty virtual function called. No implementation provided." << std::endl;
+    return {};
+}
+
+std::vector<size_t> ArmSolver::GetRightArmQIndex()
+{
+    std::cout << "[ArmSolver::GetRightArmQIndex] Empty virtual function called. No implementation provided." << std::endl;
+    return {};
+}
+
+
 boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const ArmSolver::BasicConfig &config_){
     switch (config_.type) {
         case ArmSolver::Type::Ti5DualArm :{

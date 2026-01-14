@@ -13,16 +13,18 @@
     "FilterWeight": [0.4, 0.3, 0.2, 0.1],
     "_FilterWeight": [0.7, 0.2, 0.1],
 
-    "UseHead": true,
-    "UseWaist": true,
+    "EnableHead": true,
+    "EnableWaist": true,
+    "EnableLeftArm": true,
+    "EnableRightArm": true,
+    "EnableLeftLeg": false,
+    "EnableRightLeg": false,
 
     "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/Ti5DualArm.json",
 
     "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2Ti5Robot.json",
 
-    "HardwareConfig":{
-        
-    },
+    "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/Ti5Robot.json",
 
     "_Ros2BridgeConfig": {
         "MsgType": "JointStateWithoutStamp",

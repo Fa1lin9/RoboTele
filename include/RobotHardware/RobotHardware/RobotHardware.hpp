@@ -43,12 +43,12 @@ public:
 
     struct HumanoidCmd
     {
-        bool isHeadEnabled = false;
-        bool isLeftArmEnabled = false;
-        bool isRightArmEnabled = false;
-        bool isWaistEnabled = false;
-        bool isLeftLegEnabled = false;
-        bool isRightLegEnabled = false;
+        bool enableHead = false;
+        bool enableLeftArm = false;
+        bool enableRightArm = false;
+        bool enableWaist = false;
+        bool enableLeftLeg = false;
+        bool enableRightLeg = false;
 
         // q
         std::vector<double> qTargetHead;
@@ -89,7 +89,7 @@ public:
     virtual Eigen::VectorXd GetJointsAngleEigen();
 
     // give some basic information of current robot
-    virtual void Info();
+    virtual void Info() = 0;
 
     virtual void GetJointsStatus();
 
@@ -97,11 +97,11 @@ public:
 
     virtual bool MoveJ(const RobotHardware::HumanoidCmd& cmd);
 
-    virtual bool BackToInitPose(const RobotHardware::HumanoidCmd& cmd) = 0;
+    virtual bool BackToInitPose(const RobotHardware::HumanoidCmd& cmd);
 
-    virtual bool BackToZero(const RobotHardware::HumanoidCmd& cmd) = 0;
+    virtual bool BackToZero(const RobotHardware::HumanoidCmd& cmd);
 
-    virtual RobotHardware::HumanoidState GetState();
+    virtual RobotHardware::HumanoidState GetState(const bool& verbose);
 
     virtual bool SendCmd(const RobotHardware::HumanoidCmd& cmd);
 

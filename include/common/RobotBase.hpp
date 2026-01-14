@@ -20,12 +20,16 @@ namespace RobotBase{
         Ti5Robot,
         UnitreeG1Dof29,
         UnitreeG1Dof23,
+        CrpRobot,
     };
 
     inline const std::unordered_map<std::string, RobotBase::RobotType> RobotTypeMap = {
         {"Ti5Robot", RobotBase::RobotType::Ti5Robot},
         {"UnitreeG1Dof29", RobotBase::RobotType::UnitreeG1Dof29},
         {"UnitreeG1Dof23", RobotBase::RobotType::UnitreeG1Dof23},
+        {"CrpRobot", RobotBase::RobotType::CrpRobot},
+
+        {"GenericRobot", RobotBase::RobotType::GenericRobot},
     };
 
     inline RobotBase::RobotType GetTypeFromStr(const std::string& str){

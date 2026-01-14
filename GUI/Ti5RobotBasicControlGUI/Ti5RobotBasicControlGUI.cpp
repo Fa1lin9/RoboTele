@@ -31,23 +31,23 @@ void Ti5RobotBasicControlGUI::CheckConnection(){
 }
 
 void Ti5RobotBasicControlGUI::UpdateConfig(){
-    this->ti5RobotConfig.isLeftArmEnabled = ui->leftArmCheckBox->isChecked();
-    this->ti5RobotConfig.isRightArmEnabled = ui->rightArmCheckBox->isChecked();
-    this->ti5RobotConfig.isHeadEnabled = ui->headCheckBox->isChecked();
-    this->ti5RobotConfig.isWaistEnabled = ui->waistCheckBox->isChecked();
+    this->ti5RobotConfig.enableLeftArm = ui->leftArmCheckBox->isChecked();
+    this->ti5RobotConfig.enableRightArm = ui->rightArmCheckBox->isChecked();
+    this->ti5RobotConfig.enableHead = ui->headCheckBox->isChecked();
+    this->ti5RobotConfig.enableWaist = ui->waistCheckBox->isChecked();
 
     std::vector<std::string> enabledParts;
 
-    if(this->ti5RobotConfig.isLeftArmEnabled){
+    if(this->ti5RobotConfig.enableLeftArm){
         enabledParts.push_back("Left Arm");
     }
-    if(this->ti5RobotConfig.isRightArmEnabled){
+    if(this->ti5RobotConfig.enableRightArm){
         enabledParts.push_back("Right Arm");
     }
-    if(this->ti5RobotConfig.isHeadEnabled){
+    if(this->ti5RobotConfig.enableHead){
         enabledParts.push_back("Head");
     }
-    if(this->ti5RobotConfig.isWaistEnabled){
+    if(this->ti5RobotConfig.enableWaist){
         enabledParts.push_back("Waist");
     }
 

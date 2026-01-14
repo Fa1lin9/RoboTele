@@ -84,6 +84,9 @@ boost::optional<Eigen::VectorXd> GenericDualArmSolver::Solve(
         std::cout<<"------------ Solver Result ------------"<<std::endl;
     }
 
+    // Get the q of the dual-arm
+
+
     return boost::optional<Eigen::VectorXd>(qEigen);
 }
 
@@ -102,9 +105,39 @@ std::vector<std::string> GenericDualArmSolver::GetJointNames()
     return this->jointNames;
 }
 
+std::vector<std::string> GenericDualArmSolver::GetLeftArmJointNames()
+{
+    return this->leftArmJointNames;
+}
+
+std::vector<std::string> GenericDualArmSolver::GetRightArmJointNames()
+{
+    return this->rightArmJointNames;
+}
+
+std::vector<size_t> GenericDualArmSolver::GetLeftArmJointIndex()
+{
+    return this->leftArmJointIndex;
+}
+
+std::vector<size_t> GenericDualArmSolver::GetRightArmJointIndex()
+{
+    return this->rightArmJointIndex;
+}
+
+std::vector<size_t> GenericDualArmSolver::GetLeftArmQIndex()
+{
+    return this->leftArmQIndex;
+}
+
+std::vector<size_t> GenericDualArmSolver::GetRightArmQIndex()
+{
+    return this->rightArmQIndex;
+}
+
 void GenericDualArmSolver::Info()
 {
-    // 空实现
+    // TODO
 }
 
 // ===== Private Functions =====
@@ -225,6 +258,8 @@ void GenericDualArmSolver::InitRobot()
     for(size_t i = 0; i < armDof; i++) {
         // Left Arm
         size_t leftQIdx = this->robotModel.joints[this->leftArmJointIndex[i]].idx_q();
+        this->leftArmQIndex.push_back(leftQIdx);
+
 //        std::cout<<"leftQIdx: "<<leftQIdx<<std::endl;
         double leftMin  = this->robotModel.lowerPositionLimit(leftQIdx);
         double leftMax  = this->robotModel.upperPositionLimit(leftQIdx);
@@ -236,6 +271,8 @@ void GenericDualArmSolver::InitRobot()
 
         // Right Arm
         size_t rightQIdx = this->robotModel.joints[this->rightArmJointIndex[i]].idx_q();
+        this->rightArmQIndex.push_back(rightQIdx);
+
 //        std::cout<<"rightQIdx: "<<rightQIdx<<std::endl;
         double rightMin = this->robotModel.lowerPositionLimit(rightQIdx);
         double rightMax = this->robotModel.upperPositionLimit(rightQIdx);
@@ -245,6 +282,19 @@ void GenericDualArmSolver::InitRobot()
         this->totalLowerBound[rightQIdx] = rightMin;
         this->totalUpperBound[rightQIdx] = rightMax;
     }
+    // Left Arm QIndex
+    std::cout << "Left Arm QIndex:\n";
+    for (size_t i = 0; i < this->leftArmQIndex.size(); ++i) {
+        std::cout << "Joint[" << i << "] = " << this->leftArmQIndex[i] << "\n";
+    }
+
+    // Right Arm QIndex
+    std::cout << "\nRight Arm QIndex:\n";
+    for (size_t i = 0; i < this->rightArmQIndex.size(); ++i) {
+        std::cout << "Joint[" << i << "] = " << this->rightArmQIndex[i] << "\n";
+    }
+
+
     std::cout << "\nTotal Lower Bounds:\n";
     for (size_t i = 0; i < this->totalLowerBound.size(); ++i) {
         std::cout << "Total Lower Bounds[" << i << "] = " << this->totalLowerBound[i] << "\n";

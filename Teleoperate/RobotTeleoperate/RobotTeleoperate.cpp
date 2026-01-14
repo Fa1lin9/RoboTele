@@ -21,6 +21,9 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const RobotTeleoper
         case RobotBase::RobotType::UnitreeG1Dof23 :{
            return boost::make_shared<UnitreeG1Teleoperate>(config_);
         }
+        case RobotBase::RobotType::CrpRobot :{
+           return boost::make_shared<Ti5RobotTeleoperate>(config_);
+        }
         default:{
             return nullptr;
         }
@@ -33,7 +36,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
 
 //    json::object solverObj = rootObj["SolverConfig"].as_object();
 //    json::object transformObj = rootObj["TransformConfig"].as_object();
-    json::object hardwareObj = rootObj["HardwareConfig"].as_object();
+//    json::object hardwareObj = rootObj["HardwareConfig"].as_object();
     json::object ros2BridgeObj = rootObj["Ros2BridgeConfig"].as_object();
 
     RobotBase::RobotType robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
@@ -109,7 +112,8 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .FPS = static_cast<int>(rootObj["FPS"].as_int64()),
 //        .solverConfig = solverConfig,
         .solverConfigPath = rootObj["SolverConfigPath"].as_string().c_str(),
-        .hardwareConfig = hardwareConfig,
+//        .hardwareConfig = hardwareConfig,
+        .hardwareConfigPath = rootObj["HardwareConfigPath"].as_string().c_str(),
 //        .transformConfig = transformConfig,
         .transformConfigPath = rootObj["TransformConfigPath"].as_string().c_str(),
         .bridgeConfig = bridgeConfig,
@@ -117,8 +121,12 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
         .isReal = rootObj["IsRealWorldRobot"].as_bool(),
         .isCheckSolution = rootObj["IsCheckSolution"].as_bool(),
         .isFilterSolution = rootObj["IsFilterSolution"].as_bool(),
-        .useHead = rootObj["UseHead"].as_bool(),
-        .useWaist = rootObj["UseWaist"].as_bool(),
+        .enableHead = rootObj["EnableHead"].as_bool(),
+//        .enableLeftArm = rootObj["EnableLeftArm"].as_bool(),
+//        .enableRightArm = rootObj["EnableRightArm"].as_bool(),
+        .enableWaist = rootObj["EnableWaist"].as_bool(),
+//        .enableLeftLeg = rootObj["EnableLeftLeg"].as_bool(),
+//        .enableRightLeg = rootObj["EnableRightLeg"].as_bool(),
     };
     Eigen::VectorXd filterWeightEigen = JsonParser::JsonArray2EigenVectorXd(rootObj["FilterWeight"].as_array());
     config.filterWeight = std::vector<double>(filterWeightEigen.data(),

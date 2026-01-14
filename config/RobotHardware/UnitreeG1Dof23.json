@@ -1,0 +1,15 @@
+{
+    "IP": "",
+    "NetworkInterface": "enp5s0",
+
+    "RobotType": "UnitreeG1Dof23",
+
+    "Description": "This is UnitreeG1Dof23",
+
+    "HeadDof": 0,
+    "ArmDof": 5,
+    "WaistDof": 1,
+    "LegDof": 6,
+    "TotalDof": 23
+
+}

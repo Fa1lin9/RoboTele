@@ -38,7 +38,8 @@ public:
 
 //        ArmSolver::BasicConfig solverConfig;
         std::string solverConfigPath;
-        RobotHardware::BasicConfig hardwareConfig;
+//        RobotHardware::BasicConfig hardwareConfig;
+        std::string hardwareConfigPath;
 //        Transform::BasicConfig transformConfig;
         std::string transformConfigPath;
         Ros2Bridge::BasicConfig bridgeConfig;
@@ -51,8 +52,12 @@ public:
         bool isFilterSolution;
         std::vector<double> filterWeight;
 
-        bool useHead;
-        bool useWaist;
+        bool enableHead;
+//        bool enableLeftArm;
+//        bool enableRightArm;
+        bool enableWaist;
+//        bool enableLeftLeg;
+//        bool enableRightLeg;
     };
 
     RobotTeleoperate();
@@ -87,8 +92,14 @@ protected:
     // For Head and Waist Control
     HeadSolver headSolver;
     WaistSolver waistSolver;
-    bool useHead;
-    bool useWaist;
+
+    bool enableHead;
+//    bool enableLeftArm;
+//    bool enableRightArm;
+    bool enableWaist;
+//    bool enableLeftLeg;
+//    bool enableRightLeg;
+
     Eigen::Vector3d headRPY;
     Eigen::Vector3d waistRPY;
     std::vector<RobotBase::JointInfo> headJointsInfo;

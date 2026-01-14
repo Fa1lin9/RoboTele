@@ -117,7 +117,7 @@ bool Ti5RobotHardware::BackToInitPose(const RobotHardware::HumanoidCmd& config_)
     if(!this->isConnect()){ return false; }
 
     // for left arm
-    if(config_.isLeftArmEnabled){
+    if(config_.enableLeftArm){
         this->SendRecvJoints(std::vector<double>{-0.72, -1.0, 0.57, -1.0, 0.83, 0, 0},
                              this->armDof,
                              this->leftArmCanDevice,
@@ -127,7 +127,7 @@ bool Ti5RobotHardware::BackToInitPose(const RobotHardware::HumanoidCmd& config_)
     }
 
     // for right arm
-    if(config_.isRightArmEnabled){
+    if(config_.enableRightArm){
         this->SendRecvJoints(std::vector<double>{0.72, 1.0, -0.57, 1.0, -0.83, 0, 0},
                              this->armDof,
                              this->rightArmCanDevice,
@@ -144,7 +144,7 @@ bool Ti5RobotHardware::BackToZero(const RobotHardware::HumanoidCmd &config_){
     if(!this->isConnect()){ return false; }
 
     // for left arm
-    if(config_.isLeftArmEnabled){
+    if(config_.enableLeftArm){
         this->SendRecvJoints(std::vector<double>{ 0 , 0 , 0 , 0 , 0 , 0 , 0 },
                              this->armDof,
                              this->leftArmCanDevice,
@@ -154,7 +154,7 @@ bool Ti5RobotHardware::BackToZero(const RobotHardware::HumanoidCmd &config_){
     }
 
     // for right arm
-    if(config_.isRightArmEnabled){
+    if(config_.enableRightArm){
         this->SendRecvJoints(std::vector<double>{ 0 , 0 , 0 , 0 , 0 , 0 , 0 },
                              this->armDof,
                              this->rightArmCanDevice,
@@ -342,7 +342,7 @@ bool Ti5RobotHardware::MoveJ(const RobotHardware::HumanoidCmd &config_){
     if(!this->isConnect()){ return false; }
 
     // for left arm
-    if(config_.isLeftArmEnabled){
+    if(config_.enableLeftArm){
         this->SendRecvJoints(config_.qTargetLeftArm,
                              this->armDof,
                              this->leftArmCanDevice,
@@ -352,7 +352,7 @@ bool Ti5RobotHardware::MoveJ(const RobotHardware::HumanoidCmd &config_){
     }
 
     // for right arm
-    if(config_.isRightArmEnabled){
+    if(config_.enableRightArm){
         this->SendRecvJoints(config_.qTargetRightArm,
                              this->armDof,
                              this->rightArmCanDevice,
@@ -362,7 +362,7 @@ bool Ti5RobotHardware::MoveJ(const RobotHardware::HumanoidCmd &config_){
     }
 
     // for head
-    if(config_.isHeadEnabled){
+    if(config_.enableHead){
         this->SendRecvJoints(config_.qTargetHead,
                              this->headDof,
                              this->headCanDevice,
@@ -372,7 +372,7 @@ bool Ti5RobotHardware::MoveJ(const RobotHardware::HumanoidCmd &config_){
     }
 
     // for waist
-    if(config_.isWaistEnabled){
+    if(config_.enableWaist){
         this->SendRecvJoints(config_.qTargetWaist,
                              this->waistDof,
                              this->waistCanDevice,

@@ -13,6 +13,7 @@
 #include <unitree/idl/hg/LowState_.hpp>
 #include <unitree/robot/channel/channel_publisher.hpp>
 #include <unitree/robot/channel/channel_subscriber.hpp>
+#include <unitree/robot/b2/motion_switcher/motion_switcher_client.hpp>
 
 class G1Dof23Hardware
         : public RobotHardware
@@ -23,13 +24,17 @@ public:
 
     bool SendCmd(const RobotHardware::HumanoidCmd& robotCmd) override;
 
-    RobotHardware::HumanoidState GetState() override;
+    RobotHardware::HumanoidState GetState(const bool& verbose) override;
+
+    Eigen::VectorXd GetJointsAngleEigen() override;
 
     bool BackToInitPose(const RobotHardware::HumanoidCmd& robotCmd) override;
 
     bool BackToZero(const RobotHardware::HumanoidCmd& robotCmd) override;
 
     bool Init() override;
+
+    void Info() override;
 
 private:
     bool Initialize();
@@ -40,8 +45,9 @@ private:
 
     bool CheckCmd(const RobotHardware::HumanoidCmd& robotCmd);
 
-    void SetJointPosition(const std::vector<size_t>& jointIndex,
-                          const std::vector<double>& q);
+    void SetJointPosition(const std::vector<double>& qTarget,
+                          const std::vector<double>& qCurrent,
+                          const std::vector<size_t>& jointIndex);
 
     void InitMsg();
 
@@ -51,8 +57,15 @@ private:
 
     void FinishWork();
 
-    std::vector<double> ClipJointAngles(const std::vector<double>& q,
+    void CommandWriter();
+
+    std::vector<double> ClipJointAngles(const std::vector<double>& qTarget,
+                                        const std::vector<double>& qCurrent,
                                         const float& velocityLimit);
+
+    std::string queryServiceName(std::string form, std::string name);
+
+    int queryMotionStatus();
 
     // Unitree Variable
     unitree::robot::ChannelPublisherPtr<unitree_hg::msg::dds_::LowCmd_>
@@ -61,7 +74,11 @@ private:
 
     unitree::robot::ChannelSubscriberPtr<unitree_hg::msg::dds_::LowState_>
         stateSubscriber;
-    unitree_hg::msg::dds_::LowState_ stateMsg;
+//    unitree_hg::msg::dds_::LowState_ stateMsg;
+
+    unitree::common::ThreadPtr cmdWriterPtr;
+
+    std::shared_ptr<unitree::robot::b2::MotionSwitcherClient> msc;
 
     std::shared_mutex cmdMutex;
     std::shared_mutex stateMutex;
@@ -99,8 +116,8 @@ private:
     RobotBase::DataBuffer<RobotHardware::HumanoidCmd> cmdBuffer;
 
     // Struct
-    RobotHardware::HumanoidCmd cmd;
-    RobotHardware::HumanoidState state;
+//    RobotHardware::HumanoidCmd cmd;
+//    RobotHardware::HumanoidState state;
 
     // JointIndex
     std::vector<size_t> leftArmJointIndex = {
@@ -121,8 +138,8 @@ private:
 
     std::vector<size_t> waistJointIndex = {
         RobotBase::UnitreeG1::JointIndex::kWaistYaw,
-        RobotBase::UnitreeG1::JointIndex::kWaistRoll,
-        RobotBase::UnitreeG1::JointIndex::kWaistPitch,
+//        RobotBase::UnitreeG1::JointIndex::kWaistRoll,
+//        RobotBase::UnitreeG1::JointIndex::kWaistPitch,
     };
 
     std::vector<size_t> leftLegJointIndex = {

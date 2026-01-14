@@ -5,7 +5,7 @@
     "ModelPath": "/home/pangk/chf_ws/project/RobotTeleoperate/assets/urdf/UnitreeG1/g1_body23.urdf",
 
     "BaseFrameName": ["waist_yaw_joint"],
-    "TargetFrameName": ["left_wrist_yaw_joint", "right_wrist_yaw_joint"],
+    "TargetFrameName": ["left_wrist_roll_joint", "right_wrist_roll_joint"],
 
     "LeftArmJointNames" : [
         "left_shoulder_pitch_joint",
@@ -24,7 +24,7 @@
 
     "BaseOffset": [
         [
-        [1, 0, 0, 0.08],
+        [1, 0, 0, 0.15],
         [0, 1, 0, 0],
         [0, 0, 1, 0.44],
         [0, 0 ,0, 1]
@@ -32,13 +32,13 @@
     ],
     "TargetOffset":[
         [
-        [1, 0, 0, 0.2],
+        [1, 0, 0, 0.15],
         [0, 1, 0, 0],
         [0, 0, 1, 0],
         [0, 0 ,0, 1]
         ],
         [
-        [1, 0, 0, 0.2],
+        [1, 0, 0, 0.15],
         [0, 1, 0, 0],
         [0, 0, 1, 0],
         [0, 0 ,0, 1]

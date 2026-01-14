@@ -5,11 +5,6 @@ bool UnitreeG1Teleoperate::Init(){
 }
 
 UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &config)
-//    :address(config.address),
-//     dataCollector(VisionProCollector(this->address)),
-//     isSim(config.isSim),
-//     isReal(config.isReal),
-//     FPS(config.FPS)
 {
     this->address = config.address;
     this->dataCollector.Init(this->address);
@@ -20,23 +15,36 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     this->FPS = config.FPS;
     this->filterWeight = config.filterWeight;
 
-    this->useHead = config.useHead;
-    this->useWaist = config.useWaist;
+    this->enableHead = config.enableHead;
+    this->enableWaist = config.enableWaist;
+//    this->enableLeftArm = config.enableLeftArm;
+//    this->enableRightArm = config.enableRightArm;
+//    this->enableLeftLeg = config.enableLeftLeg;
+//    this->enableRightLeg = config.enableRightLeg;
 
-    // Solver
+    // Ptr
     this->armSolverPtr = ArmSolver::GetPtr(config.solverConfigPath);
 
     this->transformPtr = Transform::GetPtr(config.transformConfigPath);
 
-    this->hardwarePtr = RobotHardware::GetPtr(config.hardwareConfig);
+//    std::string configPath =
+//            static_cast<std::string>(SOURCE_FILE_PATH) + "/config/RobotHardware/UnitreeG1Dof23.json";
+////    auto hardware = RobotHardware::GetPtr(configPath);
+//    auto hardware = RobotHardware::GetPtr(config.hardwareConfigPath);
+//    this->hardwarePtr = RobotHardware::GetPtr(config.hardwareConfigPath);
+//    this->hardwarePtr = hardware;
+
+//    std::cout << config.hardwareConfigPath << std::endl;
+
+//    this->InitPtr(config);
 
     // For Head and Waist Solver
-    if(this->useHead){
+    if(this->enableHead){
         this->headSolver.Init(config.robotType);
         this->headJointsInfo = this->headSolver.GetJointsInfo();
     }
 
-    if(this->useWaist){
+    if(this->enableWaist){
         this->waistSolver.Init(config.robotType);
         waistJointsInfo = this->waistSolver.GetJointsInfo();
     }
@@ -44,6 +52,8 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     this->ros2Bridge.Init(config.bridgeConfig);
 
     this->handGestureDectector.Init(config.xrType);
+
+//    this->InitPtr(config);
 
     // Set qLast
     std::cout << "Current Robot's DofTotal: " << this->armSolverPtr->GetTotalDof() << std::endl;
@@ -53,13 +63,73 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     double threshold = this->FPS * M_PI / 180.0;
     this->speedThreshold = Eigen::VectorXd::Constant(this->armSolverPtr->GetTotalDof(), threshold);
 
+//    std::string configPath =
+//            static_cast<std::string>(SOURCE_FILE_PATH) + "/config/RobotHardware/UnitreeG1Dof23.json";
+//    auto hardware = RobotHardware::GetPtr(configPath);
+//    auto hardware = RobotHardware::GetPtr(config.hardwareConfigPath);
+    this->hardwarePtr = RobotHardware::GetPtr(config.hardwareConfigPath);
+//    this->hardwarePtr = hardware;
 }
 
 UnitreeG1Teleoperate::~UnitreeG1Teleoperate(){
 
 }
 
+void UnitreeG1Teleoperate::InitPtr(const BasicConfig &config)
+{
+    // Ptr
+    this->armSolverPtr = ArmSolver::GetPtr(config.solverConfigPath);
+
+    this->transformPtr = Transform::GetPtr(config.transformConfigPath);
+
+//    auto hardware = RobotHardware::GetPtr(config.hardwareConfigPath);
+    this->hardwarePtr = RobotHardware::GetPtr(config.hardwareConfigPath);
+//    this->hardwarePtr = hardware;
+//    std::cout << " hardware: " << hardware.get() << std::endl;
+//    std::cout << " hardwarePtr: " << this->hardwarePtr.get() << std::endl;
+
+    std::cout << config.hardwareConfigPath << std::endl;
+}
+
 bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
+//    std::string configPath =
+//            static_cast<std::string>(SOURCE_FILE_PATH) + "/config/RobotHardware/UnitreeG1Dof23.json";
+//    auto hardware = RobotHardware::GetPtr(configPath);
+//    this->hardwarePtr = hardware;
+
+    while(true){
+        auto start = std::chrono::high_resolution_clock::now();
+        std::cout << "-----------------------------------" << std::endl;
+        RobotHardware::HumanoidCmd cmd = {
+            .enableHead = false,
+            .enableLeftArm = true,
+            .enableRightArm = true,
+            .enableWaist = false,
+            .enableLeftLeg = false,
+            .enableRightLeg = false,
+            .qTargetLeftArm = std::vector<double>{0., 0, 0, 0.5, 0},
+            .qTargetRightArm = std::vector<double>{0., 0, 0, 0.5, 0},
+        };
+        auto state = this->hardwarePtr->GetState(true);
+//        hardware->SendCmd(cmd);
+        this->hardwarePtr->SendCmd(cmd);
+
+//        auto temp = hardware->GetJointsAngleEigen();
+
+        // Sleep
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        std::cout << " Main Loop 耗时: " << duration.count() << " ms" << std::endl;
+
+        double FPS = 25.0;
+        int framePeriod = static_cast<int>(1000.0 / FPS);
+        int sleepTime = framePeriod - duration.count();
+
+        if(sleepTime > 0){
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
+        }
+    }
+
     // Filter
     WeightedMovingFilter filter(this->filterWeight, this->armSolverPtr->GetTotalDof());
 
@@ -181,14 +251,14 @@ bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
                 waistRPY = this->waistSolver.Solve(transformedMsg[2]);
                 std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
             }
-            if(this->useHead){
+            if(this->enableHead){
                 // Set Value to Head
                 qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
                 qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
                 qEigen(headJointsInfo[2].index) = headRPY(0); // Row
             }
 
-            if(this->useWaist){
+            if(this->enableWaist){
                 // Set Value to Waist
                 qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
                 qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
@@ -218,32 +288,73 @@ bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
                 std::vector<double> qVec(qEigen.data(), qEigen.data() + qEigen.size());
                 msg.position() = qVec;
                 msg.name() = this->armSolverPtr->GetJointNames();
-//                for(size_t i=0;i<msg.name().size();i++){
-//                    std::cout<<"Msg Joint "<<i<<": "<<msg.name()[i]<<std::endl;
-//                }
-                // Temp send 14 joints value just to apply to GunmpGan's current version
-//                std::vector<double> qVecOnlyArm;
-//                qVecOnlyArm.reserve(14);
-//                qVecOnlyArm.insert(qVecOnlyArm.end(),qVec.begin() + 4, qVec.begin() + 4 + 7);
-//                qVecOnlyArm.insert(qVecOnlyArm.end(),qVec.end() - 7, qVec.end());
-//                msg.position() = qVecOnlyArm;
 
-    //            std::cout<<"The size of the postion of the msg is "<<msg.position().size()<<std::endl;
-    //            for(size_t i=0;i<msg.position().size();i++){
-    //                std::cout<<"SendMsg: Joint "<<i<<" Value: "<<msg.position()[i]<<std::endl;
-    //            }
                 this->ros2Bridge.SendMsg(msg);
             }
 
+            // Check the angle of the dual-arm
+//            std::vector<double> qTargetLeftArm(this->armSolverPtr->GetLeftArmQIndex().size());
+//            std::vector<double> qTargetRightArm(this->armSolverPtr->GetRightArmQIndex().size());
+//            auto leftArmQIndex = this->armSolverPtr->GetLeftArmQIndex();
+//            auto rightArmQIndex = this->armSolverPtr->GetRightArmQIndex();
+
+//            std::cout << "qTargetLeftArm:\n";
+//            for(size_t i = 0; i < leftArmQIndex.size(); i++){
+//                qTargetLeftArm[i] = qEigen(leftArmQIndex[i]);
+//                std::cout << "Joint[" << i << "] (qIndex=" << leftArmQIndex[i]
+//                          << ") = " << qTargetLeftArm[i] << "\n";
+//            }
+
+//            std::cout << "qTargetRightArm:\n";
+//            for(size_t i = 0; i < rightArmQIndex.size(); i++){
+//                qTargetRightArm[i] = qEigen(rightArmQIndex[i]);
+//                std::cout << "Joint[" << i << "] (qIndex=" << rightArmQIndex[i]
+//                          << ") = " << qTargetRightArm[i] << "\n";
+//            }
+
             if(this->isReal){
                 // TODO
+                std::vector<double> qTargetLeftArm(this->armSolverPtr->GetLeftArmQIndex().size());
+                std::vector<double> qTargetRightArm(this->armSolverPtr->GetRightArmQIndex().size());
+                auto leftArmQIndex = this->armSolverPtr->GetLeftArmQIndex();
+                auto rightArmQIndex = this->armSolverPtr->GetRightArmQIndex();
+
+                std::cout << "qTargetLeftArm:\n";
+                for(size_t i = 0; i < leftArmQIndex.size(); i++){
+                    qTargetLeftArm[i] = qEigen(leftArmQIndex[i]);
+                    std::cout << "Joint[" << i << "] (qIndex=" << leftArmQIndex[i]
+                              << ") = " << qTargetLeftArm[i] << "\n";
+                }
+
+                std::cout << "qTargetRightArm:\n";
+                for(size_t i = 0; i < rightArmQIndex.size(); i++){
+                    qTargetRightArm[i] = qEigen(rightArmQIndex[i]);
+                    std::cout << "Joint[" << i << "] (qIndex=" << rightArmQIndex[i]
+                              << ") = " << qTargetRightArm[i] << "\n";
+                }
+
+                RobotHardware::HumanoidCmd cmd = {
+                    .enableHead = false,
+                    .enableLeftArm = true,
+                    .enableRightArm = true,
+                    .enableWaist = false,
+                    .enableLeftLeg = false,
+                    .enableRightLeg = false,
+//                    .qTargetLeftArm = qTargetLeftArm,
+//                    .qTargetRightArm = qTargetRightArm,
+                    .qTargetLeftArm = std::vector<double>{0., 0, 0, 0.5, 0},
+                    .qTargetRightArm = std::vector<double>{0., 0, 0, 0.5, 0},
+                };
+
+//                auto state = this->hardwarePtr->GetState(true);
+                this->hardwarePtr->SendCmd(cmd);
 
             }
 
             // set the initial value of the joint
             if(this->isReal){
             // For Real Robot
-//                qLast = physicalRobotPtr->GetJointsAngleEigen();
+//                qLast = this->hardwarePtr->GetJointsAngleEigen();
             }else{
                 this->qLast = qEigen;
             }

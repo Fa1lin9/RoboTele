@@ -68,9 +68,9 @@ Eigen::VectorXd RobotHardware::GetJointsAngleEigen() {
     return Eigen::VectorXd();
 }
 
-void RobotHardware::Info() {
-    std::cout << "[RobotHardware] Calling Info()." << std::endl;
-}
+//void RobotHardware::Info() {
+//    std::cout << "[RobotHardware] Calling Info()." << std::endl;
+//}
 
 void RobotHardware::GetJointsStatus() {
     std::cout << "[RobotHardware] Calling GetJointsStatus()." << std::endl;
@@ -82,7 +82,19 @@ bool RobotHardware::MoveJ(const HumanoidCmd &cmd)
     return true;
 }
 
-RobotHardware::HumanoidState RobotHardware::GetState()
+bool RobotHardware::BackToInitPose(const HumanoidCmd &cmd)
+{
+    std::cout << "[RobotHardware] Calling BackToInitPose()." << std::endl;
+    return true;
+}
+
+bool RobotHardware::BackToZero(const HumanoidCmd &cmd)
+{
+    std::cout << "[RobotHardware] Calling BackToZero()." << std::endl;
+    return true;
+}
+
+RobotHardware::HumanoidState RobotHardware::GetState(const bool& verbose)
 {
     std::cout << "[RobotHardware] Calling GetState()." << std::endl;
     return HumanoidState();

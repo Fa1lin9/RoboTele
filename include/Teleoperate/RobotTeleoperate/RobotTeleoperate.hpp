@@ -67,9 +67,11 @@ public:
 
     static boost::shared_ptr<RobotTeleoperate> GetPtr(const std::string& filePath);
 
-    virtual bool Init() = 0;
-    virtual bool StartTeleop(bool verbose) = 0;
-    virtual bool StopTeleop() = 0;
+    virtual bool Init();
+    virtual bool StartTeleop(bool verbose);
+    virtual bool StopTeleop();
+
+    virtual void Info() = 0;
 
 protected:
     // Solver
@@ -79,26 +81,9 @@ protected:
 
     boost::shared_ptr<Transform> transformPtr;
 
-    int FPS;
-
-    bool isSim;
-    bool isReal;
-    bool isCheckSolution;
-
-    // Filter
-    bool isFilterSolution;
-    std::vector<double> filterWeight;
-
     // For Head and Waist Control
     HeadSolver headSolver;
     WaistSolver waistSolver;
-
-    bool enableHead;
-//    bool enableLeftArm;
-//    bool enableRightArm;
-    bool enableWaist;
-//    bool enableLeftLeg;
-//    bool enableRightLeg;
 
     Eigen::Vector3d headRPY;
     Eigen::Vector3d waistRPY;
@@ -118,4 +103,6 @@ protected:
     HandGestureDetector handGestureDectector;
 
     Eigen::VectorXd qLast;
+
+    RobotTeleoperate::BasicConfig config;
 };

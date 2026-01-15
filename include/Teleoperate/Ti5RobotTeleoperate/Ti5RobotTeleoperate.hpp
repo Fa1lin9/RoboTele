@@ -12,6 +12,7 @@ public:
     bool Init() override;
     bool StartTeleop(bool verbose) override;
     bool StopTeleop() override;
+    void Info() override;
 
 private:
     bool CheckDataValid();

@@ -1,13 +1,13 @@
 #pragma once
 #include <RobotTeleoperate/RobotTeleoperate.hpp>
 
-class UnitreeG1Teleoperate
+class GenericTeleoperate
         :public RobotTeleoperate
 {
 public:
-    UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &config);
-//    UnitreeG1Teleoperate(const std::string &fileName);
-    ~UnitreeG1Teleoperate();
+    GenericTeleoperate(const RobotTeleoperate::BasicConfig &config);
+//    GenericTeleoperate(const std::string &fileName);
+    ~GenericTeleoperate();
 
     bool Init() override;
     bool StartTeleop(bool verbose) override;
@@ -31,7 +31,7 @@ private:
 
     bool saveFlag = true;
 
-    const RobotBase::RobotType robotType = RobotBase::RobotType::UnitreeG1Dof23;
+//    const RobotBase::RobotType robotType = RobotBase::RobotType::GenericRobot;
 
     // Speed Limits
     Eigen::VectorXd speedThreshold;

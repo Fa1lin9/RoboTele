@@ -14,6 +14,8 @@ list( APPEND ${GROUP_NAME}_Components
     RobotTeleoperate
     Ti5RobotTeleoperate
     UnitreeG1Teleoperate
+
+    GenericTeleoperate
 )
 
 ##########################################################################

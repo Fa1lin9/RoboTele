@@ -1,10 +1,10 @@
-#include <UnitreeG1Teleoperate/UnitreeG1Teleoperate.hpp>
+#include <GenericTeleoperate/GenericTeleoperate.hpp>
 
-bool UnitreeG1Teleoperate::Init(){
+bool GenericTeleoperate::Init(){
     return true;
 }
 
-UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &config_)
+GenericTeleoperate::GenericTeleoperate(const RobotTeleoperate::BasicConfig &config_)
 {
     // Load Config
     this->config = config_;
@@ -17,16 +17,9 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
 
     this->transformPtr = Transform::GetPtr(this->config.transformConfigPath);
 
-//    std::string configPath =
-//            static_cast<std::string>(SOURCE_FILE_PATH) + "/config/RobotHardware/UnitreeG1Dof23.json";
-////    auto hardware = RobotHardware::GetPtr(configPath);
-//    auto hardware = RobotHardware::GetPtr(config.hardwareConfigPath);
-//    this->hardwarePtr = RobotHardware::GetPtr(config.hardwareConfigPath);
-//    this->hardwarePtr = hardware;
-
-//    std::cout << config.hardwareConfigPath << std::endl;
-
-//    this->InitPtr(config);
+    if(this->config.isReal){
+        this->hardwarePtr = RobotHardware::GetPtr(this->config.hardwareConfigPath);
+    }
 
     // For Head and Waist Solver
     if(this->config.enableHead){
@@ -43,8 +36,6 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
 
     this->handGestureDectector.Init(this->config.xrType);
 
-//    this->InitPtr(config);
-
     // Set qLast
     std::cout << "Current Robot's DofTotal: " << this->armSolverPtr->GetTotalDof() << std::endl;
     this->qLast = Eigen::VectorXd::Zero(this->armSolverPtr->GetTotalDof());
@@ -53,57 +44,13 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     double threshold = this->config.FPS * M_PI / 180.0;
     this->speedThreshold = Eigen::VectorXd::Constant(this->armSolverPtr->GetTotalDof(), threshold);
 
-//    std::string configPath =
-//            static_cast<std::string>(SOURCE_FILE_PATH) + "/config/RobotHardware/UnitreeG1Dof23.json";
-//    auto hardware = RobotHardware::GetPtr(configPath);
-//    auto hardware = RobotHardware::GetPtr(config.hardwareConfigPath);
-    this->hardwarePtr = RobotHardware::GetPtr(this->config.hardwareConfigPath);
-//    this->hardwarePtr = hardware;
 }
 
-UnitreeG1Teleoperate::~UnitreeG1Teleoperate(){
+GenericTeleoperate::~GenericTeleoperate(){
 
 }
 
-bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
-//    std::string configPath =
-//            static_cast<std::string>(SOURCE_FILE_PATH) + "/config/RobotHardware/UnitreeG1Dof23.json";
-//    auto hardware = RobotHardware::GetPtr(configPath);
-//    this->hardwarePtr = hardware;
-
-    while(true){
-        auto start = std::chrono::high_resolution_clock::now();
-        std::cout << "-----------------------------------" << std::endl;
-        RobotHardware::HumanoidCmd cmd = {
-            .enableHead = false,
-            .enableLeftArm = true,
-            .enableRightArm = true,
-            .enableWaist = false,
-            .enableLeftLeg = false,
-            .enableRightLeg = false,
-            .qTargetLeftArm = std::vector<double>{0., 0, 0, 0.5, 0},
-            .qTargetRightArm = std::vector<double>{0., 0, 0, 0.5, 0},
-        };
-        auto state = this->hardwarePtr->GetState(true);
-//        hardware->SendCmd(cmd);
-        this->hardwarePtr->SendCmd(cmd);
-
-//        auto temp = hardware->GetJointsAngleEigen();
-
-        // Sleep
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        std::cout << " Main Loop 耗时: " << duration.count() << " ms" << std::endl;
-
-        double FPS = 25.0;
-        int framePeriod = static_cast<int>(1000.0 / FPS);
-        int sleepTime = framePeriod - duration.count();
-
-        if(sleepTime > 0){
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
-        }
-    }
-
+bool GenericTeleoperate::StartTeleop(bool verbose){
     // Filter
     WeightedMovingFilter filter(this->config.filterWeight, this->armSolverPtr->GetTotalDof());
 
@@ -164,7 +111,7 @@ bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
             msgConfig.initHeadPose = this->poseMatrix[0];
             std::cout << "Initial Head Pose: " << std::endl;
             std::cout << msgConfig.initHeadPose << std::endl;
-            std::cout << "[UnitreeG1Teleoperate] The handGesture is OK, now start the teleoperation! "<<std::endl;
+            std::cout << "[GenericTeleoperate] The handGesture is OK, now start the teleoperation! "<<std::endl;
         }
 
         if(!isEnd){
@@ -172,7 +119,7 @@ bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
                     this->handGestureDectector.IsThumbsUpGesture(this->dualHandData.leftHandData) ||
                     this->handGestureDectector.IsThumbsUpGesture(this->dualHandData.rightHandData);
         }else{
-            std::cout << "[UnitreeG1Teleoperate] The handGesture is thumbs up, now end the teleoperation! "<<std::endl;
+            std::cout << "[GenericTeleoperate] The handGesture is thumbs up, now end the teleoperation! "<<std::endl;
             break;
         }
 
@@ -364,7 +311,7 @@ bool UnitreeG1Teleoperate::StartTeleop(bool verbose){
     return true;
 }
 
-bool UnitreeG1Teleoperate::StopTeleop(){
+bool GenericTeleoperate::StopTeleop(){
     if(!this->startFlag){
         std::cout<<"Teleoperation has ended! "<<std::endl;
     }else{
@@ -374,28 +321,28 @@ bool UnitreeG1Teleoperate::StopTeleop(){
     return true;
 }
 
-void UnitreeG1Teleoperate::Info()
+void GenericTeleoperate::Info()
 {
 
 }
 
-bool UnitreeG1Teleoperate::CheckDataValid(){
+bool GenericTeleoperate::CheckDataValid(){
     // PoseMatrix
     if (this->poseMatrix[0].isZero(1e-9) ||
         this->poseMatrix[1].isZero(1e-9) ||
         this->poseMatrix[2].isZero(1e-9)){
-        std::cerr << "[UnitreeG1Teleoperate::CheckData] One of poseMatrix is zero!" << std::endl;
+        std::cerr << "[GenericTeleoperate::CheckData] One of poseMatrix is zero!" << std::endl;
         return false;
     }
 
     if (this->poseMatrix.empty()) {
-        std::cerr << "[UnitreeG1Teleoperate::CheckData] poseMatrix is empty!" << std::endl;
+        std::cerr << "[GenericTeleoperate::CheckData] poseMatrix is empty!" << std::endl;
         return false;
     }
 
     // ensure poseMatrix has at least 3 matrices
     if (this->poseMatrix.size() < 3) {
-        std::cerr << "[UnitreeG1Teleoperate::CheckData] poseMatrix size < 3!" << std::endl;
+        std::cerr << "[GenericTeleoperate::CheckData] poseMatrix size < 3!" << std::endl;
         return false;
     }
 
@@ -404,20 +351,20 @@ bool UnitreeG1Teleoperate::CheckDataValid(){
     const auto& right = this->dualHandData.rightHandData.handPositions;
 
     if (left.empty() || right.empty()) {
-        std::cerr << "[UnitreeG1Teleoperate::CheckData] HandData is empty!" << std::endl;
+        std::cerr << "[GenericTeleoperate::CheckData] HandData is empty!" << std::endl;
         return false;
     }
 
     if (left[0].isZero(1e-9) || right[0].isZero(1e-9)) {
-        std::cerr << "[UnitreeG1Teleoperate::CheckData] First hand position is zero!" << std::endl;
+        std::cerr << "[GenericTeleoperate::CheckData] First hand position is zero!" << std::endl;
         return false;
     }
 
     return true;
 }
 
-bool UnitreeG1Teleoperate::CheckSolutionValid(const Eigen::VectorXd& sol,
-                                             const Eigen::VectorXd& qLast)
+bool GenericTeleoperate::CheckSolutionValid(const Eigen::VectorXd& sol,
+                                            const Eigen::VectorXd& qLast)
 {
     Eigen::VectorXd diff = sol - qLast;
 
@@ -430,7 +377,7 @@ bool UnitreeG1Teleoperate::CheckSolutionValid(const Eigen::VectorXd& sol,
     }
 
     if(outOfBounds){
-        std::cout<<"[UnitreeG1Teleoperate::CheckSolutionValid] The solution is invalid! "<<std::endl;
+        std::cout<<"[GenericTeleoperate::CheckSolutionValid] The solution is invalid! "<<std::endl;
         return false;
     }else{
         return true;

@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 3.20 )
 #############################################################
 #	Set project name, files, dependancies
 #############################################################
-set( TARGET_NAME "RobotTeleoperate" )
+set( TARGET_NAME "GenericTeleoperate" )
 message( STATUS "\n-------------  ${GROUP_NAME} - ${TARGET_NAME}  -------------" )
 
 
@@ -46,31 +46,16 @@ target_include_directories( ${TARGET_NAME}
 #   Add dependancies
 target_link_libraries( ${TARGET_NAME}
     PUBLIC 
-        $<BUILD_INTERFACE:Transform::Transform>
-        $<BUILD_INTERFACE:Core::DataCollector>
-        $<BUILD_INTERFACE:Core::CsvWriter>
-        $<BUILD_INTERFACE:Core::WeightedMovingFilter>
-        $<BUILD_INTERFACE:ArmSolver::ArmSolver>
-        $<BUILD_INTERFACE:RobotHardware::RobotHardware>
-        $<BUILD_INTERFACE:FastDDSInterface::Ros2Bridge>
-        $<BUILD_INTERFACE:Core::JsonParser>
-        $<BUILD_INTERFACE:BasicSolver::HeadSolver>
-        $<BUILD_INTERFACE:BasicSolver::WaistSolver>
-        $<BUILD_INTERFACE:HandSolver::HandSolver>
-        $<BUILD_INTERFACE:HandSolver::HandGestureDetector>
-        $<BUILD_INTERFACE:HandController::HandController>
+        $<BUILD_INTERFACE:Teleoperate::RobotTeleoperate>
 
-        $<BUILD_INTERFACE:Teleoperate::Ti5RobotTeleoperate>
-        $<BUILD_INTERFACE:Teleoperate::UnitreeG1Teleoperate>
-        $<BUILD_INTERFACE:Teleoperate::GenericTeleoperate>
     PRIVATE
         
 
 )
 
-# if(UNIX)
-#   target_link_libraries(${TARGET_NAME} PUBLIC dl)
-# endif()
+if(UNIX)
+  target_link_libraries(${TARGET_NAME} PUBLIC dl)
+endif()
 
 # #   Add Macro compile defination
 # TARGET_COMPILE_DEFINITIONS( ${TARGET_NAME}

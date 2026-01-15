@@ -1,6 +1,7 @@
 #include <RobotTeleoperate/RobotTeleoperate.hpp>
 #include <Ti5RobotTeleoperate/Ti5RobotTeleoperate.hpp>
 #include <UnitreeG1Teleoperate/UnitreeG1Teleoperate.hpp>
+#include <GenericTeleoperate/GenericTeleoperate.hpp>
 
 RobotTeleoperate::RobotTeleoperate(){
 
@@ -13,16 +14,23 @@ RobotTeleoperate::~RobotTeleoperate(){
 boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const RobotTeleoperate::BasicConfig &config_){
     switch (config_.robotType) {
         case RobotBase::RobotType::Ti5Robot :{
-           return boost::make_shared<Ti5RobotTeleoperate>(config_);
+//           return boost::make_shared<Ti5RobotTeleoperate>(config_);
+            return boost::make_shared<GenericTeleoperate>(config_);
         }
         case RobotBase::RobotType::UnitreeG1Dof29 :{
-           return boost::make_shared<UnitreeG1Teleoperate>(config_);
+//           return boost::make_shared<UnitreeG1Teleoperate>(config_);
+           return boost::make_shared<GenericTeleoperate>(config_);
         }
         case RobotBase::RobotType::UnitreeG1Dof23 :{
-           return boost::make_shared<UnitreeG1Teleoperate>(config_);
+//           return boost::make_shared<UnitreeG1Teleoperate>(config_);
+           return boost::make_shared<GenericTeleoperate>(config_);
         }
         case RobotBase::RobotType::CrpRobot :{
-           return boost::make_shared<Ti5RobotTeleoperate>(config_);
+//           return boost::make_shared<Ti5RobotTeleoperate>(config_);
+           return boost::make_shared<GenericTeleoperate>(config_);
+        }
+        case RobotBase::RobotType::GenericRobot :{
+           return boost::make_shared<GenericTeleoperate>(config_);
         }
         default:{
             return nullptr;
@@ -133,4 +141,22 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& 
                                               filterWeightEigen.data() + filterWeightEigen.size());
 
     return RobotTeleoperate::GetPtr(config);
+}
+
+bool RobotTeleoperate::Init()
+{
+    std::cout << "[RobotTeleoperate] Calling Init()." << std::endl;
+    return true;
+}
+
+bool RobotTeleoperate::StartTeleop(bool verbose)
+{
+    std::cout << "[RobotTeleoperate] Calling StartTeleop()." << std::endl;
+    return true;
+}
+
+bool RobotTeleoperate::StopTeleop()
+{
+    std::cout << "[RobotTeleoperate] Calling StopTeleop()." << std::endl;
+    return true;
 }

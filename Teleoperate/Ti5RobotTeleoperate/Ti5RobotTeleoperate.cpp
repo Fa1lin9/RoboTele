@@ -4,47 +4,36 @@ bool Ti5RobotTeleoperate::Init(){
     return true;
 }
 
-Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &config)
-//    :address(config.address),
-//     dataCollector(VisionProCollector(this->address)),
-//     isSim(config.isSim),
-//     isReal(config.isReal),
-//     FPS(config.FPS)
+Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &config_)
 {
-    this->address = config.address;
-    this->dataCollector.Init(this->address);
-    this->isSim = config.isSim;
-    this->isReal = config.isReal;
-    this->isCheckSolution = config.isCheckSolution;
-    this->isFilterSolution = config.isFilterSolution;
-    this->FPS = config.FPS;
-    this->filterWeight = config.filterWeight;
+    // Load Config
+    this->config = config_;
 
-    this->enableHead = config.enableHead;
-    this->enableWaist = config.enableWaist;
+    // DataCollector
+    this->dataCollector.Init(this->config.address);
 
     // For Head and Waist Solver
-    if(this->enableHead){
-        this->headSolver.Init(config.robotType);
+    if(this->config.enableHead){
+        this->headSolver.Init(this->config.robotType);
         this->headJointsInfo = this->headSolver.GetJointsInfo();
     }
 
-    if(this->enableWaist){
-        this->waistSolver.Init(config.robotType);
+    if(this->config.enableWaist){
+        this->waistSolver.Init(this->config.robotType);
         waistJointsInfo = this->waistSolver.GetJointsInfo();
     }
 
-    this->armSolverPtr = ArmSolver::GetPtr(config.solverConfigPath);
+    this->armSolverPtr = ArmSolver::GetPtr(this->config.solverConfigPath);
 
-    this->transformPtr = Transform::GetPtr(config.transformConfigPath);
+    this->transformPtr = Transform::GetPtr(this->config.transformConfigPath);
 
-    if(this->isReal){
-        this->hardwarePtr = RobotHardware::GetPtr(config.hardwareConfigPath);
+    if(this->config.isReal){
+        this->hardwarePtr = RobotHardware::GetPtr(this->config.hardwareConfigPath);
     }
 
-    this->ros2Bridge.Init(config.bridgeConfig);
+    this->ros2Bridge.Init(this->config.bridgeConfig);
 
-    this->handGestureDectector.Init(config.xrType);
+    this->handGestureDectector.Init(this->config.xrType);
 
     // qLast
     this->qLast = Eigen::VectorXd::Zero(this->armSolverPtr->GetTotalDof());
@@ -57,7 +46,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
 //    this->qLast.segment(14,7) << 0.72, 1.0, 1.0, 1.0, -0.83, 0, 0;
 
     // Speed Limits
-    double threshold = this->FPS * M_PI / 180.0;
+    double threshold = this->config.FPS * M_PI / 180.0;
     this->speedThreshold = Eigen::VectorXd::Constant(this->armSolverPtr->GetTotalDof(), threshold);
 
 }
@@ -69,7 +58,7 @@ Ti5RobotTeleoperate::~Ti5RobotTeleoperate(){
 bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
     // Filter
 //    WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, this->ikSolverPtr->GetDofTotal());
-    WeightedMovingFilter filter(this->filterWeight, this->armSolverPtr->GetTotalDof());
+    WeightedMovingFilter filter(this->config.filterWeight, this->armSolverPtr->GetTotalDof());
 
     this->startFlag = true;
     this->saveFlag = true;
@@ -190,14 +179,14 @@ bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
                 waistRPY = this->waistSolver.Solve(transformedMsg[2]);
                 std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
             }
-            if(this->enableHead){
+            if(this->config.enableHead){
                 // Set Value to Head
                 qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
                 qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
                 qEigen(headJointsInfo[2].index) = headRPY(0); // Row
             }
 
-            if(this->enableWaist){
+            if(this->config.enableWaist){
                 // Set Value to Waist
                 qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
                 qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
@@ -205,7 +194,7 @@ bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
             }
 
             // Check solution
-            if(this->isCheckSolution){
+            if(this->config.isCheckSolution){
                 if(!isFirstCheck){
                     isFirstCheck = true;
                 }else{
@@ -216,12 +205,12 @@ bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
             }
 
             // Filter the Eigen
-            if(this->isFilterSolution){
+            if(this->config.isFilterSolution){
                 filter.AddData(qEigen);
                 qEigen = filter.GetFilteredData();
             }
 
-            if(this->isSim){
+            if(this->config.isSim){
                 // send to ros2
                 ti5_interfaces::msg::JointStateWithoutStamp msg;
                 std::vector<double> qVec(qEigen.data(), qEigen.data() + qEigen.size());
@@ -244,7 +233,7 @@ bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
                 this->ros2Bridge.SendMsg(msg);
             }
 
-            if(this->isReal){
+            if(this->config.isReal){
                 // TODO
 
             }
@@ -272,7 +261,7 @@ bool Ti5RobotTeleoperate::StartTeleop(bool verbose){
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         std::cout << " Main Loop 耗时: " << duration.count() << " ms" << std::endl;
 
-        int framePeriod = static_cast<int>(1000.0 / this->FPS);
+        int framePeriod = static_cast<int>(1000.0 / this->config.FPS);
         int sleepTime = framePeriod - duration.count();
 
         if(sleepTime > 0){
@@ -295,6 +284,11 @@ bool Ti5RobotTeleoperate::StopTeleop(){
     }
 
     return true;
+}
+
+void Ti5RobotTeleoperate::Info()
+{
+
 }
 
 bool Ti5RobotTeleoperate::CheckDataValid(){

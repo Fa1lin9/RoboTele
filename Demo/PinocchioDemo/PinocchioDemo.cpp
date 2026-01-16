@@ -39,7 +39,7 @@ int main(){
         .wSmooth = 0.5,
     };
 
-    boost::shared_ptr<ArmSolver> ikSolverPtr = ArmSolver::GetPtr(config);
+    std::shared_ptr<ArmSolver> ikSolverPtr = ArmSolver::GetPtr(config);
 
     ikSolverPtr->Info();
 

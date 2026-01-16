@@ -63,9 +63,9 @@ public:
 
     virtual std::vector<Eigen::Matrix4d> Solve(const Transform::MsgConfig &config_) = 0;
 
-    static boost::shared_ptr<Transform> GetPtr(const Transform::BasicConfig &config_);
+    static std::shared_ptr<Transform> GetPtr(const Transform::BasicConfig &config_);
 
-    static boost::shared_ptr<Transform> GetPtr(const std::string& filePath);
+    static std::shared_ptr<Transform> GetPtr(const std::string& filePath);
 
     static Transform::Type GetTypeFromStr(const std::string& str);
 

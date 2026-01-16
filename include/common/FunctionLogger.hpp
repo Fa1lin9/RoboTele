@@ -48,16 +48,16 @@ public:
     template<typename T>
     FunctionLogger(T* obj, const char* func) {
         funcName = getClassFuncName(obj, func);
-        std::cout << "[ENTER] " << funcName << std::endl;
+        std::cout << "\n[ENTER] " << funcName << std::endl;
     }
 
     // 对于非类函数，也可以直接传函数名
     FunctionLogger(const char* func) : funcName(func) {
-        std::cout << "[ENTER] " << funcName << std::endl;
+        std::cout << "\n[ENTER] " << funcName << std::endl;
     }
 
     ~FunctionLogger() {
-        std::cout << "[EXIT] " << funcName << std::endl;
+        std::cout << "[EXIT] " << funcName << "\n" << std::endl;
     }
 };
 

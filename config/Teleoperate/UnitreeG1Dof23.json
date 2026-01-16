@@ -6,7 +6,7 @@
     "FPS": 25,
 
     "IsSimulatedRobot": true,
-    "IsRealWorldRobot": false,
+    "IsRealWorldRobot": true,
     
     "IsCheckSolution": false,
     "IsFilterSolution": true,

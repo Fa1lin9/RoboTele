@@ -109,9 +109,9 @@ public:
 
     virtual std::vector<size_t> GetRightArmQIndex();
 
-    static boost::shared_ptr<ArmSolver> GetPtr(const ArmSolver::BasicConfig& config_);
+    static std::shared_ptr<ArmSolver> GetPtr(const ArmSolver::BasicConfig& config_);
 
-    static boost::shared_ptr<ArmSolver> GetPtr(const std::string& filePath);
+    static std::shared_ptr<ArmSolver> GetPtr(const std::string& filePath);
 
     static ArmSolver::Type GetTypeFromStr(const std::string& str);
 

@@ -11,26 +11,26 @@ RobotTeleoperate::~RobotTeleoperate(){
 
 }
 
-boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const RobotTeleoperate::BasicConfig &config_){
+std::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const RobotTeleoperate::BasicConfig &config_){
     switch (config_.robotType) {
         case RobotBase::RobotType::Ti5Robot :{
-//           return boost::make_shared<Ti5RobotTeleoperate>(config_);
-            return boost::make_shared<GenericTeleoperate>(config_);
+//           return std::make_shared<Ti5RobotTeleoperate>(config_);
+            return std::make_shared<GenericTeleoperate>(config_);
         }
         case RobotBase::RobotType::UnitreeG1Dof29 :{
-//           return boost::make_shared<UnitreeG1Teleoperate>(config_);
-           return boost::make_shared<GenericTeleoperate>(config_);
+//           return std::make_shared<UnitreeG1Teleoperate>(config_);
+           return std::make_shared<GenericTeleoperate>(config_);
         }
         case RobotBase::RobotType::UnitreeG1Dof23 :{
-//           return boost::make_shared<UnitreeG1Teleoperate>(config_);
-           return boost::make_shared<GenericTeleoperate>(config_);
+//           return std::make_shared<UnitreeG1Teleoperate>(config_);
+           return std::make_shared<GenericTeleoperate>(config_);
         }
         case RobotBase::RobotType::CrpRobot :{
-//           return boost::make_shared<Ti5RobotTeleoperate>(config_);
-           return boost::make_shared<GenericTeleoperate>(config_);
+//           return std::make_shared<Ti5RobotTeleoperate>(config_);
+           return std::make_shared<GenericTeleoperate>(config_);
         }
         case RobotBase::RobotType::GenericRobot :{
-           return boost::make_shared<GenericTeleoperate>(config_);
+           return std::make_shared<GenericTeleoperate>(config_);
         }
         default:{
             return nullptr;
@@ -38,7 +38,7 @@ boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const RobotTeleoper
     }
 }
 
-boost::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& filePath){
+std::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& filePath){
     JsonParser jsonParser(filePath);
     json::object rootObj = jsonParser.GetJsonObject();
 

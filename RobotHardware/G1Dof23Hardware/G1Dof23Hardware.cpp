@@ -12,17 +12,14 @@ G1Dof23Hardware::G1Dof23Hardware(const RobotHardware::BasicConfig &config_){
 
 //    this->LoadJointIndex();
     this->Initialize();
-
-    // Start MainLoop
-    this->mainThread = std::thread(&G1Dof23Hardware::MainLoop, this);
 }
 
 G1Dof23Hardware::~G1Dof23Hardware(){
     this->runningMainLoop = false;
     if(this->mainThread.joinable()){
+        std::cout << "[G1Dof23Hardware::~G1Dof23Hardware] Delete mainThread! " << std::endl;
         this->mainThread.join();
     }
-
 }
 
 /* ---------------- Motion Control ---------------- */
@@ -41,41 +38,43 @@ bool G1Dof23Hardware::SendCmd(const RobotHardware::HumanoidCmd& cmd)
         throw std::invalid_argument("[G1Dof23Hardware::SendCmd] Sry, the UnitreeG1 doesn't have headDof! ");
     }
 
+    std::cout << "[G1Dof23Hardware::SendCmd] Send cmd! " << std::endl;
+
     this->cmdBuffer.SetData(cmd);
     std::unique_lock lock(this->cmdMutex);
 
     auto humanoidState = this->GetState(false);
 
     if(cmd.enableLeftArm){
-        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Left Arm" << std::endl;
+//        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Left Arm" << std::endl;
         this->SetJointPosition(cmd.qTargetLeftArm,
                                humanoidState.qLeftArm,
                                this->leftArmJointIndex);
     }
 
     if(cmd.enableRightArm){
-        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Right Arm" << std::endl;
+//        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Right Arm" << std::endl;
         this->SetJointPosition(cmd.qTargetRightArm,
                                humanoidState.qRightArm,
                                this->rightArmJointIndex);
     }
 
     if(cmd.enableWaist){
-        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Waist" << std::endl;
+//        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Waist" << std::endl;
         this->SetJointPosition(cmd.qTargetWaist,
                                humanoidState.qWaist,
                                this->waistJointIndex);
     }
 
     if(cmd.enableLeftLeg){
-        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Left Leg" << std::endl;
+//        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Left Leg" << std::endl;
         this->SetJointPosition(cmd.qTargetLeftLeg,
                                humanoidState.qLeftLeg,
                                this->leftLegJointIndex);
     }
 
     if(cmd.enableRightLeg){
-        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Right Leg" << std::endl;
+//        std::cout << "[G1Dof23Hardware::SendCmd] Controlling Right Leg" << std::endl;
         this->SetJointPosition(cmd.qTargetRightLeg,
                                humanoidState.qRightLeg,
                                this->rightLegJointIndex);
@@ -163,6 +162,7 @@ Eigen::VectorXd G1Dof23Hardware::GetJointsAngleEigen()
 
 bool G1Dof23Hardware::BackToInitPose(const RobotHardware::HumanoidCmd& robotCmd)
 {
+    std::cout << "[G1Dof23Hardware::BackToInitPose] Back to initial pose! " << std::endl;
     return this->BackToZero(robotCmd);
 }
 
@@ -261,6 +261,8 @@ bool G1Dof23Hardware::Initialize()
         std::cout<<"[G1Dof23Hardware::Initialize] Start to initialize! "<<std::endl;
     }
 
+    std::cout << "[G1Dof23Hardware::Initialize] networkInterface: " <<
+                 this->config.networkInterface << std::endl;
     unitree::robot::ChannelFactory::Instance()->Init(0, this->config.networkInterface);
 
     this->msc.reset(new unitree::robot::b2::MotionSwitcherClient());
@@ -312,6 +314,9 @@ bool G1Dof23Hardware::Initialize()
 //            &G1Dof23Hardware::CommandWriter,
 //            this
 //        );
+
+    // Start MainLoop
+    this->mainThread = std::thread(&G1Dof23Hardware::MainLoop, this);
 
     this->initFlag = true;
     return true;
@@ -484,37 +489,52 @@ void G1Dof23Hardware::InitMsg()
 
 void G1Dof23Hardware::MainLoop()
 {
-    while(this->runningMainLoop){
+    // Back to initial pose
+    RobotHardware::HumanoidCmd cmd = {
+        .enableHead = false,
+        .enableLeftArm = true,
+        .enableRightArm = true,
+        .enableWaist = true,
+        .enableLeftLeg = true,
+        .enableRightLeg = true,
+    };
+
+    auto initStart = std::chrono::steady_clock::now();
+
+    while (this->runningMainLoop) {
         auto start = std::chrono::high_resolution_clock::now();
+
+        // Back to initial pose
+        auto now = std::chrono::steady_clock::now();
+        double elapsed = std::chrono::duration<double>(now - initStart).count();
+        if (elapsed < 3.0) {
+            this->BackToInitPose(cmd);
+        }
 
         {
             std::unique_lock lock(this->cmdMutex);
 
-            // Send Msg
-            this->cmdMsg.crc() = RobotBase::UnitreeG1::Crc32Core((uint32_t *)&this->cmdMsg,
-                                                                 (sizeof(this->cmdMsg) >> 2) - 1);
-            bool temp = this->cmdPublisher->Write(this->cmdMsg);
+//            this->PrintCmdMsg();
 
-//            if(temp){
-////                std::cout << "******************** Send Msg ********************" << std::endl;
-//            }else{
-//                std::cout << "******************** Send Msg Error ********************" << std::endl;
-//            }
-//            std::cout << "******************** Send Command ********************" << std::endl;
+            // Send Msg
+            this->cmdMsg.crc() = RobotBase::UnitreeG1::Crc32Core(
+                (uint32_t *)&this->cmdMsg,
+                (sizeof(this->cmdMsg) >> 2) - 1
+            );
+            this->cmdPublisher->Write(this->cmdMsg);
         }
 
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-//        std::cout << " Main Loop 耗时: " << duration.count() << " ms" << std::endl;
 
         int framePeriod = this->dt * 1000;
         int sleepTime = framePeriod - duration.count();
 
-        if(sleepTime > 0){
-//            std::cout << " Time Sleep: " << sleepTime << " ms" << std::endl;
+        if (sleepTime > 0) {
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
         }
     }
+
 }
 
 void G1Dof23Hardware::StateCallback(const void *msg)
@@ -654,7 +674,7 @@ std::vector<double> G1Dof23Hardware::ClipJointAngles(const std::vector<double>& 
 
     auto motionScale = max / ( this->dt * velocityLimit );
 
-    std::cout << "[G1Dof23Hardware::ClipJointAngles] motionScale is " << motionScale << std::endl;
+//    std::cout << "[G1Dof23Hardware::ClipJointAngles] motionScale is " << motionScale << std::endl;
 
     std::vector<double> qCliped(qTarget.size());
     for(size_t i=0;i<delta.size();i++){
@@ -703,5 +723,32 @@ int G1Dof23Hardware::queryMotionStatus()
     }
     return motionStatus;
 }
+
+void G1Dof23Hardware::PrintCmdMsg()
+{
+    std::cout << "========== CmdMsg ==========" << std::endl;
+
+    for (size_t i = 0; i < this->cmdMsg.motor_cmd().size(); ++i) {
+        const auto &m = this->cmdMsg.motor_cmd().at(i);
+
+        std::cout << "Motor[" << i << "]: "
+                  << "q=" << m.q()
+                  << ", dq=" << m.dq()
+                  << ", tau=" << m.tau()
+                  << ", mode=" << static_cast<int>(m.mode())
+                  << std::endl;
+    }
+
+    std::cout << "============================" << std::endl;
+}
+
+bool G1Dof23Hardware::IsBackToInitPose()
+{
+    auto state = this->GetState(false);
+    // TODO
+    return false;
+}
+
+
 
 

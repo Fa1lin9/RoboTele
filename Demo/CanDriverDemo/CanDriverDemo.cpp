@@ -47,7 +47,7 @@ int main(){
         .robotType = RobotBase::RobotType::Ti5Robot,
     };
 
-    boost::shared_ptr<RobotHardware> RobotHardware
+    std::shared_ptr<RobotHardware> RobotHardware
             = RobotHardware::GetPtr(config);
 
     physicalRobotPtr->Connect();
@@ -113,7 +113,7 @@ int main(){
 //        .type = PhysicalRobot::Type::CrpRobot,
 //    };
 
-//    boost::shared_ptr<PhysicalRobot> robotPtr
+//    std::shared_ptr<PhysicalRobot> robotPtr
 //            = PhysicalRobot::GetPtr(config);
 
 //    robotPtr->Connect();

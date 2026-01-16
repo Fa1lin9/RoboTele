@@ -9,10 +9,10 @@ HandSolver::~HandSolver(){
 
 }
 
-boost::shared_ptr<HandSolver> HandSolver::GetPtr(const HandSolver::BasicConfig &config_){
+std::shared_ptr<HandSolver> HandSolver::GetPtr(const HandSolver::BasicConfig &config_){
     switch (config_.type) {
         case XRBase::XRType::VisionPro :{
-           return boost::make_shared<VisionProHandSolver>(config_);
+           return std::make_shared<VisionProHandSolver>(config_);
         }
         default:{
             return nullptr;

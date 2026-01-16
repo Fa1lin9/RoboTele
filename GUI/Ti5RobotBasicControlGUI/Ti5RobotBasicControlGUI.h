@@ -64,7 +64,7 @@ private slots:
 private:
     Ui::Ti5RobotBasicControlGUI *ui;
 
-    boost::shared_ptr<RobotHardware> physicalRobotPtr;
+    std::shared_ptr<RobotHardware> physicalRobotPtr;
 
     RobotHardware::HumanoidCmd ti5RobotConfig;
 

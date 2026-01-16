@@ -39,7 +39,7 @@ private:
 
     std::string configPath;
 
-    boost::shared_ptr<RobotTeleoperate> teleop;
+    std::shared_ptr<RobotTeleoperate> teleop;
     QThread* teleopThread = nullptr;
 
 };

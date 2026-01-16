@@ -63,9 +63,9 @@ public:
     RobotTeleoperate();
     ~RobotTeleoperate();
 
-    static boost::shared_ptr<RobotTeleoperate> GetPtr(const RobotTeleoperate::BasicConfig& config_);
+    static std::shared_ptr<RobotTeleoperate> GetPtr(const RobotTeleoperate::BasicConfig& config_);
 
-    static boost::shared_ptr<RobotTeleoperate> GetPtr(const std::string& filePath);
+    static std::shared_ptr<RobotTeleoperate> GetPtr(const std::string& filePath);
 
     virtual bool Init();
     virtual bool StartTeleop(bool verbose);
@@ -75,11 +75,11 @@ public:
 
 protected:
     // Solver
-    boost::shared_ptr<ArmSolver> armSolverPtr;
+    std::shared_ptr<ArmSolver> armSolverPtr;
 
-    boost::shared_ptr<RobotHardware> hardwarePtr;
+    std::shared_ptr<RobotHardware> hardwarePtr;
 
-    boost::shared_ptr<Transform> transformPtr;
+    std::shared_ptr<Transform> transformPtr;
 
     // For Head and Waist Control
     HeadSolver headSolver;

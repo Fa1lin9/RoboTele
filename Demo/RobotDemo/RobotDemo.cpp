@@ -6,24 +6,8 @@
 #include <thread>
 
 #include <source_path.h>
-int main(){
-//    RobotHardware::BasicConfig config  = {
-//        .networkInterface = "enp5s0",
-//        .robotType = RobotBase::RobotType::UnitreeG1Dof23,
-//        .description = "This is UnitreeG1Dof23",
-//        .headDof = 0,
-//        .armDof = 5,
-//        .waistDof = 1,
-//        .legDof = 6,
-//        .totalDof = 23,
-//    };
 
-//    auto hardware = RobotHardware::GetPtr(config);
-
-    std::string configPath =
-            static_cast<std::string>(SOURCE_FILE_PATH) + "/config/RobotHardware/UnitreeG1Dof23.json";
-    auto hardware = RobotHardware::GetPtr(configPath);
-
+void MainLoop(const std::shared_ptr<RobotHardware>& hardware){
     while(true){
         auto start = std::chrono::high_resolution_clock::now();
         std::cout << "-----------------------------------" << std::endl;
@@ -55,4 +39,29 @@ int main(){
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
         }
     }
+}
+
+int main(){
+//    RobotHardware::BasicConfig config  = {
+//        .networkInterface = "enp5s0",
+//        .robotType = RobotBase::RobotType::UnitreeG1Dof23,
+//        .description = "This is UnitreeG1Dof23",
+//        .headDof = 0,
+//        .armDof = 5,
+//        .waistDof = 1,
+//        .legDof = 6,
+//        .totalDof = 23,
+//    };
+
+//    auto hardware = RobotHardware::GetPtr(config);
+
+    std::shared_ptr<RobotHardware> hardware;
+
+    std::string configPath =
+            static_cast<std::string>(SOURCE_FILE_PATH) + "/config/RobotHardware/UnitreeG1Dof23.json";
+    if(true){
+        hardware = RobotHardware::GetPtr(configPath);
+    }
+
+    MainLoop(hardware);
 }

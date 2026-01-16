@@ -24,7 +24,7 @@
     
     "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2CrpRobot.json",
 
-    "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/UnitreeG1Dof23.json",
+    "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/CrpRobot.json",
 
     "_Ros2BridgeConfig": {
         "MsgType": "JointStateWithoutStamp",

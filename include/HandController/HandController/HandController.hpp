@@ -50,7 +50,7 @@ public:
 
     // static function
 
-    static boost::shared_ptr<HandController> GetPtr(const HandController::BasicConfig& config_);
+    static std::shared_ptr<HandController> GetPtr(const HandController::BasicConfig& config_);
 
 protected:
 

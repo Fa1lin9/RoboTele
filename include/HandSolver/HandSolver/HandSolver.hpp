@@ -34,7 +34,7 @@ public:
 
     static std::vector<double> GetUpperBound(const XRBase::XRType& type);
 
-    static boost::shared_ptr<HandSolver> GetPtr(const HandSolver::BasicConfig& config_);
+    static std::shared_ptr<HandSolver> GetPtr(const HandSolver::BasicConfig& config_);
 
 protected:
 

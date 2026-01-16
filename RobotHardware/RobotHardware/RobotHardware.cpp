@@ -7,9 +7,9 @@ RobotHardware::RobotHardware(){
 
 }
 
-RobotHardware::~RobotHardware(){
+//RobotHardware::~RobotHardware(){
 
-}
+//}
 
 /* ---------------- Connection ---------------- */
 
@@ -106,16 +106,16 @@ bool RobotHardware::SendCmd(const HumanoidCmd &cmd)
     return true;
 }
 
-boost::shared_ptr<RobotHardware> RobotHardware::GetPtr(const RobotHardware::BasicConfig &config){
+std::shared_ptr<RobotHardware> RobotHardware::GetPtr(const RobotHardware::BasicConfig &config){
     switch (config.robotType) {
         case RobotBase::RobotType::Ti5Robot :{
-           return boost::make_shared<Ti5RobotHardware>(config);
+           return std::make_shared<Ti5RobotHardware>(config);
         }
         case RobotBase::RobotType::UnitreeG1Dof23 :{
-           return boost::make_shared<G1Dof23Hardware>(config);
+           return std::make_shared<G1Dof23Hardware>(config);
         }
 //        case RobotBase::RobotType::UnitreeG1Dof29 :{
-//           return boost::make_shared<G1Dof29Hardware>(config);
+//           return std::make_shared<G1Dof29Hardware>(config);
 //        }
         default:{
             return nullptr;
@@ -123,7 +123,7 @@ boost::shared_ptr<RobotHardware> RobotHardware::GetPtr(const RobotHardware::Basi
     }
 }
 
-boost::shared_ptr<RobotHardware> RobotHardware::GetPtr(const std::string& filePath){
+std::shared_ptr<RobotHardware> RobotHardware::GetPtr(const std::string& filePath){
     JsonParser jsonParser(filePath);
     json::object rootObj = jsonParser.GetJsonObject();
 

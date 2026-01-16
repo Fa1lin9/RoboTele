@@ -12,15 +12,6 @@ GenericTeleoperate::GenericTeleoperate(const RobotTeleoperate::BasicConfig &conf
     // DataCollector
     this->dataCollector.Init(this->config.address);
 
-    // Ptr
-    this->armSolverPtr = ArmSolver::GetPtr(this->config.solverConfigPath);
-
-    this->transformPtr = Transform::GetPtr(this->config.transformConfigPath);
-
-    if(this->config.isReal){
-        this->hardwarePtr = RobotHardware::GetPtr(this->config.hardwareConfigPath);
-    }
-
     // For Head and Waist Solver
     if(this->config.enableHead){
         this->headSolver.Init(this->config.robotType);
@@ -32,12 +23,28 @@ GenericTeleoperate::GenericTeleoperate(const RobotTeleoperate::BasicConfig &conf
         waistJointsInfo = this->waistSolver.GetJointsInfo();
     }
 
+    // Ptr
+    std::cout << "------------------- Configuration Path -------------------" << std::endl;
+    std::cout << "solverConfigPath: \n" << this->config.solverConfigPath << std::endl;
+    std::cout << "transformConfigPath: \n" << this->config.transformConfigPath << std::endl;
+    std::cout << "hardwareConfigPath: \n" << this->config.hardwareConfigPath << std::endl;
+    std::cout << "------------------- Configuration Path -------------------" << std::endl;
+
+    this->armSolverPtr = ArmSolver::GetPtr(this->config.solverConfigPath);
+
+    this->transformPtr = Transform::GetPtr(this->config.transformConfigPath);
+
+    if(this->config.isReal){
+        std::cout << "------------------- Use RobotHardware -------------------" << std::endl;
+        this->hardwarePtr = RobotHardware::GetPtr(this->config.hardwareConfigPath);
+    }
+
     this->ros2Bridge.Init(this->config.bridgeConfig);
 
     this->handGestureDectector.Init(this->config.xrType);
 
     // Set qLast
-    std::cout << "Current Robot's DofTotal: " << this->armSolverPtr->GetTotalDof() << std::endl;
+    std::cout << "Current Robot's TotalDof: " << this->armSolverPtr->GetTotalDof() << std::endl;
     this->qLast = Eigen::VectorXd::Zero(this->armSolverPtr->GetTotalDof());
 
     // Speed Limits
@@ -51,11 +58,19 @@ GenericTeleoperate::~GenericTeleoperate(){
 }
 
 bool GenericTeleoperate::StartTeleop(bool verbose){
+//    if(this->config.isReal){
+//        std::cout << "------------------- Use RobotHardware -------------------" << std::endl;
+//        auto hardware = RobotHardware::GetPtr(this->config.hardwareConfigPath);
+//        this->hardwarePtr = RobotHardware::GetPtr(this->config.hardwareConfigPath);
+////        this->hardwarePtr = hardware;
+//    }
+//    auto hardware = RobotHardware::GetPtr(this->config.hardwareConfigPath);
+
     // Filter
     WeightedMovingFilter filter(this->config.filterWeight, this->armSolverPtr->GetTotalDof());
 
     this->startFlag = true;
-    this->saveFlag = false;
+    this->saveFlag = true;
 
     // Collector VisionPro's Data
     std::thread dataThread(&DataCollector::Run, &dataCollector);

@@ -11,16 +11,16 @@ Transform::~Transform(){
 
 }
 
-boost::shared_ptr<Transform> Transform::GetPtr(const Transform::BasicConfig &config_){
+std::shared_ptr<Transform> Transform::GetPtr(const Transform::BasicConfig &config_){
     switch (config_.type) {
         case Transform::Type::VisionPro2Ti5Robot :{
-           return boost::make_shared<VisionPro2Ti5RobotTransform>(config_);
+           return std::make_shared<VisionPro2Ti5RobotTransform>(config_);
         }
         case Transform::Type::VisionPro2UnitreeG1 :{
-           return boost::make_shared<VisionPro2UnitreeG1Transform>(config_);
+           return std::make_shared<VisionPro2UnitreeG1Transform>(config_);
         }
         case Transform::Type::VisionPro :{
-           return boost::make_shared<VisionProTransform>(config_);
+           return std::make_shared<VisionProTransform>(config_);
         }
         default:{
             return nullptr;
@@ -28,7 +28,7 @@ boost::shared_ptr<Transform> Transform::GetPtr(const Transform::BasicConfig &con
     }
 }
 
-boost::shared_ptr<Transform> Transform::GetPtr(const std::string& filePath){
+std::shared_ptr<Transform> Transform::GetPtr(const std::string& filePath){
     JsonParser jsonParser(filePath);
     json::object rootObj = jsonParser.GetJsonObject();
 

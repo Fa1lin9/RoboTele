@@ -60,7 +60,7 @@ public:
     };
 
     RobotHardware();
-    ~RobotHardware();
+    virtual ~RobotHardware() = default;
 
     /* ---------------- Connection ---------------- */
 
@@ -107,9 +107,9 @@ public:
 
     /* ---------------- Static Method ---------------- */
 
-    static boost::shared_ptr<RobotHardware> GetPtr(const RobotHardware::BasicConfig &config_);
+    static std::shared_ptr<RobotHardware> GetPtr(const RobotHardware::BasicConfig &config_);
 
-    static boost::shared_ptr<RobotHardware> GetPtr(const std::string& filePath);
+    static std::shared_ptr<RobotHardware> GetPtr(const std::string& filePath);
 
 
 protected:

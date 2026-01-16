@@ -49,19 +49,19 @@ std::vector<size_t> ArmSolver::GetRightArmQIndex()
 }
 
 
-boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const ArmSolver::BasicConfig &config_){
+std::shared_ptr<ArmSolver> ArmSolver::GetPtr(const ArmSolver::BasicConfig &config_){
     switch (config_.type) {
         case ArmSolver::Type::Ti5DualArm :{
-           return boost::make_shared<Ti5DualArmSolver>(config_);
+           return std::make_shared<Ti5DualArmSolver>(config_);
         }
         case ArmSolver::Type::G1Dof23DualArm :{
-           return boost::make_shared<G1Dof23DualArmSolver>(config_);
+           return std::make_shared<G1Dof23DualArmSolver>(config_);
         }
         case ArmSolver::Type::G1Dof29DualArm :{
-           return boost::make_shared<G1Dof29DualArmSolver>(config_);
+           return std::make_shared<G1Dof29DualArmSolver>(config_);
         }
         case ArmSolver::Type::GenericDualArm :{
-           return boost::make_shared<GenericDualArmSolver>(config_);
+           return std::make_shared<GenericDualArmSolver>(config_);
         }
         default:{
             return nullptr;
@@ -69,7 +69,7 @@ boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const ArmSolver::BasicConfig &con
     }
 }
 
-boost::shared_ptr<ArmSolver> ArmSolver::GetPtr(const std::string& filePath){
+std::shared_ptr<ArmSolver> ArmSolver::GetPtr(const std::string& filePath){
     JsonParser jsonParser(filePath);
     json::object rootObj = jsonParser.GetJsonObject();
 

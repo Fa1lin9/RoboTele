@@ -67,6 +67,10 @@ private:
 
     int queryMotionStatus();
 
+    void PrintCmdMsg();
+
+    bool IsBackToInitPose();
+
     // Unitree Variable
     unitree::robot::ChannelPublisherPtr<unitree_hg::msg::dds_::LowCmd_>
         cmdPublisher;

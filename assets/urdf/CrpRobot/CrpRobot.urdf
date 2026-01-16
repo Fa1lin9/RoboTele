@@ -3,7 +3,7 @@
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
-  name="CrpRobotDescription">
+  name="CrpRobot">
   <link
     name="AMR_link">
     <inertial>
@@ -518,8 +518,8 @@
       effort="0"
       velocity="0" /> -->
     <limit
-      lower="-3.14"
-      upper="3.14"
+      lower="-0.45"
+      upper="2.618"
       effort="0"
       velocity="0" />
   </joint>
@@ -574,7 +574,7 @@
     <child
       link="left_elbow_Link" />
     <axis
-      xyz="0 0 -1" />
+      xyz="0 0 1" />
     <limit
       lower="-3.14"
       upper="3.14"
@@ -639,8 +639,8 @@
       effort="0"
       velocity="0" /> -->
     <limit
-      lower="-1.571"
-      upper="1.927"
+      lower="-1.55"
+      upper="2.0"
       effort="0"
       velocity="0" />
   </joint>
@@ -760,8 +760,8 @@
       effort="0"
       velocity="0" /> -->
     <limit
-      lower="-1.571"
-      upper="1.571"
+      lower="-0.958"
+      upper="0.86"
       effort="0"
       velocity="0" />
   </joint>
@@ -818,8 +818,8 @@
     <axis
       xyz="1 0 0" />
     <limit
-      lower="-1.0467"
-      upper="1.0467"
+      lower="-1.71"
+      upper="0.826"
       effort="0"
       velocity="0" />
   </joint>
@@ -939,8 +939,8 @@
       effort="0"
       velocity="0" /> -->
     <limit
-      lower="-3.14"
-      upper="3.14"
+      lower="-0.45"
+      upper="2.618"
       effort="0"
       velocity="0" />
   </joint>
@@ -997,7 +997,7 @@
     <axis
       xyz="0 0 -1" />
     <limit
-      lower="-3.41"
+      lower="-3.14"
       upper="3.14"
       effort="0"
       velocity="0" />
@@ -1060,8 +1060,8 @@
       effort="0"
       velocity="0" /> -->
     <limit
-      lower="-1.571"
-      upper="1.927"
+      lower="-1.55"
+      upper="2.0"
       effort="0"
       velocity="0" />
   </joint>
@@ -1116,7 +1116,7 @@
     <child
       link="right_armend_Link" />
     <axis
-      xyz="0 0 1" />
+      xyz="0 0 -1" />
     <limit
       lower="-3.14"
       upper="3.14"
@@ -1181,8 +1181,8 @@
       effort="0"
       velocity="0" /> -->
     <limit
-      lower="-1.571"
-      upper="1.571"
+      lower="-0.958"
+      upper="0.86"
       effort="0"
       velocity="0" />
   </joint>
@@ -1231,6 +1231,25 @@
     type="revolute">
     <origin
       xyz="0 0 0"
+      rpy="3.1415926 0 0" />
+    <parent
+      link="right_wrist_Link" />
+    <child
+      link="right_hand_Link" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="-1.71"
+      upper="0.826"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <!-- Origin version corespond to NoHand Model -->
+  <!-- <joint
+    name="JT_rightwrist_roll"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
       rpy="0 0 0" />
     <parent
       link="right_wrist_Link" />
@@ -1243,5 +1262,5 @@
       upper="1.0467"
       effort="0"
       velocity="0" />
-  </joint>
+  </joint> -->
 </robot>

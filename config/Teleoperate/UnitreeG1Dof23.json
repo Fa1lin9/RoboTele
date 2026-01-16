@@ -26,11 +26,6 @@
 
     "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/UnitreeG1Dof23.json",
 
-    "_Ros2BridgeConfig": {
-        "MsgType": "JointStateWithoutStamp",
-        "TopicName": "position_control/joint_state"
-    },
-
     "Ros2BridgeConfig": {
         "MsgType": "JointState",
         "TopicName": "HumanoidCtrl/humanoid_msgs/msg/JointState"

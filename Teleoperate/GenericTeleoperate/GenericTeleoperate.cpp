@@ -58,14 +58,6 @@ GenericTeleoperate::~GenericTeleoperate(){
 }
 
 bool GenericTeleoperate::StartTeleop(bool verbose){
-//    if(this->config.isReal){
-//        std::cout << "------------------- Use RobotHardware -------------------" << std::endl;
-//        auto hardware = RobotHardware::GetPtr(this->config.hardwareConfigPath);
-//        this->hardwarePtr = RobotHardware::GetPtr(this->config.hardwareConfigPath);
-////        this->hardwarePtr = hardware;
-//    }
-//    auto hardware = RobotHardware::GetPtr(this->config.hardwareConfigPath);
-
     // Filter
     WeightedMovingFilter filter(this->config.filterWeight, this->armSolverPtr->GetTotalDof());
 

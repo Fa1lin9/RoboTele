@@ -38,7 +38,9 @@ bool G1Dof23Hardware::SendCmd(const RobotHardware::HumanoidCmd& cmd)
         throw std::invalid_argument("[G1Dof23Hardware::SendCmd] Sry, the UnitreeG1 doesn't have headDof! ");
     }
 
-    std::cout << "[G1Dof23Hardware::SendCmd] Send cmd! " << std::endl;
+    if(cmd.verbose){
+        std::cout << "[G1Dof23Hardware::SendCmd] Send cmd! " << std::endl;
+    }
 
     this->cmdBuffer.SetData(cmd);
     std::unique_lock lock(this->cmdMutex);
@@ -432,8 +434,7 @@ void G1Dof23Hardware::InitMsg()
         this->cmdMsg.motor_cmd().at(this->leftArmJointIndex[i]).mode() = 1;
 
         // For Wrist
-        if(this->leftArmJointIndex[i] >= RobotBase::UnitreeG1::JointIndex::kLeftWristRoll &&
-           this->leftArmJointIndex[i] <= RobotBase::UnitreeG1::JointIndex::kLeftWristYaw){
+        if(this->leftArmJointIndex[i] >= RobotBase::UnitreeG1::JointIndex::kLeftWristRoll){
             this->cmdMsg.motor_cmd().at(this->leftArmJointIndex[i]).kp() = this->kpWrist;
             this->cmdMsg.motor_cmd().at(this->leftArmJointIndex[i]).kd() = this->kdWrist;
         } else {
@@ -446,8 +447,7 @@ void G1Dof23Hardware::InitMsg()
         this->cmdMsg.motor_cmd().at(this->rightArmJointIndex[i]).mode() = 1;
 
         // For Wrist
-        if(this->rightArmJointIndex[i] >= RobotBase::UnitreeG1::JointIndex::kRightWristRoll &&
-           this->rightArmJointIndex[i] <= RobotBase::UnitreeG1::JointIndex::kRightWristYaw){
+        if(this->rightArmJointIndex[i] >= RobotBase::UnitreeG1::JointIndex::kRightWristRoll){
             this->cmdMsg.motor_cmd().at(this->rightArmJointIndex[i]).kp() = this->kpWrist;
             this->cmdMsg.motor_cmd().at(this->rightArmJointIndex[i]).kd() = this->kdWrist;
         } else {
@@ -497,9 +497,11 @@ void G1Dof23Hardware::MainLoop()
         .enableWaist = true,
         .enableLeftLeg = true,
         .enableRightLeg = true,
+        .verbose = false,
     };
 
     auto initStart = std::chrono::steady_clock::now();
+    bool initFlag = false;
 
     while (this->runningMainLoop) {
         auto start = std::chrono::high_resolution_clock::now();
@@ -507,6 +509,12 @@ void G1Dof23Hardware::MainLoop()
         // Back to initial pose
         auto now = std::chrono::steady_clock::now();
         double elapsed = std::chrono::duration<double>(now - initStart).count();
+
+        if (elapsed >= 3.0 && !initFlag) {
+            std::cout << "[G1Dof23Hardware::MainLoop] BackToInitPose finished." << std::endl;
+            initFlag = true;
+        }
+
         if (elapsed < 3.0) {
             this->BackToInitPose(cmd);
         }

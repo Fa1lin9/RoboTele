@@ -50,6 +50,8 @@ public:
         bool enableLeftLeg = false;
         bool enableRightLeg = false;
 
+        bool verbose = true;
+
         // q
         std::vector<double> qTargetHead;
         std::vector<double> qTargetLeftArm;

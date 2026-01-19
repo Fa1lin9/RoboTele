@@ -268,10 +268,11 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
                     .enableWaist = false,
                     .enableLeftLeg = false,
                     .enableRightLeg = false,
-//                    .qTargetLeftArm = qTargetLeftArm,
-//                    .qTargetRightArm = qTargetRightArm,
-                    .qTargetLeftArm = std::vector<double>{0., 0, 0, 0.5, 0},
-                    .qTargetRightArm = std::vector<double>{0., 0, 0, 0.5, 0},
+                    .verbose = true,
+                    .qTargetLeftArm = qTargetLeftArm,
+                    .qTargetRightArm = qTargetRightArm,
+//                    .qTargetLeftArm = std::vector<double>{0., 0, 0, 0.5, 0},
+//                    .qTargetRightArm = std::vector<double>{0., 0, 0, 0.5, 0},
                 };
 
 //                auto state = this->hardwarePtr->GetState(true);

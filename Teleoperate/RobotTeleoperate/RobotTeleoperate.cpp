@@ -51,69 +51,11 @@ std::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& fi
 
     RobotBase::RobotType robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
 
-//    std::cout << "Translation kind = " << (int)solverObj["TranslationWeight"].kind() << std::endl;
-//    std::cout << "Rotation kind = " << (int)solverObj["RotationWeight"].kind() << std::endl;
-//    std::cout << "Regularization kind = " << (int)solverObj["RegularizationWeight"].kind() << std::endl;
-//    std::cout << "Smooth kind = " << (int)solverObj["SmoothWeight"].kind() << std::endl;
-
-    // ArmSolver
-//    ArmSolver::BasicConfig solverConfig = {
-//        .type = ArmSolver::GetTypeFromStr(solverObj["Type"].as_string().c_str()),
-////        .baseFrameName = {"BASE_S"},
-//        .baseFrameName = JsonParser::JsonArray2StdVecStr(solverObj["BaseFrameName"].as_array()),
-////        .targetFrameName = {"L_WRIST_R", "R_WRIST_R"},
-//        .targetFrameName = JsonParser::JsonArray2StdVecStr(solverObj["TargetFrameName"].as_array()),
-////        .baseOffset = {JsonParser::JsonArray2EigenMatrixXd(solverObj["BaseOffset"].as_array()[0].as_array())},
-//        // for nlopt
-////        .maxIteration = 400,
-////        .relativeTol = 1e-2,
-//        // for ipopt
-//        .maxIteration = static_cast<int>(solverObj["MaxIteration"].as_int64()),
-//        .relativeTol = solverObj["RelativeTol"].as_double(),
-//        .armActiveDof = JsonParser::JsonArray2StdVecInt(solverObj["ArmActiveDof"].as_array()),
-//        .wTranslation = solverObj["ObjectiveFunc"].as_object()["TranslationWeight"].as_double(),
-//        .wRotation = solverObj["ObjectiveFunc"].as_object()["RotationWeight"].as_double(),
-//        .wRegularization = solverObj["ObjectiveFunc"].as_object()["RegularizationWeight"].as_double(),
-//        .wSmooth = solverObj["ObjectiveFunc"].as_object()["SmoothWeight"].as_double(),
-//    };
-//    // In the future, the variable BaseOffset maybe not just 1
-//    // So I choose to set BaseOffset to 3-D array
-//    std::vector<Eigen::Matrix4d> baseOffset;
-//    for(size_t i=0;i<solverObj["BaseOffset"].as_array().size();i++){
-//        auto element = JsonParser::JsonArray2EigenMatrixXd(solverObj["BaseOffset"].as_array()[i].as_array());
-//        baseOffset.push_back(element);
-//    }
-//    solverConfig.baseOffset = baseOffset;
-
-//    // For targetOffset
-//    std::vector<Eigen::Matrix4d> targetOffset;
-//    for(size_t i=0;i<solverObj["TargetOffset"].as_array().size();i++){
-//        auto element = JsonParser::JsonArray2EigenMatrixXd(solverObj["TargetOffset"].as_array()[i].as_array());
-//        targetOffset.push_back(element);
-//    }
-//    solverConfig.targetOffset = targetOffset;
-
-    // Transform
-//    Transform::BasicConfig transformConfig = {
-//        .T_Head2Waist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Head2Waist"].as_array()),
-//        .T_XR2Robot = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_XR2Robot"].as_array()),
-//        .T_Robot2LeftWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2LeftWrist"].as_array()),
-//        .T_Robot2RightWrist = JsonParser::JsonArray2EigenMatrixXd(transformObj["T_Robot2RightWrist"].as_array()),
-//        .offset = JsonParser::JsonArray2EigenVectorXd(transformObj["Offset"].as_array()),
-//        .type = Transform::GetTypeFromStr(transformObj["Type"].as_string().c_str()),
-//    };
-
-//    // RobotHardware
-//    RobotHardware::BasicConfig hardwareConfig = {
-//        .robotType = robotType,
-//    };
-
     // Ros2Bridge
     Ros2Bridge::BasicConfig bridgeConfig = {
         .topicName = ros2BridgeObj["TopicName"].as_string().c_str(),
         .msgType = Ros2Bridge::GetMsgTypeFromStr(ros2BridgeObj["MsgType"].as_string().c_str()),
     };
-
 
     RobotTeleoperate::BasicConfig config = {
         .robotType = robotType,

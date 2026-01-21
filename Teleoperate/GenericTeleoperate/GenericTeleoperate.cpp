@@ -204,7 +204,7 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
 //                qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
 //                qEigen(headJointsInfo[2].index) = headRPY(0); // Row
                 for(size_t i=0;i<3;i++){
-                    if(headJointsInfo[i].index != 0){
+                    if(headJointsInfo[i].index != -1){
                         qEigen(headJointsInfo[i].index) =
                                 headRPY(headJointsInfo[i].type) * headJointsInfo[i].direction;
                     }
@@ -217,7 +217,7 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
 //                qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
 //                qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
                 for(size_t i=0;i<3;i++){
-                    if(waistJointsInfo[i].index != 0){
+                    if(waistJointsInfo[i].index != -1){
                         qEigen(waistJointsInfo[i].index) =
                                 waistRPY(waistJointsInfo[i].type) * waistJointsInfo[i].direction;
                     }

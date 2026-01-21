@@ -1,0 +1,10 @@
+{
+
+    "JointsIndex":  [-1, 2, 3],
+    "JointsName" :  ["Null", "JT_waist_pitch", "JT_waist_yaw"],
+    "EulerAxis":    ["Roll", "Pitch", "Yaw"],
+    "UpperBound":   [0, 0.4363, 1.0472],
+    "LowerBound":   [0, -0.3491, -1.0472],
+    "Direction":    [0, -1, -1]
+
+}

@@ -10,17 +10,12 @@ from VisionProData import VisionProData_pb2
 
 # ==================== 配置 ====================
 fps = 25
-
-# file_name = "20251203_095737.csv" # good data
-# file_name = "20251204_144546.csv"
-# file_name = "20251204_152315.csv"
-
 # new data
 # file_name = "20251226_100815.csv" # sit down
-file_name = "20251226_112653.csv" # stand up
+# file_name = "20251226_112653.csv" # stand up
 
-# for gumpgan
-# file_name = "20251226_110804.csv"
+# new
+file_name = "20260121_131848.csv"
 
 # for hand
 # file_name = "20251213_153136.csv"

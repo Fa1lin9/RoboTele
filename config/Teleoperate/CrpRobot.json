@@ -14,26 +14,27 @@
     "_FilterWeight": [0.7, 0.2, 0.1],
     
     "BodyEnable": {
-        "Head": true,
-        "Waist": false,
-        "LeftArm": true,
-        "RightArm": true,
-        "LeftLeg": false,
-        "RightLeg": false
+        "Head":         true,
+        "Waist":        false,
+        "LeftArm":      true,
+        "RightArm":     true,
+        "LeftLeg":      false,
+        "RightLeg":     false
     },
 
     "ConfigPath": {
         "UseRootPath": true,
 
-        "ArmSolver": "/config/ArmSolver/CrpDualArm.json",
+        "ArmSolver":        "/config/ArmSolver/CrpDualArm.json",
 
-        "Transform": "/config/Transform/VisionPro2CrpRobot.json",
+        "HeadSolver":       "/config/BasicSolver/HeadSolver/CrpRobot.json",
 
-        "RobotHardware": "/config/RobotHardware/CrpRobot.json",
+        "WaistSolver":      "/config/BasicSolver/WaistSolver/CrpRobot.json",
 
-        "HeadSolver": "/config/HeadSolver/CrpRobot.json",
+        "Transform":        "/config/Transform/VisionPro2CrpRobot.json",
 
-        "WaistSolver": "/config/WaistSolver/CrpRobot.jso"
+        "RobotHardware":    "/config/RobotHardware/CrpRobot.json"
+
     },
 
     "Ros2BridgeConfig": {

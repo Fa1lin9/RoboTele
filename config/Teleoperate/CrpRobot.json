@@ -13,22 +13,25 @@
     "FilterWeight": [0.4, 0.3, 0.2, 0.1],
     "_FilterWeight": [0.7, 0.2, 0.1],
     
-    "EnableHead": false,
+    "EnableHead": true,
     "EnableWaist": false,
     "EnableLeftArm": true,
     "EnableRightArm": true,
     "EnableLeftLeg": false,
     "EnableRightLeg": false,
 
-    "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/CrpDualArm.json",
-    
-    "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2CrpRobot.json",
+    "ConfigPath": {
+        "UseRootPath": true,
 
-    "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/CrpRobot.json",
+        "ArmSolverConfigPath": "/config/ArmSolver/CrpDualArm.json",
 
-    "_Ros2BridgeConfig": {
-        "MsgType": "JointStateWithoutStamp",
-        "TopicName": "position_control/joint_state"
+        "TransformConfigPath": "/config/Transform/VisionPro2CrpRobot.json",
+
+        "HardwareConfigPath": "/config/RobotHardware/CrpRobot.json",
+
+        "HeadSolverConfigPath": "/config/HeadSolver/CrpRobot.json",
+
+        "WaistSolverConfigPath": "/config/WaistSolver/CrpRobot.jso"
     },
 
     "Ros2BridgeConfig": {

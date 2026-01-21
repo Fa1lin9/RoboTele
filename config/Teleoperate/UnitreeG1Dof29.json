@@ -20,15 +20,18 @@
     "EnableLeftLeg": false,
     "EnableRightLeg": false,
 
-    "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/G1Dof29DualArm.json",
+    "ConfigPath": {
+        "UseRootPath": true,
 
-    "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2UnitreeG1.json",
+        "ArmSolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/G1Dof29DualArm.json",
 
-    "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/UnitreeG1Dof29.json",
+        "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2UnitreeG1.json",
 
-    "_Ros2BridgeConfig": {
-        "MsgType": "JointStateWithoutStamp",
-        "TopicName": "position_control/joint_state"
+        "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/UnitreeG1Dof29.json",
+
+        "HeadSolverConfigPath": "",
+
+        "WaistSolverConfigPath": ""
     },
 
     "Ros2BridgeConfig": {

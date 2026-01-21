@@ -12,6 +12,7 @@ namespace RobotBase{
         std::string name;
         int index;
         MatrixUtils::EulerAxis type;
+        int direction;
     };
 
     enum RobotType{

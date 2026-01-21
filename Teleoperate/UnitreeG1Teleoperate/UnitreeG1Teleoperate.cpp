@@ -13,7 +13,7 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
     this->dataCollector.Init(this->config.address);
 
     // Ptr
-    this->armSolverPtr = ArmSolver::GetPtr(this->config.solverConfigPath);
+    this->armSolverPtr = ArmSolver::GetPtr(this->config.armSolverConfigPath);
 
     this->transformPtr = Transform::GetPtr(this->config.transformConfigPath);
 
@@ -29,15 +29,15 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
 //    this->InitPtr(config);
 
     // For Head and Waist Solver
-    if(this->config.enableHead){
-        this->headSolver.Init(this->config.robotType);
-        this->headJointsInfo = this->headSolver.GetJointsInfo();
-    }
+//    if(this->config.enableHead){
+//        this->headSolver.Init(this->config.robotType);
+//        this->headJointsInfo = this->headSolver.GetJointsInfo();
+//    }
 
-    if(this->config.enableWaist){
-        this->waistSolver.Init(this->config.robotType);
-        waistJointsInfo = this->waistSolver.GetJointsInfo();
-    }
+//    if(this->config.enableWaist){
+//        this->waistSolver.Init(this->config.robotType);
+//        waistJointsInfo = this->waistSolver.GetJointsInfo();
+//    }
 
     this->ros2Bridge.Init(this->config.bridgeConfig);
 

@@ -37,7 +37,9 @@ public:
         int FPS;
 
 //        ArmSolver::BasicConfig solverConfig;
-        std::string solverConfigPath;
+        std::string armSolverConfigPath;
+        std::string headSolverConfigPath;
+        std::string waistSolverConfigPath;
 //        RobotHardware::BasicConfig hardwareConfig;
         std::string hardwareConfigPath;
 //        Transform::BasicConfig transformConfig;
@@ -58,6 +60,8 @@ public:
         bool enableWaist;
 //        bool enableLeftLeg;
 //        bool enableRightLeg;
+
+        bool useRootPath;
     };
 
     RobotTeleoperate();

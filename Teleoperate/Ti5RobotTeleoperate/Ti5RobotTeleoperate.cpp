@@ -13,17 +13,17 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
     this->dataCollector.Init(this->config.address);
 
     // For Head and Waist Solver
-    if(this->config.enableHead){
-        this->headSolver.Init(this->config.robotType);
-        this->headJointsInfo = this->headSolver.GetJointsInfo();
-    }
+//    if(this->config.enableHead){
+//        this->headSolver.Init(this->config.robotType);
+//        this->headJointsInfo = this->headSolver.GetJointsInfo();
+//    }
 
-    if(this->config.enableWaist){
-        this->waistSolver.Init(this->config.robotType);
-        waistJointsInfo = this->waistSolver.GetJointsInfo();
-    }
+//    if(this->config.enableWaist){
+//        this->waistSolver.Init(this->config.robotType);
+//        waistJointsInfo = this->waistSolver.GetJointsInfo();
+//    }
 
-    this->armSolverPtr = ArmSolver::GetPtr(this->config.solverConfigPath);
+    this->armSolverPtr = ArmSolver::GetPtr(this->config.armSolverConfigPath);
 
     this->transformPtr = Transform::GetPtr(this->config.transformConfigPath);
 

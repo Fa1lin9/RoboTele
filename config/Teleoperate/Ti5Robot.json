@@ -20,15 +20,18 @@
     "EnableLeftLeg": false,
     "EnableRightLeg": false,
 
-    "SolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/Ti5DualArm.json",
+    "ConfigPath": {
+        "UseRootPath": true,
 
-    "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2Ti5Robot.json",
+        "ArmSolverConfigPath": "/config/ArmSolver/Ti5DualArm.json",
 
-    "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/Ti5Robot.json",
+        "TransformConfigPath": "/config/Transform/VisionPro2Ti5Robot.json",
 
-    "_Ros2BridgeConfig": {
-        "MsgType": "JointStateWithoutStamp",
-        "TopicName": "position_control/joint_state"
+        "HardwareConfigPath": "/config/RobotHardware/Ti5Robot.json",
+
+        "HeadSolverConfigPath": "/config/BasicSolver/HeadSolver/Ti5Robot.json",
+
+        "WaistSolverConfigPath": "/config/BasicSolver/WaistSolver/Ti5Robot.json"
     },
 
     "Ros2BridgeConfig": {

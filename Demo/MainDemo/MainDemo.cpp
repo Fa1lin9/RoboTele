@@ -16,9 +16,9 @@ int main(){
     std::cout<<"UnitreeG1Dof29 ConfigPath: "<<UnitreeG1Dof29ConfigPath<<std::endl;
     std::cout<<"UnitreeG1Dof23 ConfigPath: "<<UnitreeG1Dof23ConfigPath<<std::endl;
 
-//    auto teleoperatePtr = RobotTeleoperate::GetPtr(Ti5RobotConfigPath);
+    auto teleoperatePtr = RobotTeleoperate::GetPtr(Ti5RobotConfigPath);
 //    auto teleoperatePtr = RobotTeleoperate::GetPtr(CrpRobotConfigPath);
-    auto teleoperatePtr = RobotTeleoperate::GetPtr(UnitreeG1Dof23ConfigPath);
+//    auto teleoperatePtr = RobotTeleoperate::GetPtr(UnitreeG1Dof23ConfigPath);
 
     teleoperatePtr->StartTeleop(false);
 }

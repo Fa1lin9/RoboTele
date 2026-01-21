@@ -12,16 +12,18 @@ class HeadSolver
 {
 public:
     HeadSolver();
-    HeadSolver(const RobotBase::RobotType& type);
+    HeadSolver(const std::string& path);
     ~HeadSolver();
 
-    void Init(const RobotBase::RobotType& type);
+    void Init(const std::string& path);
 
     Eigen::Vector3d Solve(const Eigen::Matrix4d &mat);
 
-    std::vector<int> GetJointsIndex();
+//    std::vector<int> GetJointsIndex();
 
-    std::vector<std::string> GetJointsName();
+//    std::vector<std::string> GetJointsName();
+
+//    std::vector<int> GetDirection();
 
     std::vector<RobotBase::JointInfo> GetJointsInfo();
 
@@ -35,15 +37,19 @@ private:
 
     std::string configPath;
     JsonParser jsonParser;
-    json::object rootObj;
     json::object robotObj;
 
-    std::string typeStr;
+//    std::string typeStr;
+    std::vector<int> direction;
+    std::vector<int> jointsIndex;
+    std::vector<std::string> jointsName;
 
     std::vector<double> upperBound;
     std::vector<double> lowerBound;
 
-    RobotBase::RobotType type;
+    bool initFlag = false;
+
+//    RobotBase::RobotType type;
 
     std::vector<RobotBase::JointInfo> jointsInfo;
 };

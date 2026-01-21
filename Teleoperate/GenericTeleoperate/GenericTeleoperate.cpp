@@ -14,23 +14,25 @@ GenericTeleoperate::GenericTeleoperate(const RobotTeleoperate::BasicConfig &conf
 
     // For Head and Waist Solver
     if(this->config.enableHead){
-        this->headSolver.Init(this->config.robotType);
+        this->headSolver.Init(this->config.headSolverConfigPath);
         this->headJointsInfo = this->headSolver.GetJointsInfo();
     }
 
     if(this->config.enableWaist){
-        this->waistSolver.Init(this->config.robotType);
+        this->waistSolver.Init(this->config.waistSolverConfigPath);
         waistJointsInfo = this->waistSolver.GetJointsInfo();
     }
 
     // Ptr
     std::cout << "------------------- Configuration Path -------------------" << std::endl;
-    std::cout << "solverConfigPath: \n" << this->config.solverConfigPath << std::endl;
-    std::cout << "transformConfigPath: \n" << this->config.transformConfigPath << std::endl;
-    std::cout << "hardwareConfigPath: \n" << this->config.hardwareConfigPath << std::endl;
+    std::cout << "ArmSolver: \n" << this->config.armSolverConfigPath << std::endl;
+    std::cout << "HeadSolver: \n" << this->config.headSolverConfigPath << std::endl;
+   std::cout << "WaistSolver: \n" << this->config.waistSolverConfigPath << std::endl;
+    std::cout << "Transform: \n" << this->config.transformConfigPath << std::endl;
+    std::cout << "RobotHardware: \n" << this->config.hardwareConfigPath << std::endl;
     std::cout << "------------------- Configuration Path -------------------" << std::endl;
 
-    this->armSolverPtr = ArmSolver::GetPtr(this->config.solverConfigPath);
+    this->armSolverPtr = ArmSolver::GetPtr(this->config.armSolverConfigPath);
 
     this->transformPtr = Transform::GetPtr(this->config.transformConfigPath);
 
@@ -181,16 +183,28 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
             }
             if(this->config.enableHead){
                 // Set Value to Head
-                qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
-                qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
-                qEigen(headJointsInfo[2].index) = headRPY(0); // Row
+//                qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
+//                qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
+//                qEigen(headJointsInfo[2].index) = headRPY(0); // Row
+                for(size_t i=0;i<3;i++){
+                    if(headJointsInfo[i].index != 0){
+                        qEigen(headJointsInfo[i].index) =
+                                headRPY(headJointsInfo[i].type) * headJointsInfo[i].direction;
+                    }
+                }
             }
 
             if(this->config.enableWaist){
                 // Set Value to Waist
-                qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
-                qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
-                qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
+//                qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
+//                qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
+//                qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
+                for(size_t i=0;i<3;i++){
+                    if(waistJointsInfo[i].index != 0){
+                        qEigen(waistJointsInfo[i].index) =
+                                waistRPY(waistJointsInfo[i].type) * waistJointsInfo[i].direction;
+                    }
+                }
             }
 
             // Check solution

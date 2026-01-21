@@ -83,11 +83,6 @@ if( BuildPackages_RobotHardware )
     add_subdirectory( src/RobotHardware )
 endif()
 
-option( BuildPackages_SimRobot "Whether generate Core package?" ON )
-if( BuildPackages_SimRobot)
-    add_subdirectory( src/SimRobot )
-endif()
-
 option( BuildPackages_ArmSolver "Whether generate Core package?" ON )
 if( BuildPackages_ArmSolver )
     add_subdirectory( src/ArmSolver )

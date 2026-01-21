@@ -13,25 +13,27 @@
     "FilterWeight": [0.4, 0.3, 0.2, 0.1],
     "_FilterWeight": [0.7, 0.2, 0.1],
 
-    "EnableHead": false,
-    "EnableWaist": false,
-    "EnableLeftArm": true,
-    "EnableRightArm": true,
-    "EnableLeftLeg": false,
-    "EnableRightLeg": false,
+    "BodyEnable": {
+        "Head": false,
+        "Waist": false,
+        "LeftArm": true,
+        "RightArm": true,
+        "LeftLeg": false,
+        "RightLeg": false
+    },
 
     "ConfigPath": {
         "UseRootPath": true,
 
-        "ArmSolverConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/ArmSolver/G1Dof29DualArm.json",
+        "ArmSolver": "/config/ArmSolver/G1Dof29DualArm.json",
 
-        "TransformConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/Transform/VisionPro2UnitreeG1.json",
+        "Transform": "/config/Transform/VisionPro2UnitreeG1.json",
 
-        "HardwareConfigPath": "/home/pangk/chf_ws/project/RobotTeleoperate/config/RobotHardware/UnitreeG1Dof29.json",
+        "RobotHardware": "/config/RobotHardware/UnitreeG1Dof29.json",
 
-        "HeadSolverConfigPath": "",
+        "HeadSolver": "",
 
-        "WaistSolverConfigPath": ""
+        "WaistSolver": ""
     },
 
     "Ros2BridgeConfig": {

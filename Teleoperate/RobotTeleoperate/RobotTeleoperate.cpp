@@ -47,6 +47,7 @@ std::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& fi
 //    json::object hardwareObj = rootObj["HardwareConfig"].as_object();
     json::object ros2BridgeObj = rootObj["Ros2BridgeConfig"].as_object();
     json::object configPathObj = rootObj["ConfigPath"].as_object();
+    json::object bodyEnableObj = rootObj["BodyEnable"].as_object();
 
     RobotBase::RobotType robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
 
@@ -120,23 +121,27 @@ std::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& fi
         .address = rootObj["Address"].as_string().c_str(),
         .FPS = static_cast<int>(rootObj["FPS"].as_int64()),
 
-        .armSolverConfigPath = configPathObj["ArmSolverConfigPath"].as_string().c_str(),
-        .headSolverConfigPath = configPathObj["HeadSolverConfigPath"].as_string().c_str(),
-        .waistSolverConfigPath = configPathObj["WaistSolverConfigPath"].as_string().c_str(),
-        .hardwareConfigPath = configPathObj["HardwareConfigPath"].as_string().c_str(),
-        .transformConfigPath = configPathObj["TransformConfigPath"].as_string().c_str(),
+//        .armSolverConfigPath = configPathObj["ArmSolverConfigPath"].as_string().c_str(),
+//        .headSolverConfigPath = configPathObj["HeadSolverConfigPath"].as_string().c_str(),
+//        .waistSolverConfigPath = configPathObj["WaistSolverConfigPath"].as_string().c_str(),
+//        .hardwareConfigPath = configPathObj["HardwareConfigPath"].as_string().c_str(),
+//        .transformConfigPath = configPathObj["TransformConfigPath"].as_string().c_str(),
 
         .bridgeConfig = bridgeConfig,
+
         .isSim  = rootObj["IsSimulatedRobot"].as_bool(),
         .isReal = rootObj["IsRealWorldRobot"].as_bool(),
+
         .isCheckSolution = rootObj["IsCheckSolution"].as_bool(),
         .isFilterSolution = rootObj["IsFilterSolution"].as_bool(),
-        .enableHead = rootObj["EnableHead"].as_bool(),
+
+//        .enableHead = rootObj["EnableHead"].as_bool(),
 //        .enableLeftArm = rootObj["EnableLeftArm"].as_bool(),
 //        .enableRightArm = rootObj["EnableRightArm"].as_bool(),
-        .enableWaist = rootObj["EnableWaist"].as_bool(),
+//        .enableWaist = rootObj["EnableWaist"].as_bool(),
 //        .enableLeftLeg = rootObj["EnableLeftLeg"].as_bool(),
 //        .enableRightLeg = rootObj["EnableRightLeg"].as_bool(),
+
         .useRootPath = configPathObj["UseRootPath"].as_bool(),
     };
 
@@ -153,11 +158,19 @@ std::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& fi
         return config.useRootPath ? (rootPath + p) : p;
     };
 
-    config.armSolverConfigPath     = getFullPath("ArmSolverConfigPath");
-    config.headSolverConfigPath    = getFullPath("HeadSolverConfigPath");
-    config.waistSolverConfigPath   = getFullPath("WaistSolverConfigPath");
-    config.hardwareConfigPath      = getFullPath("HardwareConfigPath");
-    config.transformConfigPath     = getFullPath("TransformConfigPath");
+    config.armSolverConfigPath     = getFullPath("ArmSolver");
+    config.headSolverConfigPath    = getFullPath("HeadSolver");
+    config.waistSolverConfigPath   = getFullPath("WaistSolver");
+    config.hardwareConfigPath      = getFullPath("RobotHardware");
+    config.transformConfigPath     = getFullPath("Transform");
+
+    // For BodyEnable
+    config.enableHead     = bodyEnableObj["Head"].as_bool();
+    config.enableWaist    = bodyEnableObj["Waist"].as_bool();
+    config.enableLeftArm  = bodyEnableObj["LeftArm"].as_bool();
+    config.enableRightArm = bodyEnableObj["RightArm"].as_bool();
+    config.enableLeftLeg  = bodyEnableObj["LeftLeg"].as_bool();
+    config.enableRightLeg = bodyEnableObj["RightLeg"].as_bool();
 
     return RobotTeleoperate::GetPtr(config);
 }

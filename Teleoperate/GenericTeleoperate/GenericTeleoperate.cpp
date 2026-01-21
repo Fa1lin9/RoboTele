@@ -12,6 +12,23 @@ GenericTeleoperate::GenericTeleoperate(const RobotTeleoperate::BasicConfig &conf
     // DataCollector
     this->dataCollector.Init(this->config.address);
 
+    std::cout << "------------------- Body Enable -------------------" << std::endl;
+//    std::cout << "Head: "      << std::boolalpha << this->config.enableHead      << std::endl;
+//    std::cout << "Waist: "     << std::boolalpha << this->config.enableWaist     << std::endl;
+//    std::cout << "LeftArm: "   << std::boolalpha << this->config.enableLeftArm   << std::endl;
+//    std::cout << "RightArm: "  << std::boolalpha << this->config.enableRightArm  << std::endl;
+//    std::cout << "LeftLeg: "   << std::boolalpha << this->config.enableLeftLeg   << std::endl;
+//    std::cout << "RightLeg: "  << std::boolalpha << this->config.enableRightLeg  << std::endl;
+
+    std::cout << "Head: "      << this->config.enableHead      << std::endl;
+    std::cout << "Waist: "     << this->config.enableWaist     << std::endl;
+    std::cout << "LeftArm: "   << this->config.enableLeftArm   << std::endl;
+    std::cout << "RightArm: "  << this->config.enableRightArm  << std::endl;
+    std::cout << "LeftLeg: "   << this->config.enableLeftLeg   << std::endl;
+    std::cout << "RightLeg: "  << this->config.enableRightLeg  << std::endl;
+    std::cout << "------------------- Body Enable -------------------" << std::endl;
+
+
     // For Head and Waist Solver
     if(this->config.enableHead){
         this->headSolver.Init(this->config.headSolverConfigPath);
@@ -27,7 +44,7 @@ GenericTeleoperate::GenericTeleoperate(const RobotTeleoperate::BasicConfig &conf
     std::cout << "------------------- Configuration Path -------------------" << std::endl;
     std::cout << "ArmSolver: \n" << this->config.armSolverConfigPath << std::endl;
     std::cout << "HeadSolver: \n" << this->config.headSolverConfigPath << std::endl;
-   std::cout << "WaistSolver: \n" << this->config.waistSolverConfigPath << std::endl;
+    std::cout << "WaistSolver: \n" << this->config.waistSolverConfigPath << std::endl;
     std::cout << "Transform: \n" << this->config.transformConfigPath << std::endl;
     std::cout << "RobotHardware: \n" << this->config.hardwareConfigPath << std::endl;
     std::cout << "------------------- Configuration Path -------------------" << std::endl;

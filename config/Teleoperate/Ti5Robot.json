@@ -13,25 +13,28 @@
     "FilterWeight": [0.4, 0.3, 0.2, 0.1],
     "_FilterWeight": [0.7, 0.2, 0.1],
 
-    "EnableHead": true,
-    "EnableWaist": true,
-    "EnableLeftArm": true,
-    "EnableRightArm": true,
-    "EnableLeftLeg": false,
-    "EnableRightLeg": false,
+    "BodyEnable": {
+        "Head": false,
+        "Waist": false,
+        "LeftArm": true,
+        "RightArm": true,
+        "LeftLeg": false,
+        "RightLeg": false
+    },
+
 
     "ConfigPath": {
         "UseRootPath": true,
 
-        "ArmSolverConfigPath": "/config/ArmSolver/Ti5DualArm.json",
+        "ArmSolver": "/config/ArmSolver/Ti5DualArm.json",
 
-        "TransformConfigPath": "/config/Transform/VisionPro2Ti5Robot.json",
+        "Transform": "/config/Transform/VisionPro2Ti5Robot.json",
 
-        "HardwareConfigPath": "/config/RobotHardware/Ti5Robot.json",
+        "RobotHardware": "/config/RobotHardware/Ti5Robot.json",
 
-        "HeadSolverConfigPath": "/config/BasicSolver/HeadSolver/Ti5Robot.json",
+        "HeadSolver": "/config/BasicSolver/HeadSolver/Ti5Robot.json",
 
-        "WaistSolverConfigPath": "/config/BasicSolver/WaistSolver/Ti5Robot.json"
+        "WaistSolver": "/config/BasicSolver/WaistSolver/Ti5Robot.json"
     },
 
     "Ros2BridgeConfig": {

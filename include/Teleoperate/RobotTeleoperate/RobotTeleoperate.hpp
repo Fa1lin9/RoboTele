@@ -55,11 +55,11 @@ public:
         std::vector<double> filterWeight;
 
         bool enableHead;
-//        bool enableLeftArm;
-//        bool enableRightArm;
+        bool enableLeftArm;
+        bool enableRightArm;
         bool enableWaist;
-//        bool enableLeftLeg;
-//        bool enableRightLeg;
+        bool enableLeftLeg;
+        bool enableRightLeg;
 
         bool useRootPath;
     };

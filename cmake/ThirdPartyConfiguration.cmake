@@ -12,3 +12,7 @@ endif()
 if( ${USER_PK_Ubuntu} )
     include( PackagePathPerUser/PK_Ubuntu )
 endif()
+
+if( ${USER_Default} )
+    include( PackagePathPerUser/Default )
+endif()

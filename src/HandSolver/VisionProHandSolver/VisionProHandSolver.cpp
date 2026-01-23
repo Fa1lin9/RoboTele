@@ -1,7 +1,7 @@
 #include <VisionProHandSolver/VisionProHandSolver.hpp>
 
 VisionProHandSolver::VisionProHandSolver(const HandSolver::BasicConfig &config_){
-    this->dofHand = config_.dofHand;
+    this->handDof = config_.dofHand;
     this->Init();
 }
 
@@ -61,7 +61,7 @@ Eigen::VectorXd VisionProHandSolver::SolveSingleHand(const HandBase::HandData& d
                                 handPositions[this->ringFingerJointsIndex[4]]);
     ret.push_back(ringAngle);
 
-    // Little Finger 21-20-23
+    // Little Finger 21-20-24
     double littleAngle =
             MatrixUtils::CalVecAngle(  handPositions[this->littleFingerJointsIndex[1]],
                                 handPositions[this->littleFingerJointsIndex[0]],
@@ -85,10 +85,10 @@ Eigen::VectorXd VisionProHandSolver::SolveSingleHand(const HandBase::HandData& d
     }
 
     // Temp print for HandGestureDetector
-    double dist = MatrixUtils::CalPoint2PlaneDist({handPositions[this->middleFingerJointsIndex[0]],
-                                                   handPositions[this->indexFingerJointsIndex[1]],
-                                                   handPositions[this->littleFingerJointsIndex[1]]},
-                                                   handPositions[this->thumbFingerJointsIndex[3]]);
+//    double dist = MatrixUtils::CalPoint2PlaneDist({handPositions[this->middleFingerJointsIndex[0]],
+//                                                   handPositions[this->indexFingerJointsIndex[1]],
+//                                                   handPositions[this->littleFingerJointsIndex[1]]},
+//                                                   handPositions[this->thumbFingerJointsIndex[3]]);
 //    std::cout<<"Dist: "<<dist<<std::endl;
 
     // map
@@ -111,6 +111,21 @@ Eigen::VectorXd VisionProHandSolver::SolveDualHand(const HandBase::DualHandData&
     ret = filter.GetFilteredData();
 
     return ret;
+}
+
+std::vector<double> VisionProHandSolver::GetLowerBound()
+{
+    return this->fingersLowerBound;
+}
+
+std::vector<double> VisionProHandSolver::GetUpperBound()
+{
+    return this->fingersUpperBound;
+}
+
+std::vector<std::string> VisionProHandSolver::GetFingersName()
+{
+    return this->fingersName;
 }
 
 void VisionProHandSolver::Init(){
@@ -140,16 +155,16 @@ void VisionProHandSolver::Init(){
                                110};
 
     this->fingersName = {
-        "thumb",
-        "index",
-        "middle",
-        "ring",
-        "little",
-        "thumbRot",
+        "Thumb",
+        "Index",
+        "Middle",
+        "Ring",
+        "Little",
+        "ThumbRot",
     };
 
     // Filter
-    this->filter.Init(std::vector<double>{0.6, 0.2, 0.2}, this->dofHand);
+    this->filter.Init(std::vector<double>{0.6, 0.2, 0.2}, this->handDof);
 }
 
 Eigen::VectorXd VisionProHandSolver::MapXR2Hand(const std::vector<double>& angles,
@@ -159,8 +174,21 @@ Eigen::VectorXd VisionProHandSolver::MapXR2Hand(const std::vector<double>& angle
     case HandBase::HandType::ROHand:
         ret.resize(HandBase::ROHandConfig::NumFingers);
         for(size_t i=0;i<HandBase::ROHandConfig::NumFingers;i++){
-            double targetLow = HandBase::ROHandConfig::FingersLowerBound[i];
+            double targetLow    = HandBase::ROHandConfig::FingersLowerBound[i];
             double targetHigh = HandBase::ROHandConfig::FingersUpperBound[i];
+
+            double currentLow = this->fingersLowerBound[i];
+            double currentHigh = this->fingersUpperBound[i];
+
+            ret(i) =
+                    targetLow + (angles[i] - currentLow)/(currentHigh - currentLow) * (targetHigh - targetLow);
+        }
+        return ret;
+    case HandBase::HandType::Revo2Hand:
+        ret.resize(HandBase::ROHandConfig::NumFingers);
+        for(size_t i=0;i<HandBase::ROHandConfig::NumFingers;i++){
+            double targetLow    = HandBase::Revo2HandConfig::FingersLowerBound[i];
+            double targetHigh   = HandBase::Revo2HandConfig::FingersUpperBound[i];
 
             double currentLow = this->fingersLowerBound[i];
             double currentHigh = this->fingersUpperBound[i];

@@ -30,15 +30,17 @@ public:
     virtual Eigen::VectorXd SolveSingleHand(const HandBase::HandData& data,
                                             const HandBase::HandType& type) = 0;
 
-    static std::vector<double> GetLowerBound(const XRBase::XRType& type);
+    virtual std::vector<double> GetLowerBound();
 
-    static std::vector<double> GetUpperBound(const XRBase::XRType& type);
+    virtual std::vector<double> GetUpperBound();
+
+    virtual std::vector<std::string> GetFingersName();
 
     static std::shared_ptr<HandSolver> GetPtr(const HandSolver::BasicConfig& config_);
 
 protected:
 
-    int dofHand;
+    int handDof;
 
     std::vector<std::string> fingersName;
     std::vector<double> fingersUpperBound;

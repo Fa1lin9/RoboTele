@@ -15,6 +15,12 @@ public:
 
     Eigen::VectorXd SolveDualHand(const HandBase::DualHandData& data) override;
 
+    std::vector<double> GetLowerBound() override;
+
+    std::vector<double> GetUpperBound() override;
+
+    std::vector<std::string> GetFingersName() override;
+
 private:
     void Init();
 

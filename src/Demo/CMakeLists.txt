@@ -21,7 +21,7 @@ list( APPEND ${GROUP_NAME}_Components
 #    FastDDSDemo
 #    JsonDemo
     # ModBusDemo
-#    HandDemo
+    HandDemo
     # BasicSolverDemo
 )
 

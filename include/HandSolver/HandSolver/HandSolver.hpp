@@ -19,7 +19,7 @@ public:
     struct BasicConfig
     {
         XRBase::XRType type;
-        int dofHand;
+        int handDof;
     };
 
     HandSolver();

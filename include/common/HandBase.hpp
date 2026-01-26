@@ -104,11 +104,11 @@ namespace HandBase{
 //        };
 
         inline constexpr std::array<double, NumFingers> FingersLowerBound = {
-            2, 80, 80, 80, 80, 2
+            58, 80, 80, 80, 80, 2
         };
 
         inline constexpr std::array<double, NumFingers> FingersUpperBound = {
-            58, 2, 2, 2, 2, 88
+            2, 2, 2, 2, 2, 88
         };
 
         inline std::array<const char*, 11> LeftFingersName = {
@@ -139,11 +139,30 @@ namespace HandBase{
             "right_pinky_distal_joint"
         };
 
+//        inline std::array<const char*, 6> LeftFingersName = {
+//            "left_thumb_flex_joint",     // 拇指屈伸
+//            "left_thumb_abduct_joint",   // 拇指外展
+//            "left_index_joint",          // 食指
+//            "left_middle_joint",         // 中指
+//            "left_ring_joint",           // 无名指
+//            "left_pinky_joint"           // 小指
+//        };
+
+//        inline std::array<const char*, 6> RightFingersName = {
+//            "right_thumb_flex_joint",     // 拇指屈伸
+//            "right_thumb_abduct_joint",   // 拇指外展
+//            "right_index_joint",          // 食指
+//            "right_middle_joint",         // 中指
+//            "right_ring_joint",           // 无名指
+//            "right_pinky_joint"           // 小指
+//        };
+
 
     }
 
     inline const std::unordered_map<std::string, HandBase::HandType> HandTypeMap = {
-        {"ROHand", HandBase::HandType::ROHand}
+        {"ROHand", HandBase::HandType::ROHand},
+        {"Revo2Hand", HandBase::HandType::Revo2Hand},
     };
 
     inline HandBase::HandType GetTypeFromStr(const std::string& str){

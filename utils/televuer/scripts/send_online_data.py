@@ -22,7 +22,7 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 CSV_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', f"{timestamp}.csv")
 os.makedirs(os.path.dirname(CSV_FILE), exist_ok=True)
 
-# ==================== 共享内存 ====================
+# ==================== Shared Memory ====================
 try:
     shm = shared_memory.SharedMemory(name=IMG_SHM_NAME)
 except FileNotFoundError:

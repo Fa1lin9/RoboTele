@@ -1,7 +1,7 @@
 #include <VisionProHandSolver/VisionProHandSolver.hpp>
 
 VisionProHandSolver::VisionProHandSolver(const HandSolver::BasicConfig &config_){
-    this->handDof = config_.dofHand;
+    this->handDof = config_.handDof;
     this->Init();
 }
 

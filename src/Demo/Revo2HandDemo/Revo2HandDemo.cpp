@@ -18,30 +18,26 @@ int FPS = 25;
 bool isReal = false;
 
 int main(){
-    int singleHandDof = 11;
-    // Filter
-    WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, singleHandDof);
-
     // DataCollector
     DataCollector dataCollector("tcp://127.0.0.1:5555");
 
     HandSolver::BasicConfig handSolverConfig;
-    handSolverConfig.dofHand = singleHandDof * 2;
+    handSolverConfig.handDof = 12;
     handSolverConfig.type = XRBase::XRType::VisionPro;
     auto handSolver = HandSolver::GetPtr(handSolverConfig);
 
     // Ros2
-    Ros2Bridge leftHandbridge;
+    Ros2Bridge leftHandBridge;
     Ros2Bridge::BasicConfig leftHandBridgeConfig;
     leftHandBridgeConfig.msgType = Ros2Bridge::MsgType::JointState;
-    leftHandBridgeConfig.topicName = "rohand_left/external_external_joint_states";
-    leftHandbridge.Init(leftHandBridgeConfig);
+    leftHandBridgeConfig.topicName = "/Revo2Hand/LeftHand";
+    leftHandBridge.Init(leftHandBridgeConfig);
 
-    Ros2Bridge rightHandbridge;
+    Ros2Bridge rightHandBridge;
     Ros2Bridge::BasicConfig rightHandBridgeConfig;
     rightHandBridgeConfig.msgType = Ros2Bridge::MsgType::JointState;
-    rightHandBridgeConfig.topicName = "rohand_left/external_external_joint_states";
-    rightHandbridge.Init(leftHandBridgeConfig);
+    rightHandBridgeConfig.topicName = "/Revo2Hand/RightHand";
+    rightHandBridge.Init(rightHandBridgeConfig);
 
     // Collect VisionPro's Data
     std::thread dataThread(&DataCollector::Run, &dataCollector);
@@ -100,27 +96,71 @@ int main(){
         std::cout << "HandAngle: " << std::endl;
         std::cout << handAngle << std::endl;
 
-        // Filter the handAngle
-        filter.AddData(handAngle);
-        handAngle = filter.GetFilteredData();
+        Eigen::VectorXd leftHandAngle   = handAngle.segment(0, handAngle.size() / 2);
+        Eigen::VectorXd rightHandAngle  = handAngle.segment(handAngle.size() / 2, handAngle.size() / 2);
+        assert(leftHandAngle.size() == rightHandAngle.size());
 
         // For simulation in ros2
-        ti5_interfaces::msg::JointStateWithoutStamp msg;
-        std::vector<double> position;
-        position.push_back(OtherFingerMap(handAngle(1)));
-        position.push_back(OtherFingerMap(handAngle(2)));
-        position.push_back(OtherFingerMap(handAngle(3)));
-        position.push_back(OtherFingerMap(handAngle(4)));
-        position.push_back(ThumbFingerMap(handAngle(0)));
-        position.push_back(handAngle(5)*M_PI/180.0);
-        msg.position() = position;
-        msg.name() = std::vector<std::string>{  "if_slider_link",
-                                                "mf_slider_link",
-                                                "rf_slider_link",
-                                                "lf_slider_link",
-                                                "th_slider_link",
-                                                "th_root_link"};
+        // Left Hand
+        humanoid_msgs::msg::JointState leftHandMsg;
+        std::vector<double> leftHandPosition;
+        leftHandPosition.push_back(leftHandAngle(5) * M_PI / 180.0);
+        leftHandPosition.push_back(leftHandAngle(0) * M_PI / 180.0);
+        leftHandPosition.push_back(leftHandAngle(0) * M_PI / 180.0);
+        leftHandPosition.push_back(leftHandAngle(1) * M_PI / 180.0);
+        leftHandPosition.push_back(OtherFingerMap(leftHandAngle(1)) * M_PI / 180.0);
+        leftHandPosition.push_back(leftHandAngle(2) * M_PI / 180.0);
+        leftHandPosition.push_back(OtherFingerMap(leftHandAngle(2)) * M_PI / 180.0);
+        leftHandPosition.push_back(leftHandAngle(3) * M_PI / 180.0);
+        leftHandPosition.push_back(OtherFingerMap(leftHandAngle(3)) * M_PI / 180.0);
+        leftHandPosition.push_back(leftHandAngle(4) * M_PI / 180.0);
+        leftHandPosition.push_back(OtherFingerMap(leftHandAngle(4)) * M_PI / 180.0);
 
+//        leftHandPosition.push_back(leftHandAngle(0) * M_PI / 180.0);
+//        leftHandPosition.push_back(leftHandAngle(5) * M_PI / 180.0);
+//        leftHandPosition.push_back(leftHandAngle(1) * M_PI / 180.0);
+//        leftHandPosition.push_back(leftHandAngle(2) * M_PI / 180.0);
+//        leftHandPosition.push_back(leftHandAngle(3) * M_PI / 180.0);
+//        leftHandPosition.push_back(leftHandAngle(4) * M_PI / 180.0);
+
+        leftHandMsg.position() = leftHandPosition;
+        leftHandMsg.name() = std::vector<std::string>(
+            HandBase::Revo2HandConfig::LeftFingersName.begin(),
+            HandBase::Revo2HandConfig::LeftFingersName.end()
+        );
+
+        // Right Hand
+        humanoid_msgs::msg::JointState rightHandMsg;
+        std::vector<double> rightHandPosition;
+        rightHandPosition.push_back(rightHandAngle(5) * M_PI / 180.0);
+        rightHandPosition.push_back(rightHandAngle(0) * M_PI / 180.0);
+        rightHandPosition.push_back(rightHandAngle(0) * M_PI / 180.0);
+        rightHandPosition.push_back(rightHandAngle(1) * M_PI / 180.0);
+        rightHandPosition.push_back(OtherFingerMap(rightHandAngle(1)) * M_PI / 180.0);
+        rightHandPosition.push_back(rightHandAngle(2) * M_PI / 180.0);
+        rightHandPosition.push_back(OtherFingerMap(rightHandAngle(2)) * M_PI / 180.0);
+        rightHandPosition.push_back(rightHandAngle(3) * M_PI / 180.0);
+        rightHandPosition.push_back(OtherFingerMap(rightHandAngle(3)) * M_PI / 180.0);
+        rightHandPosition.push_back(rightHandAngle(4) * M_PI / 180.0);
+        rightHandPosition.push_back(OtherFingerMap(rightHandAngle(4)) * M_PI / 180.0);
+
+//        rightHandPosition.push_back(rightHandAngle(0) * M_PI / 180.0);
+//        rightHandPosition.push_back(rightHandAngle(5) * M_PI / 180.0);
+//        rightHandPosition.push_back(rightHandAngle(1) * M_PI / 180.0);
+//        rightHandPosition.push_back(rightHandAngle(2) * M_PI / 180.0);
+//        rightHandPosition.push_back(rightHandAngle(3) * M_PI / 180.0);
+//        rightHandPosition.push_back(rightHandAngle(4) * M_PI / 180.0);
+
+
+        rightHandMsg.position() = rightHandPosition;
+        rightHandMsg.name() = std::vector<std::string>(
+            HandBase::Revo2HandConfig::RightFingersName.begin(),
+            HandBase::Revo2HandConfig::RightFingersName.end()
+        );
+
+        // Send Msg
+        leftHandBridge.SendMsg(leftHandMsg);
+        rightHandBridge.SendMsg(rightHandMsg);
 
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);

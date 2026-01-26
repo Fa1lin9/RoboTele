@@ -46,7 +46,7 @@ int main(){
     DataCollector dataCollector("tcp://127.0.0.1:5555");
 
     HandSolver::BasicConfig handSolverConfig;
-    handSolverConfig.dofHand = 12;
+    handSolverConfig.handDof = 12;
     handSolverConfig.type = XRBase::XRType::VisionPro;
     auto handSolver = HandSolver::GetPtr(handSolverConfig);
 

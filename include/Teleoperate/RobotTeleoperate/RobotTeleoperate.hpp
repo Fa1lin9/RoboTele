@@ -33,6 +33,7 @@ public:
     struct BasicConfig{
         RobotBase::RobotType robotType;
         XRBase::XRType xrType;
+        HandBase::HandType handType;
         std::string address;
         int FPS;
 
@@ -44,7 +45,11 @@ public:
         std::string hardwareConfigPath;
 //        Transform::BasicConfig transformConfig;
         std::string transformConfigPath;
-        Ros2Bridge::BasicConfig bridgeConfig;
+
+        // For Ros2Bridge
+        Ros2Bridge::BasicConfig bodyBridgeConfig;
+        Ros2Bridge::BasicConfig leftHandBridgeConfig;
+        Ros2Bridge::BasicConfig rightHandBridgeConfig;
 
         bool isSim;
         bool isReal;
@@ -60,6 +65,9 @@ public:
         bool enableWaist;
         bool enableLeftLeg;
         bool enableRightLeg;
+
+        bool enableLeftHand;
+        bool enableRightHand;
 
         bool useRootPath;
     };
@@ -80,6 +88,8 @@ public:
 protected:
     // Solver
     std::shared_ptr<ArmSolver> armSolverPtr;
+
+    std::shared_ptr<HandSolver> handSolverPtr;
 
     std::shared_ptr<RobotHardware> hardwarePtr;
 

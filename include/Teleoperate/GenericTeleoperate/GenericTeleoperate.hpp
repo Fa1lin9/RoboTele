@@ -24,7 +24,10 @@ private:
     CsvWriter csvWriter;
 
     DataCollector dataCollector;
-    Ros2Bridge ros2Bridge;
+
+    Ros2Bridge bodyBridge;
+    Ros2Bridge leftHandBridge;
+    Ros2Bridge rightHandBridge;
 
     // some flags
     bool startFlag = false;

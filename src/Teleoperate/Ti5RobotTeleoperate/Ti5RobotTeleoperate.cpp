@@ -31,7 +31,7 @@ Ti5RobotTeleoperate::Ti5RobotTeleoperate(const RobotTeleoperate::BasicConfig &co
         this->hardwarePtr = RobotHardware::GetPtr(this->config.hardwareConfigPath);
     }
 
-    this->ros2Bridge.Init(this->config.bridgeConfig);
+    this->ros2Bridge.Init(this->config.bodyBridgeConfig);
 
     this->handGestureDectector.Init(this->config.xrType);
 

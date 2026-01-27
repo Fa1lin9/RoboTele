@@ -26,6 +26,8 @@ GenericTeleoperate::GenericTeleoperate(const RobotTeleoperate::BasicConfig &conf
     std::cout << "RightArm: "  << this->config.enableRightArm  << std::endl;
     std::cout << "LeftLeg: "   << this->config.enableLeftLeg   << std::endl;
     std::cout << "RightLeg: "  << this->config.enableRightLeg  << std::endl;
+    std::cout << "LeftHand: "   << this->config.enableLeftHand   << std::endl;
+    std::cout << "RightHand: "  << this->config.enableRightHand  << std::endl;
     std::cout << "------------------- Body Enable -------------------" << std::endl;
 
 
@@ -38,6 +40,15 @@ GenericTeleoperate::GenericTeleoperate(const RobotTeleoperate::BasicConfig &conf
     if(this->config.enableWaist){
         this->waistSolver.Init(this->config.waistSolverConfigPath);
         waistJointsInfo = this->waistSolver.GetJointsInfo();
+    }
+
+    // For HandSolver
+    if(this->config.enableLeftHand || this->config.enableRightHand){
+        HandSolver::BasicConfig handSolverConfig = {
+            .type = this->config.xrType,
+            .handDof = 12,
+        };
+        this->handSolverPtr = HandSolver::GetPtr(handSolverConfig);
     }
 
     // Ptr
@@ -58,7 +69,17 @@ GenericTeleoperate::GenericTeleoperate(const RobotTeleoperate::BasicConfig &conf
         this->hardwarePtr = RobotHardware::GetPtr(this->config.hardwareConfigPath);
     }
 
-    this->ros2Bridge.Init(this->config.bridgeConfig);
+    // Ros2Bridge
+    // Body
+    this->bodyBridge.Init(this->config.bodyBridgeConfig);
+
+    // For Left and Right Hand
+    if(this->config.enableLeftHand){
+        this->leftHandBridge.Init(this->config.leftHandBridgeConfig);
+    }
+    if(this->config.enableRightHand){
+        this->rightHandBridge.Init(this->config.rightHandBridgeConfig);
+    }
 
     this->handGestureDectector.Init(this->config.xrType);
 
@@ -89,6 +110,7 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
     // Some Valuables
     Transform::MsgConfig msgConfig;
     Eigen::VectorXd qEigen;
+    Eigen::VectorXd handAngle;
     boost::optional<Eigen::VectorXd> q;
 
     // Flag
@@ -109,7 +131,7 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
             this->dualHandData.leftHandData.handGesture = this->dataCollector.GetLeftHandGesture();
             this->dualHandData.leftHandData.handGesture = this->dataCollector.GetRightHandGesture();
 
-            this->dualHandData.type = HandBase::HandType::ROHand;
+            this->dualHandData.type = this->config.handType;
         }else{
             continue;
         }
@@ -157,7 +179,7 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
         bool modeFlag =
                 this->handGestureDectector.IsFistGesture(this->dualHandData.leftHandData) &&
                 this->handGestureDectector.IsFistGesture(this->dualHandData.rightHandData);
-        if(modeFlag)
+        if(modeFlag && this->config.enableWaist)
         {
             msgConfig.mode = Transform::TeleMode::WaistMode;
             msgConfig.modeHeadPose = this->poseMatrix[0];
@@ -180,9 +202,12 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
         // Use ArmSolver to Solve
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
 
-        q = armSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
+        q = this->armSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
                                 this->qLast,
                                 false);
+
+        // Solve Hand
+        handAngle = this->handSolverPtr->SolveDualHand(this->dualHandData);
 
         // Check the Solution
         if(q.has_value()){
@@ -200,9 +225,6 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
             }
             if(this->config.enableHead){
                 // Set Value to Head
-//                qEigen(headJointsInfo[0].index) = headRPY(2); // Yaw
-//                qEigen(headJointsInfo[1].index) = - headRPY(1); // Pitch
-//                qEigen(headJointsInfo[2].index) = headRPY(0); // Row
                 for(size_t i=0;i<3;i++){
                     if(headJointsInfo[i].index != -1){
                         qEigen(headJointsInfo[i].index) =
@@ -213,9 +235,6 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
 
             if(this->config.enableWaist){
                 // Set Value to Waist
-//                qEigen(waistJointsInfo[0].index) = waistRPY(0); // Row
-//                qEigen(waistJointsInfo[1].index) = waistRPY(2); // Yaw
-//                qEigen(waistJointsInfo[2].index) = -waistRPY(1); // Pitch
                 for(size_t i=0;i<3;i++){
                     if(waistJointsInfo[i].index != -1){
                         qEigen(waistJointsInfo[i].index) =
@@ -242,37 +261,50 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
             }
 
             if(this->config.isSim){
-                // send to ros2
-                ti5_interfaces::msg::JointStateWithoutStamp msg;
+                // Send to Ros2
+                // Body
+                humanoid_msgs::msg::JointState bodyMsg;
                 std::vector<double> qVec(qEigen.data(), qEigen.data() + qEigen.size());
-                msg.position() = qVec;
-                msg.name() = this->armSolverPtr->GetJointNames();
+                bodyMsg.position() = qVec;
+                bodyMsg.name() = this->armSolverPtr->GetJointNames();
 
-                this->ros2Bridge.SendMsg(msg);
+                this->bodyBridge.SendMsg(bodyMsg);
+
+                int total = handAngle.size();
+                int half  = total / 2;
+
+                Eigen::VectorXd leftSeg  = handAngle.segment(0, half);
+                Eigen::VectorXd rightSeg = handAngle.segment(half, half);
+
+                auto fingerNames = this->handSolverPtr->GetFingersName();
+
+
+                // =============== Left Hand ===============
+                if (this->config.enableLeftHand) {
+                    humanoid_msgs::msg::JointState leftHandMsg;
+
+                    leftHandMsg.name() = fingerNames;
+
+                    leftHandMsg.position().assign(leftSeg.data(), leftSeg.data() + half);
+
+                    this->leftHandBridge.SendMsg(leftHandMsg);
+                }
+
+
+                // =============== Right Hand ===============
+                if (this->config.enableRightHand) {
+                    humanoid_msgs::msg::JointState rightHandMsg;
+
+                    rightHandMsg.name() = fingerNames;
+
+                    rightHandMsg.position().assign(rightSeg.data(), rightSeg.data() + half);
+
+                    this->rightHandBridge.SendMsg(rightHandMsg);
+                }
+
             }
 
-            // Check the angle of the dual-arm
-//            std::vector<double> qTargetLeftArm(this->armSolverPtr->GetLeftArmQIndex().size());
-//            std::vector<double> qTargetRightArm(this->armSolverPtr->GetRightArmQIndex().size());
-//            auto leftArmQIndex = this->armSolverPtr->GetLeftArmQIndex();
-//            auto rightArmQIndex = this->armSolverPtr->GetRightArmQIndex();
-
-//            std::cout << "qTargetLeftArm:\n";
-//            for(size_t i = 0; i < leftArmQIndex.size(); i++){
-//                qTargetLeftArm[i] = qEigen(leftArmQIndex[i]);
-//                std::cout << "Joint[" << i << "] (qIndex=" << leftArmQIndex[i]
-//                          << ") = " << qTargetLeftArm[i] << "\n";
-//            }
-
-//            std::cout << "qTargetRightArm:\n";
-//            for(size_t i = 0; i < rightArmQIndex.size(); i++){
-//                qTargetRightArm[i] = qEigen(rightArmQIndex[i]);
-//                std::cout << "Joint[" << i << "] (qIndex=" << rightArmQIndex[i]
-//                          << ") = " << qTargetRightArm[i] << "\n";
-//            }
-
             if(this->config.isReal){
-                // TODO
                 std::vector<double> qTargetLeftArm(this->armSolverPtr->GetLeftArmQIndex().size());
                 std::vector<double> qTargetRightArm(this->armSolverPtr->GetRightArmQIndex().size());
                 auto leftArmQIndex = this->armSolverPtr->GetLeftArmQIndex();

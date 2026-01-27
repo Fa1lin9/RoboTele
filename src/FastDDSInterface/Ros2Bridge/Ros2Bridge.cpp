@@ -28,66 +28,9 @@ Ros2Bridge::Ros2Bridge(){
 }
 
 Ros2Bridge::Ros2Bridge(const Ros2Bridge::BasicConfig& config)
-//     :topicName(config.topicName),
-//      msgType(config.msgType),
-//      participant(nullptr),
-//      type(nullptr),
-//      publisher(nullptr),
-//      writer(nullptr),
-//      topic(nullptr)
 {
     LOG_FUNCTION;
-//    topicName = config.topicName;
-//    msgType = config.msgType;
 
-//    // Initialize the basic parameter
-//    if(topicName.empty()){
-//        throw(std::logic_error("[Ros2Bridge] The name of the topic can not be empty!"));
-//    }
-//    if(topicName[0] == '/'){
-//        topicName.insert(0, "rt");
-//    }else{
-//        topicName.insert(0, "rt/");
-//    }
-
-//    // Step 1 创建 DomainParticipant
-//    participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-//    if (!participant)
-//    {
-//        throw(std::logic_error("[Ros2Bridge] Failed to create DomainParticipant!"));
-//    }
-
-//    // Step 2 注册类型
-//    type = CreateType(config.msgType);
-//    if (type.register_type(participant) != RETCODE_OK)
-//    {
-//        throw(std::logic_error("[Ros2Bridge] Failed to register type!"));
-//    }
-
-//    // Step 3 创建 Topic
-
-//    topic = participant->create_topic(topicName, type.get_type_name(), TOPIC_QOS_DEFAULT);
-//    if (!topic)
-//    {
-//        throw(std::logic_error("[Ros2Bridge] Failed to create topic!"));
-//    }
-
-//    // Step 4 创建 Publisher
-//    publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
-//    if (!publisher)
-//    {
-//        throw(std::logic_error("[Ros2Bridge] Failed to create publisher!"));
-//    }
-
-//    // Step 5 创建 DataWriter
-//    DataWriterQos writerQos = DATAWRITER_QOS_DEFAULT;
-//    writer = publisher->create_datawriter(topic, writerQos, nullptr);
-//    if (!writer)
-//    {
-//        throw(std::logic_error("[Ros2Bridge] Failed to create datawriter!"));
-//    }
-
-//    std::cout << "[Ros2Bridge] Ros2Bridge initialized successfully." << std::endl;
     this->Init(config);
 }
 

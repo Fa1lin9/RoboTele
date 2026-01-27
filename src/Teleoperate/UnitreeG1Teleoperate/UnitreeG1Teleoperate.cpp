@@ -39,7 +39,7 @@ UnitreeG1Teleoperate::UnitreeG1Teleoperate(const RobotTeleoperate::BasicConfig &
 //        waistJointsInfo = this->waistSolver.GetJointsInfo();
 //    }
 
-    this->ros2Bridge.Init(this->config.bridgeConfig);
+    this->ros2Bridge.Init(this->config.bodyBridgeConfig);
 
     this->handGestureDectector.Init(this->config.xrType);
 

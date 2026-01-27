@@ -45,21 +45,37 @@ std::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& fi
 //    json::object solverObj = rootObj["SolverConfig"].as_object();
 //    json::object transformObj = rootObj["TransformConfig"].as_object();
 //    json::object hardwareObj = rootObj["HardwareConfig"].as_object();
-    json::object ros2BridgeObj = rootObj["Ros2BridgeConfig"].as_object();
+    json::object ros2BridgeObj = rootObj["BridgeConfig"].as_object();
     json::object configPathObj = rootObj["ConfigPath"].as_object();
     json::object bodyEnableObj = rootObj["BodyEnable"].as_object();
 
     RobotBase::RobotType robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str());
 
     // Ros2Bridge
-    Ros2Bridge::BasicConfig bridgeConfig = {
-        .topicName = ros2BridgeObj["TopicName"].as_string().c_str(),
-        .msgType = Ros2Bridge::GetMsgTypeFromStr(ros2BridgeObj["MsgType"].as_string().c_str()),
+    // Body
+    Ros2Bridge::BasicConfig bodyBridgeConfig = {
+        .topicName = ros2BridgeObj["Body"].as_object()["TopicName"].as_string().c_str(),
+        .msgType =
+        Ros2Bridge::GetMsgTypeFromStr(ros2BridgeObj["Body"].as_object()["MsgType"].as_string().c_str()),
+    };
+    // Left Hand
+    Ros2Bridge::BasicConfig leftHandBridgeConfig = {
+        .topicName = ros2BridgeObj["LeftHand"].as_object()["TopicName"].as_string().c_str(),
+        .msgType =
+        Ros2Bridge::GetMsgTypeFromStr(ros2BridgeObj["LeftHand"].as_object()["MsgType"].as_string().c_str()),
+    };
+    // Right Hand
+    Ros2Bridge::BasicConfig rightHandBridgeConfig = {
+        .topicName = ros2BridgeObj["RightHand"].as_object()["TopicName"].as_string().c_str(),
+        .msgType =
+        Ros2Bridge::GetMsgTypeFromStr(ros2BridgeObj["RightHand"].as_object()["MsgType"].as_string().c_str()),
     };
 
     RobotTeleoperate::BasicConfig config = {
         .robotType = robotType,
         .xrType = XRBase::GetTypeFromStr(rootObj["XRType"].as_string().c_str()),
+        .handType = HandBase::GetTypeFromStr(rootObj["HandType"].as_string().c_str()),
+
         .address = rootObj["Address"].as_string().c_str(),
         .FPS = static_cast<int>(rootObj["FPS"].as_int64()),
 
@@ -69,7 +85,9 @@ std::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& fi
 //        .hardwareConfigPath = configPathObj["HardwareConfigPath"].as_string().c_str(),
 //        .transformConfigPath = configPathObj["TransformConfigPath"].as_string().c_str(),
 
-        .bridgeConfig = bridgeConfig,
+        .bodyBridgeConfig = bodyBridgeConfig,
+        .leftHandBridgeConfig = leftHandBridgeConfig,
+        .rightHandBridgeConfig = rightHandBridgeConfig,
 
         .isSim  = rootObj["IsSimulatedRobot"].as_bool(),
         .isReal = rootObj["IsRealWorldRobot"].as_bool(),
@@ -113,6 +131,8 @@ std::shared_ptr<RobotTeleoperate> RobotTeleoperate::GetPtr(const std::string& fi
     config.enableRightArm = bodyEnableObj["RightArm"].as_bool();
     config.enableLeftLeg  = bodyEnableObj["LeftLeg"].as_bool();
     config.enableRightLeg = bodyEnableObj["RightLeg"].as_bool();
+    config.enableLeftHand = bodyEnableObj["LeftHand"].as_bool();
+    config.enableRightHand = bodyEnableObj["RightHand"].as_bool();
 
     return RobotTeleoperate::GetPtr(config);
 }

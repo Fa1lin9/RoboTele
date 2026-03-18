@@ -15,8 +15,9 @@ fps = 25
 # file_name = "20251226_112653.csv" # stand up
 
 # new
-file_name = "20260122_171535.csv"
+# file_name = "20260122_171535.csv"
 # file_name = "20260121_134729.csv"
+file_name = "20260318_161542.csv"
 
 # for hand
 # file_name = "20260126_152309.csv"

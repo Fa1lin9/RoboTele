@@ -207,7 +207,9 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
                                 false);
 
         // Solve Hand
-        handAngle = this->handSolverPtr->SolveDualHand(this->dualHandData);
+        if(this->config.enableLeftHand || this->config.enableRightHand){
+            handAngle = this->handSolverPtr->SolveDualHand(this->dualHandData);
+        }
 
         // Check the Solution
         if(q.has_value()){
@@ -215,13 +217,17 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
 
             if (msgConfig.mode == Transform::TeleMode::HeadMode){
                 // Control the Head
-                headRPY = this->headSolver.Solve(transformedMsg[3].inverse() * transformedMsg[2]);
-                std::cout<<"HeadRPY: "<<headRPY<<std::endl;
+                if(this->config.enableHead){
+                    headRPY = this->headSolver.Solve(transformedMsg[3].inverse() * transformedMsg[2]);
+                    std::cout<<"HeadRPY: "<<headRPY<<std::endl;
+                }
             }else if (msgConfig.mode == Transform::TeleMode::WaistMode)
             {
                 // Control the Waist
-                waistRPY = this->waistSolver.Solve(transformedMsg[2]);
-                std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
+                if(this->config.enableWaist){
+                    waistRPY = this->waistSolver.Solve(transformedMsg[2]);
+                    std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
+                }
             }
             if(this->config.enableHead){
                 // Set Value to Head
@@ -270,14 +276,19 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
 
                 this->bodyBridge.SendMsg(bodyMsg);
 
-                int total = handAngle.size();
-                int half  = total / 2;
+                // Hand
+                int total, half;
+                Eigen::VectorXd leftSeg, rightSeg;
+                std::vector<std::string> fingerNames;
+                if(this->config.enableLeftHand || this->config.enableRightHand){
+                    total = handAngle.size();
+                    half  = total / 2;
 
-                Eigen::VectorXd leftSeg  = handAngle.segment(0, half);
-                Eigen::VectorXd rightSeg = handAngle.segment(half, half);
+                    leftSeg  = handAngle.segment(0, half);
+                    rightSeg = handAngle.segment(half, half);
 
-                auto fingerNames = this->handSolverPtr->GetFingersName();
-
+                    fingerNames = this->handSolverPtr->GetFingersName();
+                }
 
                 // =============== Left Hand ===============
                 if (this->config.enableLeftHand) {

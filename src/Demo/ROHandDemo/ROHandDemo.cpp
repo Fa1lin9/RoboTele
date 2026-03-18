@@ -21,26 +21,30 @@ int main(){
     // Filter
     WeightedMovingFilter filter(std::vector<double>{0.4, 0.3, 0.2, 0.1}, 12);
 
+    std::shared_ptr<HandController> handCtrl;
+    if(isReal){
+        // Right Hand
+        HandController::ModBusConfig modbusConfig = {
+            .device = "/dev/ttyCH341USB0",
+            .baudrate = 115200,
+            .parity = "N",
+            .dataBits = 8,
+            .stopBits = 1,
+            .slaveID = 3,
+        };
+
+        HandController::BasicConfig basicConfig = {
+            .type = HandBase::HandType::ROHand,
+            .modbusConfig = modbusConfig,
+        };
+
+        handCtrl = HandController::GetPtr(basicConfig);
+
+        handCtrl->BackToInitPose();
+        sleep(3);
+
+    }
     // HandController
-    // Right Hand
-    HandController::ModBusConfig modbusConfig = {
-        .device = "/dev/ttyCH341USB0",
-        .baudrate = 115200,
-        .parity = "N",
-        .dataBits = 8,
-        .stopBits = 1,
-        .slaveID = 3,
-    };
-
-    HandController::BasicConfig basicConfig = {
-        .type = HandBase::HandType::ROHand,
-        .modbusConfig = modbusConfig,
-    };
-
-    auto handCtrl = HandController::GetPtr(basicConfig);
-
-    handCtrl->BackToInitPose();
-    sleep(3);
 
     // DataCollector
     DataCollector dataCollector("tcp://127.0.0.1:5555");
@@ -154,8 +158,11 @@ int main(){
         }
     }
 
-    handCtrl->BackToInitPose();
-    sleep(3);
+    if(isReal){
+        handCtrl->BackToInitPose();
+        sleep(3);
+
+    }
 
     // delete the thread
     dataCollector.Stop();

@@ -40,6 +40,7 @@ public:
 
     struct BasicConfig
     {
+        bool useRootPath;
         std::string modelPath;
 
         ArmSolver::Type type;

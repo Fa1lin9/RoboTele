@@ -1,12 +1,13 @@
 {
     "RobotType": "UnitreeG1Dof23",
     "XRType" : "VisionPro",
+    "HandType": "Revo2Hand",
     
     "Address": "tcp://127.0.0.1:5555",
     "FPS": 25,
 
     "IsSimulatedRobot": true,
-    "IsRealWorldRobot": true,
+    "IsRealWorldRobot": false,
     
     "IsCheckSolution": false,
     "IsFilterSolution": true,
@@ -14,12 +15,15 @@
     "_FilterWeight": [0.7, 0.2, 0.1],
     
     "BodyEnable": {
-        "Head": false,
-        "Waist": false,
-        "LeftArm": true,
-        "RightArm": true,
-        "LeftLeg": false,
-        "RightLeg": false
+        "Head":         false,
+        "Waist":        false,
+        "LeftArm":      true,
+        "RightArm":     true,
+        "LeftLeg":      false,
+        "RightLeg":     false,
+
+        "LeftHand":     false,
+        "RightHand":    false
     },
 
     "ConfigPath": {
@@ -36,8 +40,22 @@
         "WaistSolver": ""
     },
 
-    "Ros2BridgeConfig": {
-        "MsgType": "JointState",
-        "TopicName": "HumanoidCtrl/humanoid_msgs/msg/JointState"
+    "BridgeConfig": {
+
+        "LeftHand": {
+            "MsgType": "JointState",
+            "TopicName": "/Revo2Hand/LeftHand"
+        },
+
+        "RightHand": {
+            "MsgType": "JointState",
+            "TopicName": "/Revo2Hand/RightHand"
+        },
+
+        "Body": {
+            "MsgType": "JointState",
+            "TopicName": "HumanoidCtrl/humanoid_msgs/msg/JointState"
+        }
+
     }
 }

@@ -75,7 +75,8 @@ std::shared_ptr<ArmSolver> ArmSolver::GetPtr(const std::string& filePath){
 
     // ArmSolver
     ArmSolver::BasicConfig config = {
-        .modelPath = rootObj["ModelPath"].as_string().c_str(),
+        .useRootPath = rootObj["UseRootPath"].as_bool(),
+//        .modelPath = rootObj["ModelPath"].as_string().c_str(),
 
         .type = ArmSolver::GetTypeFromStr(rootObj["Type"].as_string().c_str()),
         .robotType = RobotBase::GetTypeFromStr(rootObj["RobotType"].as_string().c_str()),
@@ -94,6 +95,16 @@ std::shared_ptr<ArmSolver> ArmSolver::GetPtr(const std::string& filePath){
         .wRegularization = rootObj["ObjectiveFunc"].as_object()["RegularizationWeight"].as_double(),
         .wSmooth = rootObj["ObjectiveFunc"].as_object()["SmoothWeight"].as_double(),
     };
+    // For Model Path
+    std::string rootPath = static_cast<std::string>(SOURCE_FILE_PATH);
+    std::string modelPath = rootObj["ModelPath"].as_string().c_str();
+
+    if(config.useRootPath){
+        config.modelPath = rootPath + modelPath;
+    }else{
+        config.modelPath = rootPath;
+    }
+
     // In the future, the variable BaseOffset maybe not just 1
     // So I choose to set BaseOffset to 3-D array
     // For BaseOffset

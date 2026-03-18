@@ -46,11 +46,11 @@ namespace HandBase{
         inline constexpr int NumFingers = 6;
 
         inline constexpr std::array<double, NumFingers> FingersLowerBound = {
-            2, 102, 98, 102, 100, 2
+            36, 102, 98, 102, 100, 2
         };
 
         inline constexpr std::array<double, NumFingers> FingersUpperBound = {
-            36, 178, 176, 176, 174, 88
+            2, 178, 176, 176, 174, 88
         };
 
         inline std::array<const char*, NumFingers> FingersName = {
@@ -104,11 +104,11 @@ namespace HandBase{
 //        };
 
         inline constexpr std::array<double, NumFingers> FingersLowerBound = {
-            58, 80, 80, 80, 80, 2
+            2, 80, 80, 80, 80, 2
         };
 
         inline constexpr std::array<double, NumFingers> FingersUpperBound = {
-            2, 2, 2, 2, 2, 88
+            58, 2, 2, 2, 2, 88
         };
 
         inline std::array<const char*, 11> LeftFingersName = {
@@ -138,26 +138,6 @@ namespace HandBase{
             "right_pinky_proximal_joint",
             "right_pinky_distal_joint"
         };
-
-//        inline std::array<const char*, 6> LeftFingersName = {
-//            "left_thumb_flex_joint",     // 拇指屈伸
-//            "left_thumb_abduct_joint",   // 拇指外展
-//            "left_index_joint",          // 食指
-//            "left_middle_joint",         // 中指
-//            "left_ring_joint",           // 无名指
-//            "left_pinky_joint"           // 小指
-//        };
-
-//        inline std::array<const char*, 6> RightFingersName = {
-//            "right_thumb_flex_joint",     // 拇指屈伸
-//            "right_thumb_abduct_joint",   // 拇指外展
-//            "right_index_joint",          // 食指
-//            "right_middle_joint",         // 中指
-//            "right_ring_joint",           // 无名指
-//            "right_pinky_joint"           // 小指
-//        };
-
-
     }
 
     inline const std::unordered_map<std::string, HandBase::HandType> HandTypeMap = {

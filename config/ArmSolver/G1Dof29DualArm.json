@@ -2,7 +2,8 @@
     "Type": "GenericDualArm",
     "RobotType": "UnitreeG1Dof29",
 
-    "ModelPath": "/home/pangk/chf_ws/project/RobotTeleoperate/assets/urdf/UnitreeG1/g1_body29_hand14.urdf",
+    "UseRootPath": true,
+    "ModelPath": "/assets/urdf/UnitreeG1/g1_body29_hand14.urdf",
 
     "BaseFrameName": ["waist_yaw_joint"],
     "TargetFrameName": ["left_wrist_yaw_joint", "right_wrist_yaw_joint"],

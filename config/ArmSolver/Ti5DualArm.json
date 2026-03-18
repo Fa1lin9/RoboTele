@@ -2,7 +2,8 @@
     "Type": "GenericDualArm",
     "RobotType": "Ti5Robot",
 
-    "ModelPath": "/home/pangk/chf_ws/project/RobotTeleoperate/assets/urdf/Ti5Robot/Ti5Robot.urdf",
+    "UseRootPath": true,
+    "ModelPath": "/assets/urdf/Ti5Robot/Ti5Robot.urdf",
 
     "BaseFrameName": ["WAIST_Y"],
     "_BaseFrameName": ["BASE_S"],

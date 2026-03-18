@@ -1,8 +1,9 @@
 {
     "Type": "GenericDualArm",
     "RobotType": "CrpRobot",
-
-    "ModelPath": "/home/pangk/chf_ws/project/RobotTeleoperate/assets/urdf/CrpRobot/CrpRobot.urdf",
+    
+    "UseRootPath": true,
+    "ModelPath": "/assets/urdf/CrpRobot/CrpRobot.urdf",
 
     "BaseFrameName": ["JT_waist_yaw"],
     "TargetFrameName": ["JT_leftwrist_roll", "JT_rightwrist_roll"],

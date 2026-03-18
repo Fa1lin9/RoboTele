@@ -64,6 +64,8 @@ public:
         double wRotation;
         double wRegularization;
         double wSmooth;
+
+        bool useRootPath;
     };
 
     // just for nlopt

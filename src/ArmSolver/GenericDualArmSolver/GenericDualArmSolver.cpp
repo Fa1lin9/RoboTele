@@ -76,7 +76,6 @@ boost::optional<Eigen::VectorXd> GenericDualArmSolver::Solve(
         // check result
         std::cout<<"------------ Solver Result ------------"<<std::endl;
         std::cout << " Joint Value =\n" << std::fixed << std::setprecision(5) << qEigen << std::endl;
-//            std::cout << " Function Value = " << funcValue << std::endl;
         std::cout<<" Left Arm Translation: \n"<<Forward(qEigen)[0].translation()<<std::endl;
         std::cout<<" Left Arm Rotation: \n"<<Forward(qEigen)[0].rotation()<<std::endl;
         std::cout<<" Right Arm Translation: \n"<<Forward(qEigen)[1].translation()<<std::endl;
@@ -92,7 +91,38 @@ boost::optional<Eigen::VectorXd> GenericDualArmSolver::Solve(
 
 std::vector<pinocchio::SE3> GenericDualArmSolver::Forward(const Eigen::VectorXd& q)
 {
-    return std::vector<pinocchio::SE3>{};
+//    LOG_FUNCTION;
+    if(q.size() != this->totalDof){
+        std::string error = " The size of the q should be this->robotModel.nq! ";
+        throw std::length_error(error);
+    }
+
+    // updata data to better get position
+    pinocchio::Data data = pinocchio::Data(this->robotModel);
+    pinocchio::forwardKinematics(this->robotModel,data,q);
+    pinocchio::updateFramePlacements(this->robotModel,data);
+
+    // base pose
+    pinocchio::SE3 BasePoseOffset = pinocchio::SE3(
+                this->baseOffset[0].block<3,3>(0,0),
+                this->baseOffset[0].block<3,1>(0,3));
+    pinocchio::SE3 basePose = data.oMf[this->baseFrameIndex];
+
+//    std::cout<<"BasePose Translation: "<<basePose.translation()<<std::endl;
+//    std::cout<<"BasePose Rotation: "<<basePose.rotation()<<std::endl;
+
+    basePose = BasePoseOffset * basePose;
+
+    // left arm
+    pinocchio::SE3 leftArmEndPose = data.oMf[this->leftArmEndEffectorFrameIndex];
+    pinocchio::SE3 leftArmPose = basePose.inverse() * leftArmEndPose;
+
+
+    // right arm
+    pinocchio::SE3 rightArmEndPose = data.oMf[this->rightArmEndEffectorFrameIndex];
+    pinocchio::SE3 rightArmPose = basePose.inverse() * rightArmEndPose;
+
+    return std::vector<pinocchio::SE3>{leftArmPose, rightArmPose};
 }
 
 size_t GenericDualArmSolver::GetTotalDof()
@@ -337,7 +367,7 @@ void GenericDualArmSolver::InitRobot()
 
 void GenericDualArmSolver::InitOptim()
 {
-    LOG_FUNCTION;
+//    LOG_FUNCTION;
 
     // Update robotModelSX
     this->robotModelSX = this->robotModel.cast<casadi::SX>();
@@ -456,7 +486,18 @@ void GenericDualArmSolver::InitOptim()
     opts["print_time"] = 0;          // <= 禁用求解时间输出
     opts["calc_lam_p"] = 0;          // 可选，关闭对偶变量计算（减少输出）
 
+    this->opti.set_initial(this->qVar, casadi::DM(initPoseVec));
+
     this->opti.solver("ipopt", opts);
+
+//    this->opti.solver("sqpmethod", {
+//        {"qpsol", "qrqp"},
+//        {"max_iter", 100},
+//        {"hessian_approximation", "limited-memory"},
+//    });
+
+    // Doc
+//    std::cout << casadi::doc_nlpsol("feasiblesqpmethod") << std::endl;
 }
 
 void GenericDualArmSolver::CheckConfig(const ArmSolver::BasicConfig &config)

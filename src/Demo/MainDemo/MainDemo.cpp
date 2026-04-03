@@ -20,5 +20,5 @@ int main(){
     auto teleoperatePtr = RobotTeleoperate::GetPtr(CrpRobotConfigPath);
 //    auto teleoperatePtr = RobotTeleoperate::GetPtr(UnitreeG1Dof23ConfigPath);
 
-    teleoperatePtr->StartTeleop(false);
+    teleoperatePtr->StartTeleop(true);
 }

@@ -202,9 +202,14 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
         // Use ArmSolver to Solve
         std::cout<<"-------------- Start to solve --------------"<<std::endl;
 
+        auto optimStart = std::chrono::high_resolution_clock::now();
         q = this->armSolverPtr->Solve({transformedMsg[0],transformedMsg[1]},
                                 this->qLast,
-                                false);
+                                true);
+
+        auto optimEnd = std::chrono::high_resolution_clock::now();
+        auto optimEuration =
+                std::chrono::duration_cast<std::chrono::milliseconds>(optimEnd - optimStart);
 
         // Solve Hand
         handAngle = this->handSolverPtr->SolveDualHand(this->dualHandData);
@@ -359,7 +364,66 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
 
         // Save Data to Log
         if(this->saveFlag){
-            this->csvWriter.WriteEigenVector(q.value());
+            // Write the solved joint angle
+//            this->csvWriter.WriteEigenVector(q.value());
+
+            auto temp = this->armSolverPtr->Forward(q.value());
+
+            // 平移
+            Eigen::Vector3d transLeftRobot  = temp[0].translation();
+            Eigen::Vector3d transRightRobot = temp[1].translation();
+            Eigen::Vector3d transLeftHuman  = transformedMsg[0].block<3,1>(0,3);
+            Eigen::Vector3d transRightHuman = transformedMsg[1].block<3,1>(0,3);
+
+            auto SafeEulerAnglesZYX = [](const Eigen::Matrix3d& R) -> Eigen::Vector3d
+            {
+                // ZYX: yaw(Z), pitch(Y), roll(X)
+                Eigen::Vector3d euler = R.eulerAngles(2,1,0);
+
+                double yaw   = euler[0];
+                double pitch = euler[1];
+                double roll  = euler[2];
+
+                // 👉 ZYX 的奇异点仍然在 pitch = ±pi/2（万向锁）
+                // 不建议像之前那样强行 ±pi 修正（会引入跳变）
+                // 这里只做范围规范化
+
+                auto NormalizeAngle = [](double a)
+                {
+                    if(a > M_PI)       a -= 2.0 * M_PI;
+                    else if(a < -M_PI) a += 2.0 * M_PI;
+                    return a;
+                };
+
+                yaw   = NormalizeAngle(yaw);
+                pitch = NormalizeAngle(pitch);
+                roll  = NormalizeAngle(roll);
+
+                // ⚠️ 返回顺序：roll, pitch, yaw（和你之前保持一致接口）
+                return Eigen::Vector3d(roll, pitch, yaw);
+            };
+
+            // 提取欧拉角
+            Eigen::Vector3d eulerLeftRobot  = SafeEulerAnglesZYX(temp[0].rotation());
+            Eigen::Vector3d eulerRightRobot = SafeEulerAnglesZYX(temp[1].rotation());
+            Eigen::Vector3d eulerLeftHuman  = SafeEulerAnglesZYX(transformedMsg[0].block<3,3>(0,0));
+            Eigen::Vector3d eulerRightHuman = SafeEulerAnglesZYX(transformedMsg[1].block<3,3>(0,0));
+
+            // 拼接：12平移 + 12欧拉角 + 1时间 = 25维
+            Eigen::VectorXd all(25);
+            all << transLeftRobot,
+                   transLeftHuman,
+                   transRightRobot,
+                   transRightHuman,
+                   eulerLeftRobot,
+                   eulerLeftHuman,
+                   eulerRightRobot,
+                   eulerRightHuman,
+                   static_cast<double>(optimEuration.count());
+
+            // 写 CSV
+            this->csvWriter.WriteEigenVector(all);
+
         }
         std::cout<<"---------------- Solver over ----------------"<<std::endl;
 

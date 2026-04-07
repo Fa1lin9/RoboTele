@@ -1,0 +1,61 @@
+{
+    "RobotType": "GenericRobot",
+    "XRType" : "VisionPro",
+    "HandType": "Revo2Hand",
+    
+    "Address": "tcp://127.0.0.1:5555",
+    "FPS": 25,
+
+    "IsSimulatedRobot": true,
+    "IsRealWorldRobot": false,
+    
+    "IsCheckSolution": false,
+    "IsFilterSolution": true,
+    "FilterWeight": [0.4, 0.3, 0.2, 0.1],
+    "_FilterWeight": [0.7, 0.2, 0.1],
+    
+    "BodyEnable": {
+        "Head": false,
+        "Waist": false,
+        "LeftArm": true,
+        "RightArm": true,
+        "LeftLeg": false,
+        "RightLeg": false,
+
+        "LeftHand": true,
+        "RightHand": true
+    },
+
+    "ConfigPath": {
+        "UseRootPath": true,
+
+        "ArmSolver": "/config/ArmSolver/FourierGR1DualArm.json",
+
+        "Transform": "/config/Transform/VisionPro2FourierGR1.json",
+
+        "RobotHardware": "",
+
+        "HeadSolver": "",
+
+        "WaistSolver": ""
+    },
+
+    "BridgeConfig": {
+
+        "LeftHand": {
+            "MsgType": "JointState",
+            "TopicName": "/Revo2Hand/LeftHand"
+        },
+
+        "RightHand": {
+            "MsgType": "JointState",
+            "TopicName": "/Revo2Hand/RightHand"
+        },
+
+        "Body": {
+            "MsgType": "JointState",
+            "TopicName": "/HumanoidCtrl/humanoid_msgs/msg/JointState"
+        }
+
+    }
+}

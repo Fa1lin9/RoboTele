@@ -1,6 +1,6 @@
 {
     "Type": "GenericDualArm",
-    "RobotType": "Ti5Robot",
+    "RobotType": "GenericRobot",
 
     "UseRootPath": true,
     "ModelPath": "/assets/urdf/Ti5Robot/Ti5Robot.urdf",

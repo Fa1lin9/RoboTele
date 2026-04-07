@@ -381,29 +381,18 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
 
             auto SafeEulerAnglesZYX = [](const Eigen::Matrix3d& R) -> Eigen::Vector3d
             {
-                // ZYX: yaw(Z), pitch(Y), roll(X)
-                Eigen::Vector3d euler = R.eulerAngles(2,1,0);
+                // 显式提取，避免 Eigen 内部多解切换导致的跳变
+                double pitch = -asin(std::clamp(R(2,0), -1.0, 1.0));
+                double roll, yaw;
 
-                double yaw   = euler[0];
-                double pitch = euler[1];
-                double roll  = euler[2];
+                if (std::abs(pitch) < M_PI_2 - 0.001) { // 非死锁区
+                    roll = atan2(R(2,1), R(2,2));
+                    yaw  = atan2(R(1,0), R(0,0));
+                } else { // 死锁区处理
+                    roll = 0.0; // 设为一个固定值
+                    yaw  = atan2(-R(0,1), R(1,1));
+                }
 
-                // 👉 ZYX 的奇异点仍然在 pitch = ±pi/2（万向锁）
-                // 不建议像之前那样强行 ±pi 修正（会引入跳变）
-                // 这里只做范围规范化
-
-                auto NormalizeAngle = [](double a)
-                {
-                    if(a > M_PI)       a -= 2.0 * M_PI;
-                    else if(a < -M_PI) a += 2.0 * M_PI;
-                    return a;
-                };
-
-                yaw   = NormalizeAngle(yaw);
-                pitch = NormalizeAngle(pitch);
-                roll  = NormalizeAngle(roll);
-
-                // ⚠️ 返回顺序：roll, pitch, yaw（和你之前保持一致接口）
                 return Eigen::Vector3d(roll, pitch, yaw);
             };
 

@@ -1,5 +1,5 @@
 {
-    "RobotType": "Ti5Robot",
+    "RobotType": "GenericRobot",
     "XRType" : "VisionPro",
     "HandType": "Revo2Hand",
     

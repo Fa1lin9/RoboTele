@@ -1,0 +1,63 @@
+{
+    "Type": "GenericDualArm",
+    "RobotType": "GenericRobot",
+
+    "UseRootPath": true,
+    "ModelPath": "/assets/urdf/FourierGR1/gr1t2/basic_urdf/gr1t2_dummy_hand.urdf",
+
+    "BaseFrameName": ["waist_yaw_joint"],
+    "TargetFrameName": ["left_wrist_pitch_joint", "right_wrist_pitch_joint"],
+
+    "LeftArmJointNames" : [
+        "left_shoulder_pitch_joint",
+        "left_shoulder_roll_joint",
+        "left_shoulder_yaw_joint",
+        "left_elbow_pitch_joint",
+        "left_wrist_yaw_joint",
+        "left_wrist_roll_joint",
+        "left_wrist_pitch_joint"
+    ],
+    "RightArmJointNames" : [
+        "right_shoulder_pitch_joint",
+        "right_shoulder_roll_joint",
+        "right_shoulder_yaw_joint",
+        "right_elbow_pitch_joint",
+        "right_wrist_yaw_joint",
+        "right_wrist_roll_joint",
+        "right_wrist_pitch_joint"
+    ],
+
+    "BaseOffset": [
+        [
+        [1, 0, 0, 0.10],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0.50],
+        [0, 0 ,0, 1]
+        ]
+    ],
+    "TargetOffset":[
+        [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ],
+        [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ]
+    ],
+
+    "MaxIteration": 50,
+    "RelativeTol": 1e-6,
+    "ArmActiveDof": [6, 6],
+
+    "ObjectiveFunc":{
+        "TranslationWeight": 50.0,
+        "RotationWeight": 0.5,
+        "RegularizationWeight": 0.02,
+        "SmoothWeight": 0.5 
+    }
+}

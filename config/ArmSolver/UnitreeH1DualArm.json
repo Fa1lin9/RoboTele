@@ -1,0 +1,59 @@
+{
+    "Type": "GenericDualArm",
+    "RobotType": "GenericRobot",
+
+    "UseRootPath": true,
+    "ModelPath": "/assets/urdf/UnitreeH1/h1_with_hand.urdf",
+
+    "BaseFrameName": ["torso_joint"],
+    "TargetFrameName": ["left_elbow_joint", "right_elbow_joint"],
+
+    "LeftArmJointNames" : [
+        "left_shoulder_pitch_joint",
+        "left_shoulder_roll_joint",
+        "left_shoulder_yaw_joint",
+        "left_elbow_joint",
+        "left_hand_joint"
+    ],
+    "RightArmJointNames" : [
+        "right_shoulder_pitch_joint",
+        "right_shoulder_roll_joint",
+        "right_shoulder_yaw_joint",
+        "right_elbow_joint",
+        "right_hand_joint"
+    ],
+
+    "BaseOffset": [
+        [
+        [1, 0, 0, 0.15],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0.70],
+        [0, 0 ,0, 1]
+        ]
+    ],
+    "TargetOffset":[
+        [
+        [1, 0, 0, 0.31],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ],
+        [
+        [1, 0, 0, 0.31],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0 ,0, 1]
+        ]
+    ],
+
+    "MaxIteration": 50,
+    "RelativeTol": 1e-6,
+    "ArmActiveDof": [5, 5],
+
+    "ObjectiveFunc":{
+        "TranslationWeight": 50.0,
+        "RotationWeight": 0.5,
+        "RegularizationWeight": 0.02,
+        "SmoothWeight": 0.5 
+    }
+}

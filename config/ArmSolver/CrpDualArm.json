@@ -1,6 +1,6 @@
 {
     "Type": "GenericDualArm",
-    "RobotType": "CrpRobot",
+    "RobotType": "GenericRobot",
     
     "UseRootPath": true,
     "ModelPath": "/assets/urdf/CrpRobot/CrpRobot.urdf",

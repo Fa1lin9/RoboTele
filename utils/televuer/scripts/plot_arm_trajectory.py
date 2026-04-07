@@ -11,9 +11,12 @@ plt.rcParams['font.family'] = font_prop.get_name()
 plt.rcParams['axes.unicode_minus'] = False
 
 # ====================== 配置 ======================
+
+# 调参完成的： CrpRobot H1 Ti5Robot G1Dof29 GR1 X1 N1
+
 SAVE_FLAG = True
-FILE_PREFIX = "(G1Dof29)"  # 文件名前缀
-file_name = "20260407_111848.csv"
+FILE_PREFIX = "(X1)"  # 文件名前缀
+file_name = "20260407_170805.csv"
 CSV_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', file_name)
 
 # ====================== 读取 CSV ======================
@@ -61,9 +64,10 @@ def plot_arm_axis(arm, axis, human_df, robot_df, mode="Pos"):
     plt.grid(True, linestyle='--', alpha=0.5)
     plt.tight_layout()
     if SAVE_FLAG:
-        save_path = get_save_path(f"{arm}_{axis}_{mode}.png")
-        plt.savefig(save_path, dpi=300)
-        plt.close()
+        # 暂时不绘制单独的
+        # save_path = get_save_path(f"{arm}_{axis}_{mode}.png")
+        # plt.savefig(save_path, dpi=300)
+        print("暂时不绘制单独的")
     else:
         plt.show()
 

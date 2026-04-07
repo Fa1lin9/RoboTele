@@ -1,5 +1,5 @@
 {
-    "RobotType": "UnitreeG1Dof29",
+    "RobotType": "GenericRobot",
     "XRType" : "VisionPro",
     "HandType": "Revo2Hand",
     

@@ -1,5 +1,5 @@
 {
-    "RobotType": "CrpRobot",
+    "RobotType": "GenericRobot",
     "XRType" : "VisionPro",
     "HandType": "Revo2Hand",
     

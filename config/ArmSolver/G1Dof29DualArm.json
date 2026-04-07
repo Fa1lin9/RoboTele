@@ -1,6 +1,6 @@
 {
     "Type": "GenericDualArm",
-    "RobotType": "UnitreeG1Dof29",
+    "RobotType": "GenericRobot",
 
     "UseRootPath": true,
     "ModelPath": "/assets/urdf/UnitreeG1/g1_body29_hand14.urdf",
@@ -29,9 +29,9 @@
 
     "BaseOffset": [
         [
-        [1, 0, 0, 0.04],
+        [1, 0, 0, 0.02],
         [0, 1, 0, 0],
-        [0, 0, 1, 0.46],
+        [0, 0, 1, 0.50],
         [0, 0 ,0, 1]
         ]
     ],

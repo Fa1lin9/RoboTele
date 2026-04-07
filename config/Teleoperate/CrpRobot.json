@@ -55,7 +55,7 @@
 
         "Body": {
             "MsgType": "JointState",
-            "TopicName": "HumanoidCtrl/humanoid_msgs/msg/JointState"
+            "TopicName": "/HumanoidCtrl/humanoid_msgs/msg/JointState"
         }
 
     }

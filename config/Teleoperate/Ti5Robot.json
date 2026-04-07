@@ -1,6 +1,7 @@
 {
     "RobotType": "Ti5Robot",
     "XRType" : "VisionPro",
+    "HandType": "Revo2Hand",
     
     "Address": "tcp://127.0.0.1:5555",
     "FPS": 25,
@@ -19,7 +20,10 @@
         "LeftArm": true,
         "RightArm": true,
         "LeftLeg": false,
-        "RightLeg": false
+        "RightLeg": false,
+
+        "LeftHand": true,
+        "RightHand": true
     },
 
     "ConfigPath": {
@@ -36,8 +40,22 @@
         "WaistSolver": "/config/BasicSolver/WaistSolver/Ti5Robot.json"
     },
 
-    "Ros2BridgeConfig": {
-        "MsgType": "JointState",
-        "TopicName": "HumanoidCtrl/humanoid_msgs/msg/JointState"
+    "BridgeConfig": {
+
+        "LeftHand": {
+            "MsgType": "JointState",
+            "TopicName": "/Revo2Hand/LeftHand"
+        },
+
+        "RightHand": {
+            "MsgType": "JointState",
+            "TopicName": "/Revo2Hand/RightHand"
+        },
+
+        "Body": {
+            "MsgType": "JointState",
+            "TopicName": "/HumanoidCtrl/humanoid_msgs/msg/JointState"
+        }
+
     }
 }

@@ -29,9 +29,9 @@
 
     "BaseOffset": [
         [
-        [1, 0, 0, 0.15],
+        [1, 0, 0, 0.04],
         [0, 1, 0, 0],
-        [0, 0, 1, 0.44],
+        [0, 0, 1, 0.46],
         [0, 0 ,0, 1]
         ]
     ],
@@ -52,7 +52,7 @@
 
     "MaxIteration": 50,
     "RelativeTol": 1e-6,
-    "ArmActiveDof": [5, 5],
+    "ArmActiveDof": [6, 6],
 
     "ObjectiveFunc":{
         "TranslationWeight": 50.0,

@@ -208,7 +208,7 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
                                 true);
 
         auto optimEnd = std::chrono::high_resolution_clock::now();
-        auto optimEuration =
+        auto optimDuration =
                 std::chrono::duration_cast<std::chrono::milliseconds>(optimEnd - optimStart);
 
         // Solve Hand
@@ -219,14 +219,18 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
             qEigen = q.value();
 
             if (msgConfig.mode == Transform::TeleMode::HeadMode){
-                // Control the Head
-                headRPY = this->headSolver.Solve(transformedMsg[3].inverse() * transformedMsg[2]);
-                std::cout<<"HeadRPY: "<<headRPY<<std::endl;
+                if(this->config.enableHead){
+                    // Control the Head
+                    headRPY = this->headSolver.Solve(transformedMsg[3].inverse() * transformedMsg[2]);
+                    std::cout<<"HeadRPY: "<<headRPY<<std::endl;
+                }
             }else if (msgConfig.mode == Transform::TeleMode::WaistMode)
             {
-                // Control the Waist
-                waistRPY = this->waistSolver.Solve(transformedMsg[2]);
-                std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
+                if(this->config.enableWaist){
+                    // Control the Waist
+                    waistRPY = this->waistSolver.Solve(transformedMsg[2]);
+                    std::cout<<"WaistRPY: "<<waistRPY<<std::endl;
+                }
             }
             if(this->config.enableHead){
                 // Set Value to Head
@@ -419,7 +423,7 @@ bool GenericTeleoperate::StartTeleop(bool verbose){
                    eulerLeftHuman,
                    eulerRightRobot,
                    eulerRightHuman,
-                   static_cast<double>(optimEuration.count());
+                   static_cast<double>(optimDuration.count());
 
             // 写 CSV
             this->csvWriter.WriteEigenVector(all);

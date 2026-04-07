@@ -12,8 +12,8 @@ plt.rcParams['axes.unicode_minus'] = False
 
 # ====================== 配置 ======================
 SAVE_FLAG = True
-FILE_PREFIX = "(ipopt)"  # 文件名前缀
-file_name = "20260330_152432.csv"
+FILE_PREFIX = "(G1Dof29)"  # 文件名前缀
+file_name = "20260407_111848.csv"
 CSV_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', file_name)
 
 # ====================== 读取 CSV ======================

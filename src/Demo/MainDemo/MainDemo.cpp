@@ -29,8 +29,8 @@ int main(){
 //    auto teleoperatePtr = RobotTeleoperate::GetPtr(UnitreeG1Dof23ConfigPath);
 //    auto teleoperatePtr = RobotTeleoperate::GetPtr(UnitreeH1ConfigPath);
 //    auto teleoperatePtr = RobotTeleoperate::GetPtr(FourierGR1ConfigPath);
-    auto teleoperatePtr = RobotTeleoperate::GetPtr(AgiBotX1ConfigPath);
-//    auto teleoperatePtr = RobotTeleoperate::GetPtr(FourierN1ConfigPath);
+//    auto teleoperatePtr = RobotTeleoperate::GetPtr(AgiBotX1ConfigPath);
+    auto teleoperatePtr = RobotTeleoperate::GetPtr(FourierN1ConfigPath);
 
     teleoperatePtr->StartTeleop(false);
 }

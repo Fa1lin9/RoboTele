@@ -32,5 +32,6 @@ int main(){
 //    auto teleoperatePtr = RobotTeleoperate::GetPtr(AgiBotX1ConfigPath);
     auto teleoperatePtr = RobotTeleoperate::GetPtr(FourierN1ConfigPath);
 
+
     teleoperatePtr->StartTeleop(false);
 }

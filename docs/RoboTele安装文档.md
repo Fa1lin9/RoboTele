@@ -82,7 +82,7 @@ git tag
 ```bash
 git checkout tag/vX.X.X
 ```
-clone完仓库后之后记得更新子模块。有些库需要，有些库不需要，这个看具体情况。
+clone完仓库后之后记得更新子模块。有些库需要，有些库不需要，这个看具体情况。  
 ```bash
 git submodule update --init --recursive
 ```
